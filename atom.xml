@@ -1,0 +1,426 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>星期五。見面</title>
+  <icon>https://meetonfriday.com/img/avatar.jpg</icon>
+  <subtitle>程式 | 學習 | 日記 | 玩樂</subtitle>
+  <link href="https://meetonfriday.com/atom.xml" rel="self"/>
+  
+  <link href="https://meetonfriday.com/"/>
+  <updated>2021-03-13T07:01:29.104Z</updated>
+  <id>https://meetonfriday.com/</id>
+  
+  <author>
+    <name>John</name>
+    <email>john85051232@gmail.com</email>
+  </author>
+  
+  <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>令人搖頭的羅技產品品質? G413鍵盤出保紀錄(2021年)</title>
+    <link href="https://meetonfriday.com/posts/5cb74faa/"/>
+    <id>https://meetonfriday.com/posts/5cb74faa/</id>
+    <published>2021-03-11T01:30:00.000Z</published>
+    <updated>2021-03-13T07:01:29.104Z</updated>
+    
+    
+    <summary type="html">這篇文是講述自己對於羅技產品的親身體驗以及產品故障出保過程。</summary>
+    
+    
+    
+    <category term="daily" scheme="https://meetonfriday.com/categories/daily/"/>
+    
+    
+    <category term="others" scheme="https://meetonfriday.com/tags/others/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>[讀書心得]35歲，為什麼還沒被重用？</title>
+    <link href="https://meetonfriday.com/posts/dedf856f/"/>
+    <id>https://meetonfriday.com/posts/dedf856f/</id>
+    <published>2021-03-09T02:30:00.000Z</published>
+    <updated>2021-03-13T07:01:29.104Z</updated>
+    
+    
+    <summary type="html">本文是【35歲，為什麼還沒被重用】的讀書心得:是什麼關鍵，讓鴻海、台達電、統一、旺旺成為簽證客戶？是什麼原因，讓近百位合夥人願意提早將退休金全部結算？一本值得反覆咀嚼的好書，告訴你如何創造自己價值、如何找出成功方法，如何走出數字迷思。</summary>
+    
+    
+    
+    <category term="reading" scheme="https://meetonfriday.com/categories/reading/"/>
+    
+    
+    <category term="reading" scheme="https://meetonfriday.com/tags/reading/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>[課程筆記]Linux Driver正點原子課程筆記 - Course 4</title>
+    <link href="https://meetonfriday.com/posts/9aca0070/"/>
+    <id>https://meetonfriday.com/posts/9aca0070/</id>
+    <published>2021-03-03T00:30:00.000Z</published>
+    <updated>2021-03-13T07:01:29.104Z</updated>
+    
+    
+    <summary type="html">本文記錄了在學習Linux Kernel課程時的所有筆記，可以透過這邊文章連結到所有以往發過的課程筆記。</summary>
+    
+    
+    
+    <category term="【課程筆記】" scheme="https://meetonfriday.com/categories/%E3%80%90%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98%E3%80%91/"/>
+    
+    
+    <category term="linux kernel" scheme="https://meetonfriday.com/tags/linux-kernel/"/>
+    
+    <category term="study" scheme="https://meetonfriday.com/tags/study/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>[課程筆記]Linux Driver正點原子課程筆記 - Course 3</title>
+    <link href="https://meetonfriday.com/posts/62f55520/"/>
+    <id>https://meetonfriday.com/posts/62f55520/</id>
+    <published>2021-03-02T00:30:00.000Z</published>
+    <updated>2021-03-13T07:01:29.104Z</updated>
+    
+    
+    <summary type="html">本文記錄了在學習Linux Kernel課程時的所有筆記，可以透過這邊文章連結到所有以往發過的課程筆記。</summary>
+    
+    
+    
+    <category term="【課程筆記】" scheme="https://meetonfriday.com/categories/%E3%80%90%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98%E3%80%91/"/>
+    
+    
+    <category term="linux kernel" scheme="https://meetonfriday.com/tags/linux-kernel/"/>
+    
+    <category term="study" scheme="https://meetonfriday.com/tags/study/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>全台灣最大數據分析競賽上線啦!蝦皮2020數據分析競賽心得</title>
+    <link href="https://meetonfriday.com/posts/10ddd910/"/>
+    <id>https://meetonfriday.com/posts/10ddd910/</id>
+    <published>2021-01-25T01:30:00.000Z</published>
+    <updated>2021-03-13T07:01:29.104Z</updated>
+    
+    
+    <summary type="html">&lt;p&gt;這篇文章紀錄2020/11/21的&lt;a href=&quot;https://careers.shopee.tw/bestcoder/&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;蝦皮數據分析競賽&lt;/a&gt;心得~&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://res.cloudinary.com/meet-on-friday/image/upload/c_scale,w_600/v1614182087/blog_posts_2021/2021_02/%E5%9C%96%E7%89%871_mfa3qb.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+&lt;h2 id=&quot;競賽介紹&quot;&gt;&lt;a href=&quot;#競賽介紹&quot; class=&quot;headerlink&quot; title=&quot;競賽介紹&quot;&gt;&lt;/a&gt;競賽介紹&lt;/h2&gt;&lt;p&gt;儘管競賽名稱是&lt;strong&gt;全台灣最大數據分析競賽&lt;/strong&gt;，但實際上的競賽內容我覺得還不太夠格冠上這個名稱xD&lt;/p&gt;
+&lt;p&gt;為何這樣說呢?&lt;/p&gt;
+&lt;p&gt;首先，組別總共分成學生組和職業組，根據組別其實競賽題型差異極大:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;學生組: 考類似leetcode的演算法題型&lt;/li&gt;
+&lt;li&gt;職業組: 考kaggle數據分析競賽&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;並且使用的平台都是在kaggle上(不太知道學生組這樣的題型要如何在kaggle上去做排名?)&lt;/p&gt;
+&lt;p&gt;接下來是競賽時間，他是線下賽，一開始想說一個kaggle的線上賽好說歹說都是星期起跳的，線下賽好歹你也要給個一天的時間吧&lt;/p&gt;
+&lt;p&gt;結果競賽時間只有&lt;strong&gt;2個小時&lt;/strong&gt;，你沒看錯就是120分鐘而已呢。&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="daily" scheme="https://meetonfriday.com/categories/daily/"/>
+    
+    
+    <category term="competitive programming" scheme="https://meetonfriday.com/tags/competitive-programming/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>[讀書心得]富爸爸商學院</title>
+    <link href="https://meetonfriday.com/posts/15ad89ab/"/>
+    <id>https://meetonfriday.com/posts/15ad89ab/</id>
+    <published>2021-01-24T23:30:00.000Z</published>
+    <updated>2021-03-13T07:01:29.104Z</updated>
+    
+    
+    <summary type="html">本文是【富爸爸商學院】的讀書心得: 聽到「直銷」或「業務」，你的第一反應是先拒絕再說？你知道銷售力可以帶來超越想像的成長，培養出過人的商業技巧與成功心態嗎？跟大多數人一樣，當羅勃特．T．清崎第一次聽到直銷時，他也抱著懷疑的態度。不過，經過深入了解，他發現直銷產業其實是一所真正的商學院，不只沒有高不可攀的入學門檻，還蘊藏著足以改變一生的核心價值。</summary>
+    
+    
+    
+    <category term="reading" scheme="https://meetonfriday.com/categories/reading/"/>
+    
+    
+    <category term="reading" scheme="https://meetonfriday.com/tags/reading/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>[課程筆記]課程筆記系列總覽</title>
+    <link href="https://meetonfriday.com/posts/85f1c2a/"/>
+    <id>https://meetonfriday.com/posts/85f1c2a/</id>
+    <published>2021-01-24T05:30:00.000Z</published>
+    <updated>2021-03-13T07:01:29.104Z</updated>
+    
+    
+    <summary type="html">本文記錄了自己在上課時所記錄的一些課程筆記，可以透過這邊文章連結到所有以往發過的課程筆記文章。</summary>
+    
+    
+    
+    <category term="【課程筆記】" scheme="https://meetonfriday.com/categories/%E3%80%90%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98%E3%80%91/"/>
+    
+    
+    <category term="study" scheme="https://meetonfriday.com/tags/study/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>[課程筆記]Linux Driver正點原子課程筆記 - Course 1 &amp; 2</title>
+    <link href="https://meetonfriday.com/posts/81763900/"/>
+    <id>https://meetonfriday.com/posts/81763900/</id>
+    <published>2021-01-24T05:30:00.000Z</published>
+    <updated>2021-03-13T07:01:29.104Z</updated>
+    
+    
+    <summary type="html">本文記錄了在學習Linux Kernel課程時的所有筆記，可以透過這邊文章連結到所有以往發過的課程筆記。</summary>
+    
+    
+    
+    <category term="【課程筆記】" scheme="https://meetonfriday.com/categories/%E3%80%90%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98%E3%80%91/"/>
+    
+    
+    <category term="linux kernel" scheme="https://meetonfriday.com/tags/linux-kernel/"/>
+    
+    <category term="study" scheme="https://meetonfriday.com/tags/study/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>[論文速速讀]Learning Deep Features for Discriminative Localization</title>
+    <link href="https://meetonfriday.com/posts/2b446abf/"/>
+    <id>https://meetonfriday.com/posts/2b446abf/</id>
+    <published>2021-01-09T18:30:00.000Z</published>
+    <updated>2021-03-13T07:01:29.104Z</updated>
+    
+    
+    <summary type="html">本文介紹CNN可視化的一種技術，Classification Activaion Mapping (CAM)，透過heatmap的方式顯示模型分類時認為圖片重要的依據為何。這篇論文的貢獻是提出了使用NIN提出的Global Average Pooling來做CNN可視化的想法。概念不難但卻非常好用，而且很酷。</summary>
+    
+    
+    
+    <category term="【論文速速讀】" scheme="https://meetonfriday.com/categories/%E3%80%90%E8%AB%96%E6%96%87%E9%80%9F%E9%80%9F%E8%AE%80%E3%80%91/"/>
+    
+    
+    <category term="deep learning" scheme="https://meetonfriday.com/tags/deep-learning/"/>
+    
+    <category term="paper" scheme="https://meetonfriday.com/tags/paper/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>驅動程式安裝失敗: 文件的哈希值不在指定的目錄中，此文件可能已損壞或被竄改</title>
+    <link href="https://meetonfriday.com/posts/640a781c/"/>
+    <id>https://meetonfriday.com/posts/640a781c/</id>
+    <published>2021-01-07T01:30:00.000Z</published>
+    <updated>2021-03-13T07:01:29.104Z</updated>
+    
+    
+    <summary type="html">本文介紹在window10下手動更新驅動程式時如果出現&quot;文件的哈希值不在指定的目錄中，此文件可能已損壞或被竄改&quot;失敗資訊時的情形，以及解決方法。</summary>
+    
+    
+    
+    <category term="daily" scheme="https://meetonfriday.com/categories/daily/"/>
+    
+    
+    <category term="others" scheme="https://meetonfriday.com/tags/others/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>[Linux Kernel慢慢學]了解Linux CCF (Common Clock Framework)中的那些基本元件</title>
+    <link href="https://meetonfriday.com/posts/f43c1090/"/>
+    <id>https://meetonfriday.com/posts/f43c1090/</id>
+    <published>2021-01-03T07:30:00.000Z</published>
+    <updated>2021-03-13T07:01:29.104Z</updated>
+    
+    
+    <summary type="html">Linux CCF (Common Clock Framework)是一個用來管理clock的子系統，CCF向使用clk的driver提供操作clock的interface，同時也向clk driver的開發者提供一個管理clock的通用框架。這篇文章作為了解Linux Clock框架的事前學習，介紹了一個系統的時間相關元件通常由哪幾項元件組成，而他們各自又是什麼東西。</summary>
+    
+    
+    
+    <category term="【Linux Kernel慢慢學】" scheme="https://meetonfriday.com/categories/%E3%80%90Linux-Kernel%E6%85%A2%E6%85%A2%E5%AD%B8%E3%80%91/"/>
+    
+    
+    <category term="c" scheme="https://meetonfriday.com/tags/c/"/>
+    
+    <category term="linux kernel" scheme="https://meetonfriday.com/tags/linux-kernel/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>使用Hexo在Github Page上架設部落格 - 2020年度回顧</title>
+    <link href="https://meetonfriday.com/posts/55a05954/"/>
+    <id>https://meetonfriday.com/posts/55a05954/</id>
+    <published>2020-12-13T16:00:00.000Z</published>
+    <updated>2021-03-13T07:01:29.100Z</updated>
+    
+    
+    <summary type="html">介紹使用Hexo+Github Page架設部落格的歷程，以及回顧這段時間的流量增減。</summary>
+    
+    
+    
+    <category term="daily" scheme="https://meetonfriday.com/categories/daily/"/>
+    
+    
+  </entry>
+  
+  <entry>
+    <title>關於研究所的那些事 - 推甄、找教授、生活日常</title>
+    <link href="https://meetonfriday.com/posts/f955f6de/"/>
+    <id>https://meetonfriday.com/posts/f955f6de/</id>
+    <published>2020-12-12T06:00:00.000Z</published>
+    <updated>2021-03-13T07:01:29.100Z</updated>
+    
+    
+    <summary type="html">這篇文章算是個系列文統整然後加上一些補充，主題涵蓋了研究所推甄、面試、找教授，以及研究生生活的一些日記，如果好奇研究生生活都是怎麼過的讀者可以去看看。</summary>
+    
+    
+    
+    <category term="daily" scheme="https://meetonfriday.com/categories/daily/"/>
+    
+    
+  </entry>
+  
+  <entry>
+    <title>[C]在不同檔案間共用變數?你可以用extern阿</title>
+    <link href="https://meetonfriday.com/posts/9514e1a0/"/>
+    <id>https://meetonfriday.com/posts/9514e1a0/</id>
+    <published>2020-11-27T01:00:00.000Z</published>
+    <updated>2021-03-13T07:01:29.100Z</updated>
+    
+    
+    <summary type="html">這篇不是教學文喔，嚴格來說是工作上發生的蠢事，因為太蠢了所以紀錄一下，順便做個筆記(寫這篇廢文的時候真的是羞愧到想挖洞把自己埋起來，我對不起大學教授我程式沒學好...咦好像也不用對不起，他也沒教什麼...)</summary>
+    
+    
+    
+    <category term="study" scheme="https://meetonfriday.com/categories/study/"/>
+    
+    
+    <category term="c" scheme="https://meetonfriday.com/tags/c/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>[課堂筆記]深度學習優化器新霸主</title>
+    <link href="https://meetonfriday.com/posts/8e7bb892/"/>
+    <id>https://meetonfriday.com/posts/8e7bb892/</id>
+    <published>2020-11-25T00:00:00.000Z</published>
+    <updated>2021-03-13T07:01:29.100Z</updated>
+    
+    
+    <summary type="html">這篇文章是巨匠LIVE講堂(1124)上課的課堂筆記，講者為尹相志老師，主要在介紹近年的深度學習優化器技術。</summary>
+    
+    
+    
+    <category term="study" scheme="https://meetonfriday.com/categories/study/"/>
+    
+    
+    <category term="deep learning" scheme="https://meetonfriday.com/tags/deep-learning/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Neural Networks API Introduction: Android APP背後是如何執行一個神經網路模型的?</title>
+    <link href="https://meetonfriday.com/posts/668f0de1/"/>
+    <id>https://meetonfriday.com/posts/668f0de1/</id>
+    <published>2020-11-15T18:30:00.000Z</published>
+    <updated>2021-03-13T07:01:29.100Z</updated>
+    
+    
+    <summary type="html">本篇是對於官方文檔的中文閱讀筆記，內容是閱讀後透過自己的理解重新撰寫的，所以不全然是文檔的翻譯內容。深度學習的任務如果應用於手機端，為了使手機上的應用端可以更加方便的使用底層的不同裝置，Google在Android 8.1 (API level 27)後提供了ANN API(Android Neural Networks API)。ANN API使用C語言所撰寫，對於上層的深度學習框架(Tensorflow Lite, Caffe2...)提供了底層不同硬體資源的支持。</summary>
+    
+    
+    
+    <category term="study" scheme="https://meetonfriday.com/categories/study/"/>
+    
+    
+    <category term="c" scheme="https://meetonfriday.com/tags/c/"/>
+    
+    <category term="deep learning" scheme="https://meetonfriday.com/tags/deep-learning/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>[Linux Kernel慢慢學]快速上手Makefile和Kbuild Makefile</title>
+    <link href="https://meetonfriday.com/posts/5523c739/"/>
+    <id>https://meetonfriday.com/posts/5523c739/</id>
+    <published>2020-11-07T12:30:00.000Z</published>
+    <updated>2021-03-13T07:01:29.100Z</updated>
+    
+    
+    <summary type="html">Linux Kernel中是透過Kbuild Makefile(Kernel build, 基於makefile的compile tool)來對kernel code編譯，然後最終產生vmlinux file。所以了解Kbuild是很重要的，在看一個kernel code的時候可以透過Makefile file來幫助了解編譯的架構構成。詳細完整的教學網路上很多了，所以這篇文章不講瑣碎的原理跟細節，而是試著從實際看code會看到的內容來介紹:1. 快速介紹Makefile的概念，我們只講重點2. 快速介紹Kbuild規則，我們只講重點和常會用到的部分3. 搭配kernel code來實際看一下例子</summary>
+    
+    
+    
+    <category term="【Linux Kernel慢慢學】" scheme="https://meetonfriday.com/categories/%E3%80%90Linux-Kernel%E6%85%A2%E6%85%A2%E5%AD%B8%E3%80%91/"/>
+    
+    
+    <category term="c" scheme="https://meetonfriday.com/tags/c/"/>
+    
+    <category term="linux kernel" scheme="https://meetonfriday.com/tags/linux-kernel/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>[Linux Kernel慢慢學]define macro with hashtag(&quot;#&quot; and &quot;##&quot;)</title>
+    <link href="https://meetonfriday.com/posts/b7efb858/"/>
+    <id>https://meetonfriday.com/posts/b7efb858/</id>
+    <published>2020-10-27T12:30:00.000Z</published>
+    <updated>2021-03-13T07:01:29.100Z</updated>
+    
+    
+    <summary type="html">介紹c/c++的define macro，以及搭配preprocessor operators(井字號/hashtag)的介紹。</summary>
+    
+    
+    
+    <category term="【Linux Kernel慢慢學】" scheme="https://meetonfriday.com/categories/%E3%80%90Linux-Kernel%E6%85%A2%E6%85%A2%E5%AD%B8%E3%80%91/"/>
+    
+    
+    <category term="c" scheme="https://meetonfriday.com/tags/c/"/>
+    
+    <category term="linux kernel" scheme="https://meetonfriday.com/tags/linux-kernel/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>[論文速速讀]ILSVRC系列文回顧 - 歷屆CNN模型介紹</title>
+    <link href="https://meetonfriday.com/posts/1e087b70/"/>
+    <id>https://meetonfriday.com/posts/1e087b70/</id>
+    <published>2020-10-25T00:00:00.000Z</published>
+    <updated>2021-03-13T07:01:29.100Z</updated>
+    
+    
+    <summary type="html">這是一篇介紹歷年ILSVRC知名CNN模型的介紹文，包含了AlexNet, ZFNet, VGG, GoogleNet, ResNet和SENet。每個模型的發展都有它背後要解決的問題，模型比別人好也有其原因，看完這一系列的文章後希望讀者可以對於面對自己手上的dataset時，要用什麼模型怎麼做比較有概念。而未來如果需要進一步去設計屬於自己的模型的時候，這系列的文章也能夠讓你更加了解應該要如何設計，例如隨插隨用的Inception block, ResNet block, SE block是什麼...又應該怎麼把這些模塊融入自己的設計模型中，預期能為自己的模型達到什麼樣的效果。</summary>
+    
+    
+    
+    <category term="【論文速速讀】" scheme="https://meetonfriday.com/categories/%E3%80%90%E8%AB%96%E6%96%87%E9%80%9F%E9%80%9F%E8%AE%80%E3%80%91/"/>
+    
+    
+    <category term="deep learning" scheme="https://meetonfriday.com/tags/deep-learning/"/>
+    
+    <category term="paper" scheme="https://meetonfriday.com/tags/paper/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>[Linux Kernel慢慢學]Different betweeen ioctl, unlocked_ioctl and compat_ioctl</title>
+    <link href="https://meetonfriday.com/posts/736969d7/"/>
+    <id>https://meetonfriday.com/posts/736969d7/</id>
+    <published>2020-10-24T12:30:00.000Z</published>
+    <updated>2021-03-13T07:01:29.100Z</updated>
+    
+    
+    <summary type="html">會寫這一篇主要是自己在看一些網路教材的時候如果有些資源比較久你就會發現他用的還是ioctl()接口，但如果你實際上去碰新版的Kernel時卻發現了這個接口卻不見了，但卻多出了unlocked_ioctl()和compat_ioctl()這兩個很類似的function，然後就好奇他們到底差在哪裡、要怎麼用，學習完後就打了這篇文章做個記錄。</summary>
+    
+    
+    
+    <category term="【Linux Kernel慢慢學】" scheme="https://meetonfriday.com/categories/%E3%80%90Linux-Kernel%E6%85%A2%E6%85%A2%E5%AD%B8%E3%80%91/"/>
+    
+    
+    <category term="c" scheme="https://meetonfriday.com/tags/c/"/>
+    
+    <category term="linux kernel" scheme="https://meetonfriday.com/tags/linux-kernel/"/>
+    
+  </entry>
+  
+</feed>
