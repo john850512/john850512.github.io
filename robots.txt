@@ -1,0 +1,15 @@
+User-agent: Googlebot
+Allow: /
+Allow: /css/
+Allow: /js/
+Allow: /fonts/
+
+
+User-agent: *
+Allow: /
+Disallow: /css/
+Disallow: /js/
+Disallow: /fonts/
+
+Sitemap: https://meetonfriday.com/sitemap.xml
+Sitemap: https://meetonfriday.com/baidusitemap.xml
