@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<!-- Head tag -->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="baidu-site-verification" content="093lY4ziMu" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="keyword"  content="programming, study, daily, entertainment">
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="星期五。見面">
+    <meta property="og:locale" content="zh-TW" />
+    
+    <meta property="og:title" content="[論文速速讀]Visualizing and Understanding Convolutional Networks" />
+    
+    
+    <meta property="og:description" content="ZFNet可說是CNN可視化的開山始祖，儘管AlexNet中作者也簡單地拿出第一層的feature map做出了可視化，不過這種簡單的方法只能用在第一層，因為後面層隨著Conv和Pooling維度降低，此時就沒辦法輕易的看出來feature map是什麼東西了。ZFNet這篇文章中透過反卷積，或者叫做DeConvnet（或者Transpose Convolution...網路上很多種叫法...）來做到可以對每一層的Conv layer進行可視化，並透過此技術來觀察並調整AlexNet的架構，然後就贏下了ILSVRC 2013年的冠軍，恭喜恭喜!" />
+    <meta name="description" content="ZFNet可說是CNN可視化的開山始祖，儘管AlexNet中作者也簡單地拿出第一層的feature map做出了可視化，不過這種簡單的方法只能用在第一層，因為後面層隨著Conv和Pooling維度降低，此時就沒辦法輕易的看出來feature map是什麼東西了。ZFNet這篇文章中透過反卷積，或者叫做DeConvnet（或者Transpose Convolution...網路上很多種叫法...）來做到可以對每一層的Conv layer進行可視化，並透過此技術來觀察並調整AlexNet的架構，然後就贏下了ILSVRC 2013年的冠軍，恭喜恭喜!">
+    
+    
+    <meta property="og:image" content="https://res.cloudinary.com/meet-on-friday/image/upload/v1595278484/blog_posts/%E8%9E%A2%E5%B9%95%E5%BF%AB%E7%85%A7_2020-07-21_%E4%B8%8A%E5%8D%884.54.31_ydvnmx.png" />
+    
+
+    <link rel="shortcut icon" href="/img/avatar.jpg">
+    <!-- Place this tag in your head or just before your close body tag. -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <!--<link href='http://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>-->
+    <title>
+        
+          [論文速速讀]Visualizing and Understanding Convolutional Networks - MeetonFriday
+        
+    </title>
+    <!-- canonical -->
+    
+    
+      <link rel="canonical" href="https://meetonfriday.com/posts/3013fdb9/">
+    
+
+    <!-- Bootstrap Core CSS -->
+    
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+
+
+    <!-- Custom CSS --> 
+    
+<link rel="stylesheet" href="/css/dusign-dark.css">
+
+    
+<link rel="stylesheet" href="/css/dusign-common-dark.css">
+
+    <!-- 
+<link rel="stylesheet" href="/css/font-awesome.css">
+ -->
+    
+<link rel="stylesheet" href="/css/toc.css">
+
+
+    
+    <!-- Pygments Highlight CSS -->
+    
+<link rel="stylesheet" href="/css/highlight.css">
+
+
+    
+<link rel="stylesheet" href="/css/widget.css">
+
+
+    
+<link rel="stylesheet" href="/css/rocket.css">
+
+
+    
+<link rel="stylesheet" href="/css/signature.css">
+
+
+    
+<link rel="stylesheet" href="/css/fonts.googleapis.css">
+
+
+    <!-- <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.3.0/css/font-awesome.min.css">-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.min.css">
+    
+    <!-- Google Analytics -->
+    
+      <!-- <script>
+          // dynamic User by Hux
+          var _gaId = 'UA-163346001-1';
+          var _gaDomain = 'auto';
+      
+          // Originial
+          (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+          (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+          })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+      
+          ga('create', _gaId, _gaDomain);
+          ga('send', 'pageview');
+      </script> -->
+      
+      <!-- Global site tag (gtag.js) - Google Analytics -->
+      <script async src="https://www.googletagmanager.com/gtag/js?id=UA-163346001-1"></script>
+      <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+      
+        gtag('config', 'UA-163346001-1');
+      </script>
+      
+    <!-- google ad sense-->
+    <script data-ad-client="ca-pub-9561340457908416" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<meta name="generator" content="Hexo 4.2.1"><link rel="alternate" href="/atom.xml" title="星期五。見面" type="application/atom+xml">
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+	<!-- Modified by Yu-Hsuan Yen -->
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        
+            
+                background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.5)), url('/img/header_img/header-bg.jpg')
+            
+        
+    }
+    
+</style>
+
+<header class="intro-header" >
+    <!-- Signature -->
+    <div id="signature">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                
+                    <div class="post-heading">
+                        <div class="tags">
+                            
+                              <a class="tag" href="/tags/#deep learning" title="deep learning">deep learning</a>
+                            
+                              <a class="tag" href="/tags/#paper" title="paper">paper</a>
+                            
+                        </div>
+                        <h1>[論文速速讀]Visualizing and Understanding Convolutional Networks</h1>
+                        <h2 class="subheading"></h2>
+                        <span class="meta">
+                            Posted by John on
+                            2020-07-21
+                        </span>
+
+                        
+                            <div class="blank_box"></div>
+                            <span class="meta">
+                                Words <span class="post-count">3.3k</span> and
+                                Reading Time <span class="post-count">12</span> Minutes
+                            </span>
+                            <div class="blank_box"></div>
+                            <!-- 不蒜子统计 start -->
+                            <span class="meta">
+                                Viewed <span id="busuanzi_value_page_pv"><i class="fa fa-spinner fa-spin"></i></span> Times
+                            </span>
+                            <!-- 不蒜子统计 end -->
+                        
+
+                    </div>
+                
+
+                </div>
+            </div>
+        </div>      
+    </div>
+
+    
+        
+            <div class="waveWrapper">
+                <div class="wave wave_before" style="background-image: url('/img/wave-dark.png')"></div>
+                <div class="wave wave_after" style="background-image: url('/img/wave-dark.png')"></div>
+            </div>
+        
+    
+</header>
+
+	
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">星期五。見面</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archive/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/categories/">Categories</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/reading/">Reading</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+    
+    <!-- Main Content -->
+    <!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+            <!-- Post Container -->
+
+    
+        
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+        
+    
+
+                <p>〖想觀看更多中文論文導讀，至<a href="https://meetonfriday.com/posts/aa55d3f9/">[論文速速讀]系列文章介紹</a>可以看到目前已發布的所有文章！〗</p>
+<p>paper: <a href="https://arxiv.org/pdf/1311.2901.pdf" target="_blank" rel="noopener">https://arxiv.org/pdf/1311.2901.pdf</a></p>
+<p>ZFNet可說是<strong>CNN可視化的開山始祖</strong>，儘管AlexNet中作者也簡單地拿出第一層的feature map做出了可視化(<a href="https://meetonfriday.com/posts/e54c12ea/">看我看我</a>)，不過這種簡單的方法只能用在第一層，因為後面層隨著Conv和Pooling維度降低，此時就沒辦法輕易的看出來feature map是什麼東西了。</p>
+<p>ZFNet這篇文章中透過反卷積，或者叫做DeConvnet（或者Transpose Convolution…網路上很多種叫法…）來做到可以對每一層的Conv layer進行可視化，並透過此技術來觀察並調整AlexNet的架構，然後就贏下了ILSVRC 2013年的冠軍，恭喜恭喜!</p>
+<p>並且，除了這些還做了一堆實驗，真的是很用心ㄋㄟ，<del>所以我才會看這麼久(ヾﾉ･ω･`)</del></p>
+<h2 id="Abstract"><a href="#Abstract" class="headerlink" title="Abstract"></a>Abstract</h2><blockquote>
+<p>Large Convolutional Network models have recently demonstrated impressive classification performance on the ImageNet benchmark (Krizhevsky et al., 2012). However there is no clear understanding of why they perform so well, or how they might be improved. In this paper we address both issues.</p>
+</blockquote>
+<p>CNN架構在圖像分類領域上取得了巨大的成功，但是，還沒有研究去說他們為何可以有如此好的表現，以及應該如何針對模型架構去改進。</p>
+<p>這篇文章中主要解決了這兩個問題，第一是提出了一種新的可視化技術可以更加了解中間層的運作，透過這個技術他們去微調了AlexNet的模型並得到了更好的結果。此外他們也透過ablation study找出不同層對於model的貢獻。</p>
+<a id="more"></a>
+<h2 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h2><p>近年來CNN興起的三個因素:</p>
+<ol>
+<li>越來越多的有label的圖片訓練資料集</li>
+<li>越來越強的GPU</li>
+<li>更好的正則化策略，例如dropout</li>
+</ol>
+<p>但是對於CNN背後的原理其實還不是很明瞭，就像個黑盒子一樣。</p>
+<p>這篇文章透過<strong>反卷積(DeConv)的技術提出了一種視覺化方法，使得可以去觀察每一層的Conv layer。</strong></p>
+<p>此外這篇文章還透過遮擋圖片的一部分來觀察模型輸出，藉此找出圖片中哪些區塊對於模型分類是比較重要的部分。</p>
+<h2 id="Approach"><a href="#Approach" class="headerlink" title="Approach"></a>Approach</h2><p>一開始對CNN model做了一下介紹，大部分的設置都與AlexNet相同</p>
+<h2 id="Visualization-with-a-Deconvnet"><a href="#Visualization-with-a-Deconvnet" class="headerlink" title="Visualization with a Deconvnet"></a>Visualization with a Deconvnet</h2><blockquote>
+<p>We present a novel way to map these activities back to the input pixel space, showing what input pattern originally caused a given activation in the feature maps.</p>
+</blockquote>
+<p>要去解釋CNN的一種方式就是看中間層的feature map哪些被激活了，作者透過Deconvnet來將特定的feature map映射回到輸入層，這樣就可以看到feature map和input layer之間的對應關係。</p>
+<p><strong>反卷積最早由(Zeiler et al., 2011)提出，一開始適用在unsupervisied learning上，不過這邊是將訓練完成的model使用Deconvnet已做出視覺化的效果，所以並沒有訓練的效果。</strong></p>
+<p>先上paper中重點架構圖，然後再來細講每一個部分:</p>
+<p><img src="https://meetonfriday.com/img/lazy-loading-animation.gif" data-original="https://res.cloudinary.com/meet-on-friday/image/upload/v1595088962/blog_posts/%E8%9E%A2%E5%B9%95%E5%BF%AB%E7%85%A7_2020-07-18_%E4%B8%8B%E5%8D%8811.30.44_ekusji.png" alt=""></p>
+<p>這張圖分成上下兩個部分:</p>
+<ul>
+<li>上半部中，右半部分是Conv的過程: Conv -&gt; ReLU -&gt; MaxPool</li>
+<li>上半部中，左半部是DeConvnet的過程: MaxUnPool -&gt; ReLU -&gt; DeConv</li>
+<li>下半部中則是介紹了Unpooling的概念(文章後面會介紹)</li>
+</ul>
+<blockquote>
+<p>To examine a given convnet activation, we set all other activations in the layer to zero and pass the feature maps as input to the attached deconvnet layer.</p>
+</blockquote>
+<p>此外，為了檢查在某一層feature map中某一個點(activation)對於input的關聯，他們會先將這個點之外的值都設成0然後再傳到DeConvnet層裡面。</p>
+<h3 id="Unpooling"><a href="#Unpooling" class="headerlink" title="Unpooling"></a>Unpooling</h3><p>Maxpool的運算是<strong>不可逆</strong>的，但可以想辦法逼近他。</p>
+<p>方法就是在每次Maxpool的時候將最大的位置都記錄下來，Unpool的時候把值放回到feature map對應的最大位置上。</p>
+<ul>
+<li>paper中稱之switch，在流程圖中也可以看到，灰色的代表最大值的位置，其他沒有填的位置則都是黑色(0)</li>
+</ul>
+<h3 id="Rectification"><a href="#Rectification" class="headerlink" title="Rectification"></a>Rectification</h3><p>在Conv時，為了確保feature map的值都是正的，會使用ReLU</p>
+<p>在DeConvnet時也為了讓值都是正的，所以也使用ReLU</p>
+<p>看似簡單，我在這一塊卡了很久…囧</p>
+<p>我一直在想: 既然Conv完會經過ReLU和Pool，確保了feature map值都是正的，那從feature map拿回來的也都是正的，為何需要再加上ReLU呢?</p>
+<p>後來想到的原因是，第一回DeConvnet的feature map的確沒這個問題(此時的Unpool是從Convnet的最後一次feature map取得，所以一定是正的，所以經過ReLU後也必然是正的)，問題在<strong>經過了一回後就不保證值還都是正的了(因為經過了一次DeConv可能會產生負值)，所以才要加上ReLU來限制</strong>。</p>
+<h3 id="Filtering"><a href="#Filtering" class="headerlink" title="Filtering"></a>Filtering</h3><blockquote>
+<p>To invert this, the deconvnet uses transposed versions of the same filters, but applied to the rectified maps, not the output of the layer beneath. In practice this means flipping each filter vertically and horizontally.</p>
+</blockquote>
+<p>Conv是對上一層的feature map來做卷積，Deconvnet為了逆這個操作，則是對經過ReLU的output使用Conv矩陣的轉置(Transposed Convolution)來做卷積(也就是將原始的參數垂直和水平翻轉)，並且這個部分並不干涉模型的訓練過程。</p>
+<p><img src="https://meetonfriday.com/img/lazy-loading-animation.gif" data-original="https://res.cloudinary.com/meet-on-friday/image/upload/v1595269674/blog_posts/Zb4LabP_j8hkod.jpg" alt=""></p>
+<p>阿勒…？ 為什麼這裡突然跑出了一個Conv矩陣的轉置呢？用卷積的轉置矩陣就可以做出逆矩陣的效果嗎？？？</p>
+<p>我覺得<a href="https://www.zhihu.com/question/43609045/answer/120266511" target="_blank" rel="noopener">如何理解深度学习中的deconvolution networks？</a>講的蠻詳細的，下面根據內文的解釋和我的理解簡單整理一遍:</p>
+<p><strong>DeConv，或是逆卷積，在做的事情做出和Conv(卷積)在正向/反向傳播中相反的運算，主要的目標是使得shape是可以被上下層給對應起來的。</strong></p>
+<p>首先想一下正常的卷積在正向/反向傳播的時候的行為:<br>考慮一個$4\times4$的input經過一個$3\times3$的kernel做卷積後，在沒有pooling和stride=1的情況下，output shape=$2\times2$</p>
+<ul>
+<li>input可以看成一個16維的向量$x$</li>
+<li>output則是4維的向量$y$</li>
+<li>卷積運算用$C$表示</li>
+</ul>
+<p>那其實一次的Conv就是下面這個式子:</p>
+<script type="math/tex; mode=display">y=Cx</script><p>$C$其實是一個$4\times16$的matrix:</p>
+<script type="math/tex; mode=display">
+\left(\begin{array}{ccccccccccccccc}
+c_{0,0} & c_{0,1} & c_{0,2} & 0 & c_{1,0} & c_{1,1} & c_{1,2} & 0 & c_{2,0} & c_{2,1} & c_{2,2} & 0 & 0 & 0 & 0 & 0 \\
+0 & c_{0,0} & c_{0,1} & c_{0,2} & 0 & c_{1,0} & c_{1,1} & c_{1,2} & 0 & c_{2,0} & c_{2,1} & c_{2,2} & 0 & 0 & 0 & 0 \\
+0 & 0 & 0 & 0 & c_{0,0} & c_{0,1} & c_{0,2} & 0 & c_{1,0} & c_{1,1} & c_{1,2} & 0 & c_{2,0} & c_{2,1} & c_{2,2} & 0 \\
+0 & 0 & 0 & 0 & 0 & c_{0,0} & c_{0,1} & c_{0,2} & 0 & c_{1,0} & c_{1,1} & c_{1,2} & 0 & c_{2,0} & c_{2,1} & c_{2,2}
+\end{array}\right)</script><p>那為了從$y$還原$x$，先不論還原矩陣的值，我們必須要有一個$16\times4$的矩陣。</p>
+<p>所<strong>以反卷積其實在做的事情只是想辦法還原shape，而這個還原矩陣的值有很多種方式，這篇文章中的DeConvnet由於不牽涉到訓練過程，採用的方式就是簡單的原始卷積矩陣的轉置$C^{T}$</strong></p>
+<p>其實關於逆矩陣或是反矩陣，英文的DeConv或是transpose convolution…blabla，不只被用在是CNN視覺化，還有很多應用。這邊要認真研究有有很多坑可以去講，在我花了兩天看了一堆資料後，下面是我認為的幾個重要概念:</p>
+<ol>
+<li>transpose convolution並不能從feature map還原原始的input data，他只是還原出原始的input shape。(就這點來說其實逆矩陣，或是DeConv是個不太適切的講法，因為他並沒有還原原始的input，這個名詞會讓人誤會。)</li>
+<li>這個矩陣的參數不一定一定要是原本Conv matrix的轉置，是可以被學出來的</li>
+<li>就pytorch的實作上，的weight似乎是隨機初始化的，詳見<a href="https://blog.csdn.net/LoseInVain/article/details/81098502?utm_medium=distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-1.nonecase&amp;depth_1-utm_source=distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-1.nonecase" target="_blank" rel="noopener">一文搞懂反卷积，转置卷积</a></li>
+<li>tensorflow的實作上則是真的有使用到了卷積的轉置，詳見<a href="https://medium.com/@dboyliao/dl-transposed-conv-%E5%88%B0%E5%BA%95%E6%98%AF%E5%95%A5-8e2a2192058b" target="_blank" rel="noopener">Deep Learning: Transpose Convolution 到底是?</a></li>
+</ol>
+<h2 id="Training-Details"><a href="#Training-Details" class="headerlink" title="Training Details"></a>Training Details</h2><p><img src="https://meetonfriday.com/img/lazy-loading-animation.gif" data-original="https://res.cloudinary.com/meet-on-friday/image/upload/v1595278484/blog_posts/%E8%9E%A2%E5%B9%95%E5%BF%AB%E7%85%A7_2020-07-21_%E4%B8%8A%E5%8D%884.54.31_ydvnmx.png" alt=""></p>
+<p>跟AlexNet差不多，不過原本sprase connection(也就是使用到兩張GPU的部分)被替換掉了，ZFNet重頭到尾只用了一張GPU，節能愛地球，讚。</p>
+<p>其他更改的地方像是第一層使用了更小的stride(4-&gt;2)和kernel size(11-&gt;7)。</p>
+<p>細節就在仔細去看paper吧，接下來要來看本文重點了。</p>
+<h2 id="Convnet-Visualization"><a href="#Convnet-Visualization" class="headerlink" title="Convnet Visualization"></a>Convnet Visualization</h2><h3 id="Feature-Visualization"><a href="#Feature-Visualization" class="headerlink" title="Feature Visualization"></a>Feature Visualization</h3><p><img src="https://meetonfriday.com/img/lazy-loading-animation.gif" data-original="https://res.cloudinary.com/meet-on-friday/image/upload/v1595279722/blog_posts/%E8%9E%A2%E5%B9%95%E5%BF%AB%E7%85%A7_2020-07-21_%E4%B8%8A%E5%8D%885.14.55_vzibp4.png" alt=""></p>
+<p>從validation set隨機取了一些feature maps，然後針對9個最大的點(activations)來看這些點映射到input space下的結果，也就是input image哪些區塊激活了這些點。</p>
+<p>圖片中左半邊是DeConv的視覺化，右半邊的是該點(activation)對應圖片的感受野區塊(receptive field)</p>
+<ul>
+<li>也就是從該點往回推，當推回input layer時被影響到的範圍</li>
+<li>比方說input layer -&gt; (3x3 Conv) -&gt; output layer，那在output layer的一個點實際上對應到了input layer的3x3區塊</li>
+</ul>
+<p>從這張圖中我們觀察到:</p>
+<ul>
+<li>show 9個activation的原因是，透過多張圖來觀察，可以發現Conv具備空間不變性: 即使圖片有差異，但學到的特徵都很類似</li>
+<li>前幾層學到的特徵都在一些顏色或邊角特徵、越後面則會學到較複雜的紋理、局部、整體特徵</li>
+</ul>
+<h3 id="Feature-Evolution-during-Training"><a href="#Feature-Evolution-during-Training" class="headerlink" title="Feature Evolution during Training"></a>Feature Evolution during Training</h3><p><img src="https://meetonfriday.com/img/lazy-loading-animation.gif" data-original="https://res.cloudinary.com/meet-on-friday/image/upload/v1595298366/blog_posts/%E8%9E%A2%E5%B9%95%E5%BF%AB%E7%85%A7_2020-07-21_%E4%B8%8A%E5%8D%8810.25.51_ovaeml.png" alt=""></p>
+<p>這個實驗室show了不同層在訓練過程中的可視化圖，可以發現越淺層學習到特徵所需的時間越短，層數越深，則需要越多次迭代才能學到好的特徵。</p>
+<h3 id="Feature-Invariance"><a href="#Feature-Invariance" class="headerlink" title="Feature Invariance"></a>Feature Invariance</h3><p><img src="https://meetonfriday.com/img/lazy-loading-animation.gif" data-original="https://res.cloudinary.com/meet-on-friday/image/upload/v1595327602/blog_posts/%E8%9E%A2%E5%B9%95%E5%BF%AB%E7%85%A7_2020-07-21_%E4%B8%8B%E5%8D%886.32.11_ci90rn.png" alt=""><br>這個實驗是在說對於CNN垂直翻轉、縮放比較具有不變性，但對於旋轉則比較不具有不變性(除非圖片本身有對稱性，例如娛樂中心那張)。</p>
+<ul>
+<li>a2-c2是第一層的feature space距離，a3-c3是第七層的距離，可以看到在越深層的地方翻轉和縮放的影響相對旋轉較小。</li>
+</ul>
+<h3 id="Architecture-Selection"><a href="#Architecture-Selection" class="headerlink" title="Architecture Selection"></a>Architecture Selection</h3><p>從Feature Visualization實驗中觀察到:</p>
+<ul>
+<li>第一層主要都是學習高頻和低頻的訊息，比較少中頻的訊息</li>
+<li>第二層有些混疊效應(aliasing artifacts)，由於第一層中使用到了較大的stride</li>
+</ul>
+<p>因此對AlexNet的設置做了一些修改，修改的部分上面提過了。</p>
+<h3 id="Occlusion-Sensitivity"><a href="#Occlusion-Sensitivity" class="headerlink" title="Occlusion Sensitivity"></a>Occlusion Sensitivity</h3><p>觀察遮蔽圖片某個部分的話，對於模型分類的影響。從圖中可以看到，模型確實是定位到了場景中的物體，如果該物體被遮蔽的話那分類的準確度就會大大降低。<br><img src="https://meetonfriday.com/img/lazy-loading-animation.gif" data-original="https://res.cloudinary.com/meet-on-friday/image/upload/v1595328196/blog_posts/%E8%9E%A2%E5%B9%95%E5%BF%AB%E7%85%A7_2020-07-21_%E4%B8%8B%E5%8D%886.42.52_bsuoys.png" alt=""></p>
+<h3 id="Correspondence-Analysis"><a href="#Correspondence-Analysis" class="headerlink" title="Correspondence Analysis"></a>Correspondence Analysis</h3><blockquote>
+<p>Deep models differ from many existing recognition approaches in that there is no explicit mechanism for establishing correspondence between specific object parts in different images (e.g. faces have a particular spatial configuration of the eyes and nose). However, an intriguing possibility is that deep models might be implicitly computing them.</p>
+</blockquote>
+<p>深度學習沒辦法像傳統的辨識技術那樣顯式地建立特地物件之間的關係(例如臉部中眼睛和鼻子之間的關係)，但是一個有趣的可能是模型可能隱式地學習到了這些關係。為了驗證，他們選擇了5張圖片，然後遮蔽相同的部分來做觀察。下面內容引用至<a href="https://zhuanlan.zhihu.com/p/24833574" target="_blank" rel="noopener">Deep Visualization:可视化并理解CNN</a></p>
+<blockquote>
+<p>觀察方式是: 首先计算图片遮蔽前后特征，两个特征向量做差，通过sign来确定符号；然后通过海明距离来计算5张照片两两之间的一致性，然后求和。</p>
+<p>由实验结果可以得出，layer5的特征一致性中，眼和鼻子的数值较低，说明眼和鼻子比其他部分，有更强的相关性，这也说明深度网络能够隐式地建立对应关系。但是在layer7中眼，鼻子和随机的数值较为相似，可能是因为高层尝试去区分狗的种类。</p>
+</blockquote>
+<h2 id="Experiments"><a href="#Experiments" class="headerlink" title="Experiments"></a>Experiments</h2><p>值得一提的是，CNN學到的特徵SVM也一樣可以用，越深層學習到的特徵分類效果越好。</p>
+<p>其他跳過。</p>
+<h2 id="Discussion"><a href="#Discussion" class="headerlink" title="Discussion"></a>Discussion</h2><p>跳過</p>
+<h2 id="結論"><a href="#結論" class="headerlink" title="結論"></a>結論</h2><p>其實說白了ZFNet只是AlexNet對於架構做了一些微調。</p>
+<p>不過這篇論文的貢獻在於提出了一個CNN可視化的方法，透過反卷積，DeConvnet，Transpose Convolution隨便什麼名字啦，使得我們可以去觀察模型不同層對應到input時哪些是比較重要的部分，這對於後續的解釋性AI(Explainable AI, XAI)有非常重要的影響。</p>
+<p>然後那個反卷積跟ReLU那邊我真的是搞了很久，明明才11頁的paper我居然搞了好幾天才搞完(ヾﾉ･ω･`)</p>
+<p>對了，對於實作有興趣的人，無意中挖到了這個pytorch實作的網站，歡迎去看看可能會對ZFNet更加了解: <a href="https://hackmd.io/@bouteille/ByaTE80BI" target="_blank" rel="noopener">ZFNet/DeconvNet: Summary and Implementation</a></p>
+<h2 id="References"><a href="#References" class="headerlink" title="References"></a>References</h2><ul>
+<li><a href="https://www.zhihu.com/question/41529286" target="_blank" rel="noopener">CNN中feature map可视化有哪些思路和方法吗？</a></li>
+<li><a href="https://zhuanlan.zhihu.com/p/47784506" target="_blank" rel="noopener">卷积神经网络可视化的探索</a></li>
+<li><a href="https://www.zhihu.com/question/43609045/answer/120266511" target="_blank" rel="noopener">如何理解深度学习中的deconvolution networks？</a></li>
+<li><a href="https://datascience.stackexchange.com/questions/20565/why-we-use-transposed-filter-as-the-deconvolution-operation-instead-of-the-pseud" target="_blank" rel="noopener">Why we use transposed filter as the deconvolution operation instead of the pseudo inverse of filter?
+</a></li>
+<li><a href="https://blog.csdn.net/LoseInVain/article/details/81098502?utm_medium=distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-1.nonecase&amp;depth_1-utm_source=distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-1.nonecase" target="_blank" rel="noopener">一文搞懂反卷积，转置卷积</a></li>
+<li><a href="https://medium.com/@dboyliao/dl-transposed-conv-%E5%88%B0%E5%BA%95%E6%98%AF%E5%95%A5-8e2a2192058b" target="_blank" rel="noopener">Deep Learning: Transpose Convolution 到底是?</a></li>
+<li><a href="https://zhuanlan.zhihu.com/p/24833574" target="_blank" rel="noopener">Deep Visualization:可视化并理解CNN</a></li>
+<li><a href="https://hackmd.io/@bouteille/ByaTE80BI" target="_blank" rel="noopener">ZFNet/DeconvNet: Summary and Implementation</a></li>
+</ul>
+
+                <hr>
+                <!-- Pager -->
+                <ul class="pager">
+    
+    <li class="previous">
+        <a href="/posts/263e065d/" data-toggle="tooltip" data-placement="top" title="[論文速速讀]Going deeper with convolutions">&larr; Newer Post</a>
+    </li>
+    
+    
+    <li class="next">
+        <a href="/posts/2c756e7/" data-toggle="tooltip" data-placement="top" title="碩二生活總結">Older Post &rarr;</a>
+    </li>
+    
+</ul>
+
+                <!-- tip start -->
+                
+
+                
+                <!-- tip end -->
+
+                <!-- Sharing -->
+                
+                <!-- Sharing -->
+
+                <!-- gitment start -->
+                
+                <!-- gitment end -->
+
+                <!-- 来必力City版安装代码 -->
+                
+                <!-- City版安装代码已完成 -->
+
+                <!-- disqus comment start -->
+                
+                <div class="comment">
+                    <div id="disqus_thread" class="disqus-thread"></div>
+                </div>
+                
+                <!-- disqus comment end -->
+            </div>
+            
+            <!-- Tabe of Content -->
+            <!-- Table of Contents -->
+
+    
+      
+        <aside id="sidebar">
+          <div id="toc" class="toc-article">
+          <strong class="toc-title">Contents</strong>
+          
+            <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Abstract"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">Abstract</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Introduction"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">Introduction</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Approach"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">Approach</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Visualization-with-a-Deconvnet"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">Visualization with a Deconvnet</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Unpooling"><span class="toc-nav-number">4.1.</span> <span class="toc-nav-text">Unpooling</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Rectification"><span class="toc-nav-number">4.2.</span> <span class="toc-nav-text">Rectification</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Filtering"><span class="toc-nav-number">4.3.</span> <span class="toc-nav-text">Filtering</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Training-Details"><span class="toc-nav-number">5.</span> <span class="toc-nav-text">Training Details</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Convnet-Visualization"><span class="toc-nav-number">6.</span> <span class="toc-nav-text">Convnet Visualization</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Feature-Visualization"><span class="toc-nav-number">6.1.</span> <span class="toc-nav-text">Feature Visualization</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Feature-Evolution-during-Training"><span class="toc-nav-number">6.2.</span> <span class="toc-nav-text">Feature Evolution during Training</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Feature-Invariance"><span class="toc-nav-number">6.3.</span> <span class="toc-nav-text">Feature Invariance</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Architecture-Selection"><span class="toc-nav-number">6.4.</span> <span class="toc-nav-text">Architecture Selection</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Occlusion-Sensitivity"><span class="toc-nav-number">6.5.</span> <span class="toc-nav-text">Occlusion Sensitivity</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Correspondence-Analysis"><span class="toc-nav-number">6.6.</span> <span class="toc-nav-text">Correspondence Analysis</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Experiments"><span class="toc-nav-number">7.</span> <span class="toc-nav-text">Experiments</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Discussion"><span class="toc-nav-number">8.</span> <span class="toc-nav-text">Discussion</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#結論"><span class="toc-nav-number">9.</span> <span class="toc-nav-text">結論</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#References"><span class="toc-nav-number">10.</span> <span class="toc-nav-text">References</span></a></li></ol>
+          
+          </div>
+        </aside>
+      
+    
+
+        </div>
+    </div>
+</article>
+
+	
+    <!-- disqus embedded js code start (one page only need to embed once) -->	
+    <script type="text/javascript">	
+        /* * * CONFIGURATION VARIABLES * * */	
+        var disqus_shortname = "meetonfriday";	
+        var disqus_identifier = "https://meetonfriday.com/posts/3013fdb9/";	
+        var disqus_url = "https://meetonfriday.com/posts/3013fdb9/";	
+        (function() {	
+            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;	
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';	
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);	
+        })();	
+    </script>	
+    <!-- disqus embedded js code start end -->	
+    
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/john850512">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://www.linkedin.com/in/john85051232">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                
+                    <li>
+                        <a target="_blank" href="https://www.facebook.com/meetonfridayyy">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+                
+                    <li>
+                        <a target="_blank"  href="https://mail.google.com/mail/?view=cm&fs=1&to=john85051232@gmail.com">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-envelope-o fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+                
+                
+
+                
+
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; John 2025 
+                    <br>
+                    Powered by 
+                    <a href="https://github.com/john850512/hexo-theme-jiji" target="_blank" rel="noopener">
+                        <i>hexo-theme-jiji</i>
+                    </a> | 
+                    <iframe name="star" style="margin-left: 2px; margin-bottom:-5px;" frameborder="0" scrolling="0"
+                        width="100px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=john850512&repo=hexo-theme-jiji&type=star&count=true">
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+
+</footer>
+
+<!-- jQuery -->
+
+<script src="/js/jquery.min.js"></script>
+
+
+<!-- Bootstrap Core JavaScript -->
+
+<script src="/js/bootstrap.min.js"></script>
+
+
+<!-- Custom Theme JavaScript -->
+
+<script src="/js/hux-blog.min.js"></script>
+
+
+<!-- Search -->
+
+<script src="/js/search.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("https://meetonfriday.com/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+<!-- Search -->
+
+    <script type="text/javascript">      
+        var search_path = "search.xml";
+        if (search_path.length == 0) {
+            search_path = "search.xml";
+        }
+    var path = "/" + search_path;
+    searchFunc(path, 'local-search-input', 'local-search-result');
+    </script>
+
+
+<!-- busuanzi -->
+<!--<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>-->
+<script async src="//cdn.jsdelivr.net/npm/busuanzi@2.3.0"></script>
+
+
+
+
+	<a id="rocket" href="#top" class=""></a>
+	<script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script>
+    <script type="text/javascript" src="/js/toc.js?v=1.0.0" async=""></script>
+
+    
+        <!-- background effects line -->
+        
+        <!-- background effects end -->
+    
+    
+    <!-- background animation-->>
+    <!--<script size="50" alpha='0.3' zIndex="-999" src="/js/ribbonStatic.js"></script>-->
+    
+        <script src="/js/ribbonDynamic.js"></script>
+    
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script>
+            window.imageLazyLoadSetting = {
+                isSPA: false,
+                processImages: null,
+            };
+        </script><script>window.addEventListener("load",function(){var t=/\.(gif|jpg|jpeg|tiff|png)$/i,r=/^data:image\/[a-z]+;base64,/;Array.prototype.slice.call(document.querySelectorAll("img[data-original]")).forEach(function(a){var e=a.parentNode;"A"===e.tagName&&(e.href.match(t)||e.href.match(r))&&(e.href=a.dataset.original)})});</script><script>!function(n){n.imageLazyLoadSetting.processImages=o;var i=n.imageLazyLoadSetting.isSPA,r=Array.prototype.slice.call(document.querySelectorAll("img[data-original]"));function o(){i&&(r=Array.prototype.slice.call(document.querySelectorAll("img[data-original]")));for(var t,e,a=0;a<r.length;a++)t=r[a],0<=(e=t.getBoundingClientRect()).bottom&&0<=e.left&&e.top<=(n.innerHeight||document.documentElement.clientHeight)&&function(){var t,e,n,i,o=r[a];t=o,e=function(){r=r.filter(function(t){return o!==t})},n=new Image,i=t.getAttribute("data-original"),n.onload=function(){t.src=i,e&&e()},n.src=i}()}o(),n.addEventListener("scroll",function(){var t,e;t=o,e=n,clearTimeout(t.tId),t.tId=setTimeout(function(){t.call(e)},500)})}(this);</script></body>
+
+</html>

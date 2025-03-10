@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<!-- Head tag -->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="baidu-site-verification" content="093lY4ziMu" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="keyword"  content="programming, study, daily, entertainment">
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="星期五。見面">
+    <meta property="og:locale" content="zh-TW" />
+    
+    <meta property="og:title" content="[ML]Predict PM2.5 Use Linear Regression-2" />
+    
+    
+    <meta property="og:description" content="上一篇連結：[Python Predict PM2.5 Use Linear Regression-1] 1. 使用的資料集是sklearn內建的資料集進行練習  2. 用`sklearn.model_selection`的`train_test_split()`把資料切成training set / testing set  3. 使用sklearn的KNeighborsClassifier進行分類、預測" />
+    <meta name="description" content="上一篇連結：[Python Predict PM2.5 Use Linear Regression-1] 1. 使用的資料集是sklearn內建的資料集進行練習  2. 用`sklearn.model_selection`的`train_test_split()`把資料切成training set / testing set  3. 使用sklearn的KNeighborsClassifier進行分類、預測">
+    
+    
+    <meta property="og:image" content="/img/avatar.jpg" />
+    
+
+    <link rel="shortcut icon" href="/img/avatar.jpg">
+    <!-- Place this tag in your head or just before your close body tag. -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <!--<link href='http://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>-->
+    <title>
+        
+          [ML]Predict PM2.5 Use Linear Regression-2 - MeetonFriday
+        
+    </title>
+    <!-- canonical -->
+    
+    
+      <link rel="canonical" href="https://meetonfriday.com/posts/1d86c42c/">
+    
+
+    <!-- Bootstrap Core CSS -->
+    
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+
+
+    <!-- Custom CSS --> 
+    
+<link rel="stylesheet" href="/css/dusign-dark.css">
+
+    
+<link rel="stylesheet" href="/css/dusign-common-dark.css">
+
+    <!-- 
+<link rel="stylesheet" href="/css/font-awesome.css">
+ -->
+    
+<link rel="stylesheet" href="/css/toc.css">
+
+
+    
+    <!-- Pygments Highlight CSS -->
+    
+<link rel="stylesheet" href="/css/highlight.css">
+
+
+    
+<link rel="stylesheet" href="/css/widget.css">
+
+
+    
+<link rel="stylesheet" href="/css/rocket.css">
+
+
+    
+<link rel="stylesheet" href="/css/signature.css">
+
+
+    
+<link rel="stylesheet" href="/css/fonts.googleapis.css">
+
+
+    <!-- <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.3.0/css/font-awesome.min.css">-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.min.css">
+    
+    <!-- Google Analytics -->
+    
+      <!-- <script>
+          // dynamic User by Hux
+          var _gaId = 'UA-163346001-1';
+          var _gaDomain = 'auto';
+      
+          // Originial
+          (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+          (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+          })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+      
+          ga('create', _gaId, _gaDomain);
+          ga('send', 'pageview');
+      </script> -->
+      
+      <!-- Global site tag (gtag.js) - Google Analytics -->
+      <script async src="https://www.googletagmanager.com/gtag/js?id=UA-163346001-1"></script>
+      <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+      
+        gtag('config', 'UA-163346001-1');
+      </script>
+      
+    <!-- google ad sense-->
+    <script data-ad-client="ca-pub-9561340457908416" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<meta name="generator" content="Hexo 4.2.1"><link rel="alternate" href="/atom.xml" title="星期五。見面" type="application/atom+xml">
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+	<!-- Modified by Yu-Hsuan Yen -->
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        
+            
+                background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.5)), url('/img/header_img/header-bg.jpg')
+            
+        
+    }
+    
+</style>
+
+<header class="intro-header" >
+    <!-- Signature -->
+    <div id="signature">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                
+                    <div class="post-heading">
+                        <div class="tags">
+                            
+                              <a class="tag" href="/tags/#machine learning" title="machine learning">machine learning</a>
+                            
+                              <a class="tag" href="/tags/#python" title="python">python</a>
+                            
+                        </div>
+                        <h1>[ML]Predict PM2.5 Use Linear Regression-2</h1>
+                        <h2 class="subheading"></h2>
+                        <span class="meta">
+                            Posted by John on
+                            2018-03-23
+                        </span>
+
+                        
+                            <div class="blank_box"></div>
+                            <span class="meta">
+                                Words <span class="post-count">1.3k</span> and
+                                Reading Time <span class="post-count">4</span> Minutes
+                            </span>
+                            <div class="blank_box"></div>
+                            <!-- 不蒜子统计 start -->
+                            <span class="meta">
+                                Viewed <span id="busuanzi_value_page_pv"><i class="fa fa-spinner fa-spin"></i></span> Times
+                            </span>
+                            <!-- 不蒜子统计 end -->
+                        
+
+                    </div>
+                
+
+                </div>
+            </div>
+        </div>      
+    </div>
+
+    
+        
+            <div class="waveWrapper">
+                <div class="wave wave_before" style="background-image: url('/img/wave-dark.png')"></div>
+                <div class="wave wave_after" style="background-image: url('/img/wave-dark.png')"></div>
+            </div>
+        
+    
+</header>
+
+	
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">星期五。見面</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archive/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/categories/">Categories</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/reading/">Reading</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+    
+    <!-- Main Content -->
+    <!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+            <!-- Post Container -->
+
+    
+        
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+        
+    
+
+                <p>上一篇連結：<a href="https://meetonfriday.com/posts/848f9596/">[Python]Predict PM2.5 Use Linear Regression-1</a></p>
+<p>上篇用自己的想法簡單了闡述Linear Regression、原理和實作過程，但畢竟還是理論，面對實際資料的時候又是另一回事了，這篇要來講處理實際data的過程以及遇到的問題還有解決方法，做一些紀錄：</p>
+<a id="more"></a>
+<p>1. 打開dataset先觀察一下，總要先知道資料長什麼樣子才有辦法做處理</p>
+<p><img src="https://meetonfriday.com/img/lazy-loading-animation.gif" data-original="https://john850512.files.wordpress.com/2018/03/31.png" alt="31.png"></p>
+<p>這份dataset每小時紀錄一次18種不同的空氣資料，一天紀錄24小時，且一個月紀錄20天，總共12個月。</p>
+<p>=&gt;資料總共有 1(index row) + 18<em>20</em>12 = 4320列(rows)，3(text) + 24 = 27行(columns)</p>
+<p>(第一次真正的動手處理資料，由於之後的動作都是牽涉到矩陣乘法，必須第一個矩陣的列數和第二個矩陣的行數相同才能乘，所以我很重視每個矩陣的row和col數量，才不會到時候有這方面的BUG產生。)</p>
+<ol>
+<li>Feature Extracting：把我們需要的資料取出來</li>
+</ol>
+<p>觀察一下資料，前三行的資訊都是我們不需要的(我們只需要連續9小時，每小時18個不同空氣的數值，不用管是哪一天的)</p>
+<ul>
+<li>為了方便之後擷取data，我<strong>把4320<em>27的資料轉換成一個18</em>5760(12月<em>20天</em>1天24小時)的矩陣</strong>，也就是從1/1開始，把1/2的資料拉上來接再1/1的後面，之後把1/3拉上來接再1/1後面…，這樣一來我就可以用迴圈去從這個18*5760的矩陣連續取出資料(如果不做這一步，會很難從1/1晚上取到1/2早上，因為要處理跨天的問題)。</li>
+</ul>
+<p><img src="https://meetonfriday.com/img/lazy-loading-animation.gif" data-original="https://john850512.files.wordpress.com/2018/03/32.png" alt="32.png"></p>
+<ul>
+<li><strong>以每個月(20天*24小時 = 480筆)為單位，每9個小時的資料存成矩陣x的一列(162)，並在第163個位置存上1這個數字</strong>，這個1是用來對y = xw + b的b做乘法的，之後我們同樣的也在w矩陣的最後一個位置多存上b這個數字，如此一來，<strong>原本要更新w和b兩個變數，就可以變成更新一個w矩陣即可。</strong>我覺得這個很難講解，看下面的圖說故事吧。</li>
+<li>此外，每個第10小時的PM2.5值則存到一個矩陣y的一列中。</li>
+<li>在做資料萃取的時候我沒有跨月做(其實也可以做)，所以一個月總共有480- 10 + 1 = 471筆資料，乘上12個月=5652筆。</li>
+</ul>
+<p><img src="https://meetonfriday.com/img/lazy-loading-animation.gif" data-original="https://john850512.files.wordpress.com/2018/03/33.png" alt="33.png"><br><img src="https://meetonfriday.com/img/lazy-loading-animation.gif" data-original="https://john850512.files.wordpress.com/2018/03/34.png" alt="34.png"></p>
+<p>所以做完上述兩件事後，會有y= xw 這個式子中的x和y矩陣(b被合併了)，x的size會是5652(12個月<em>一個月可以取471筆)</em>163(18個資料<em>9小時 + b)，y會是5652</em>1。</p>
+<p><strong>到這裡來檢查一下，y=xw的式子中，y是5652<em>1，x是5652</em>163，矩陣乘法要成立的話w就必須是163*1的矩陣才行，實際上也沒錯，實際上這個式子真正的樣子是：</strong></p>
+<p>$y = w0<em>x0 + w1</em>x1 + w2<em>x2 + w3</em>x3 + w4<em>x4 + … + w162</em>x162 + b$，w和b剛好有163個，而資料{x0,x1…,x162}共有5652組。</p>
+<p>那麼w的163個數字應該要是什麼呢?亂數設定即可(當然也可以設0，因為0也是亂數的一種可能嘛xD)</p>
+<ol>
+<li>更新Weights(Gradient Descent)</li>
+</ol>
+<p>到這裡就輕鬆多了，我深深覺得在這個Assignment中最難的就是資料處理的部分…</p>
+<p>現在每做一次y = xw，就等於是predict 5652筆data的PM2.5值，但一定不準，所以要用上次講到的梯度下降法去更新我們的權重，也就是w這個矩陣，式子就不說了上次有提到。</p>
+<p>上次有說到我們要控制兩個參數：learning rate以及epochs，接下來就是<strong>不斷的調整，使得妳的Loss function越小越好。</strong>一開始我完全沒概念要如何給定這兩個值，結果發現Loss function爆炸了(指數級上升)，後來先把learning rate調小，然後逐漸增加epochs兩三次來觀察L有無下降的趨勢，如果沒有代表這個rate可能不太適合，再重新設定learning rate，然後再用不同的epochs來觀察…</p>
+<p>最後我發現我的L降低到一個程度後就不會再降低了，所以我的model就train到這裡，雖然用這個model預測PM2.5還是會有誤差， 但誤差都介於0~20以內，所以我覺得或許是個還不錯的結果…吧。</p>
+<ol>
+<li>Adagrad 調整learning rate是需要一直嘗試的，但透過Adagrad可以幫助妳不用太care這個參數，它的原理大概是：<strong>learning rate會隨著妳的epochs增加而越來越小，進而達到model的收斂。就像妳打高爾夫，第一次揮桿很大力，但隨著揮桿次數越多，快到洞的時候妳的揮桿就會越來越小力，因為妳只想讓球移動一點點距離。</strong>我最後是用了這個方法來training model的，做出來的效果比不用adagrad好一點，不過也沒差太多(但是要嘗試很多次就是了)。 好啦，說了這麼多，完整的程式碼放在<a href="https://github.com/john850512/Linear_Regression_Assignment" target="_blank" rel="noopener">github</a></li>
+</ol>
+
+                <hr>
+                <!-- Pager -->
+                <ul class="pager">
+    
+    <li class="previous">
+        <a href="/posts/c27a2dc7/" data-toggle="tooltip" data-placement="top" title="[ML]DataConversionWarning with K-NN(Sklearn)">&larr; Newer Post</a>
+    </li>
+    
+    
+    <li class="next">
+        <a href="/posts/848f9596/" data-toggle="tooltip" data-placement="top" title="[ML]Predict PM2.5 Use Linear Regression-1">Older Post &rarr;</a>
+    </li>
+    
+</ul>
+
+                <!-- tip start -->
+                
+
+                
+                <!-- tip end -->
+
+                <!-- Sharing -->
+                
+                <!-- Sharing -->
+
+                <!-- gitment start -->
+                
+                <!-- gitment end -->
+
+                <!-- 来必力City版安装代码 -->
+                
+                <!-- City版安装代码已完成 -->
+
+                <!-- disqus comment start -->
+                
+                <div class="comment">
+                    <div id="disqus_thread" class="disqus-thread"></div>
+                </div>
+                
+                <!-- disqus comment end -->
+            </div>
+            
+            <!-- Tabe of Content -->
+            <!-- Table of Contents -->
+
+    
+      
+    
+
+        </div>
+    </div>
+</article>
+
+	
+    <!-- disqus embedded js code start (one page only need to embed once) -->	
+    <script type="text/javascript">	
+        /* * * CONFIGURATION VARIABLES * * */	
+        var disqus_shortname = "meetonfriday";	
+        var disqus_identifier = "https://meetonfriday.com/posts/1d86c42c/";	
+        var disqus_url = "https://meetonfriday.com/posts/1d86c42c/";	
+        (function() {	
+            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;	
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';	
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);	
+        })();	
+    </script>	
+    <!-- disqus embedded js code start end -->	
+    
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/john850512">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://www.linkedin.com/in/john85051232">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                
+                    <li>
+                        <a target="_blank" href="https://www.facebook.com/meetonfridayyy">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+                
+                    <li>
+                        <a target="_blank"  href="https://mail.google.com/mail/?view=cm&fs=1&to=john85051232@gmail.com">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-envelope-o fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+                
+                
+
+                
+
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; John 2025 
+                    <br>
+                    Powered by 
+                    <a href="https://github.com/john850512/hexo-theme-jiji" target="_blank" rel="noopener">
+                        <i>hexo-theme-jiji</i>
+                    </a> | 
+                    <iframe name="star" style="margin-left: 2px; margin-bottom:-5px;" frameborder="0" scrolling="0"
+                        width="100px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=john850512&repo=hexo-theme-jiji&type=star&count=true">
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+
+</footer>
+
+<!-- jQuery -->
+
+<script src="/js/jquery.min.js"></script>
+
+
+<!-- Bootstrap Core JavaScript -->
+
+<script src="/js/bootstrap.min.js"></script>
+
+
+<!-- Custom Theme JavaScript -->
+
+<script src="/js/hux-blog.min.js"></script>
+
+
+<!-- Search -->
+
+<script src="/js/search.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("https://meetonfriday.com/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+<!-- Search -->
+
+    <script type="text/javascript">      
+        var search_path = "search.xml";
+        if (search_path.length == 0) {
+            search_path = "search.xml";
+        }
+    var path = "/" + search_path;
+    searchFunc(path, 'local-search-input', 'local-search-result');
+    </script>
+
+
+<!-- busuanzi -->
+<!--<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>-->
+<script async src="//cdn.jsdelivr.net/npm/busuanzi@2.3.0"></script>
+
+
+
+
+	<a id="rocket" href="#top" class=""></a>
+	<script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script>
+    <script type="text/javascript" src="/js/toc.js?v=1.0.0" async=""></script>
+
+    
+        <!-- background effects line -->
+        
+        <!-- background effects end -->
+    
+    
+    <!-- background animation-->>
+    <!--<script size="50" alpha='0.3' zIndex="-999" src="/js/ribbonStatic.js"></script>-->
+    
+        <script src="/js/ribbonDynamic.js"></script>
+    
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script>
+            window.imageLazyLoadSetting = {
+                isSPA: false,
+                processImages: null,
+            };
+        </script><script>window.addEventListener("load",function(){var t=/\.(gif|jpg|jpeg|tiff|png)$/i,r=/^data:image\/[a-z]+;base64,/;Array.prototype.slice.call(document.querySelectorAll("img[data-original]")).forEach(function(a){var e=a.parentNode;"A"===e.tagName&&(e.href.match(t)||e.href.match(r))&&(e.href=a.dataset.original)})});</script><script>!function(n){n.imageLazyLoadSetting.processImages=o;var i=n.imageLazyLoadSetting.isSPA,r=Array.prototype.slice.call(document.querySelectorAll("img[data-original]"));function o(){i&&(r=Array.prototype.slice.call(document.querySelectorAll("img[data-original]")));for(var t,e,a=0;a<r.length;a++)t=r[a],0<=(e=t.getBoundingClientRect()).bottom&&0<=e.left&&e.top<=(n.innerHeight||document.documentElement.clientHeight)&&function(){var t,e,n,i,o=r[a];t=o,e=function(){r=r.filter(function(t){return o!==t})},n=new Image,i=t.getAttribute("data-original"),n.onload=function(){t.src=i,e&&e()},n.src=i}()}o(),n.addEventListener("scroll",function(){var t,e;t=o,e=n,clearTimeout(t.tId),t.tId=setTimeout(function(){t.call(e)},500)})}(this);</script></body>
+
+</html>

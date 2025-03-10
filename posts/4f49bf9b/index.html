@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<!-- Head tag -->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="baidu-site-verification" content="093lY4ziMu" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="keyword"  content="programming, study, daily, entertainment">
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="星期五。見面">
+    <meta property="og:locale" content="zh-TW" />
+    
+    <meta property="og:title" content="[論文速速讀]NEURAL MACHINE TRANSLATION BY JOINTLY LEARNING TO ALIGN AND TRANSLATE" />
+    
+    
+    <meta property="og:description" content="attention在nlp很紅眾所皆知，這篇據說是nlp第一個將attention概念引入的paper，還不來拜見衣食父母。往神經網路再翻譯的任務上都是建立在encoder-decoder的架構上，**固定長度的context vector會成為效能的bottleneck**，所以這篇文章提出了dynamic context vector的概念，讓model自己去搜尋input和related predict的相關部分，使得效能upupup..." />
+    <meta name="description" content="attention在nlp很紅眾所皆知，這篇據說是nlp第一個將attention概念引入的paper，還不來拜見衣食父母。往神經網路再翻譯的任務上都是建立在encoder-decoder的架構上，**固定長度的context vector會成為效能的bottleneck**，所以這篇文章提出了dynamic context vector的概念，讓model自己去搜尋input和related predict的相關部分，使得效能upupup...">
+    
+    
+    <meta property="og:image" content="https://i.imgur.com/cu63oIR.png" />
+    
+
+    <link rel="shortcut icon" href="/img/avatar.jpg">
+    <!-- Place this tag in your head or just before your close body tag. -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <!--<link href='http://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>-->
+    <title>
+        
+          [論文速速讀]NEURAL MACHINE TRANSLATION BY JOINTLY LEARNING TO ALIGN AND TRANSLATE - MeetonFriday
+        
+    </title>
+    <!-- canonical -->
+    
+    
+      <link rel="canonical" href="https://meetonfriday.com/posts/4f49bf9b/">
+    
+
+    <!-- Bootstrap Core CSS -->
+    
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+
+
+    <!-- Custom CSS --> 
+    
+<link rel="stylesheet" href="/css/dusign-dark.css">
+
+    
+<link rel="stylesheet" href="/css/dusign-common-dark.css">
+
+    <!-- 
+<link rel="stylesheet" href="/css/font-awesome.css">
+ -->
+    
+<link rel="stylesheet" href="/css/toc.css">
+
+
+    
+    <!-- Pygments Highlight CSS -->
+    
+<link rel="stylesheet" href="/css/highlight.css">
+
+
+    
+<link rel="stylesheet" href="/css/widget.css">
+
+
+    
+<link rel="stylesheet" href="/css/rocket.css">
+
+
+    
+<link rel="stylesheet" href="/css/signature.css">
+
+
+    
+<link rel="stylesheet" href="/css/fonts.googleapis.css">
+
+
+    <!-- <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.3.0/css/font-awesome.min.css">-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.min.css">
+    
+    <!-- Google Analytics -->
+    
+      <!-- <script>
+          // dynamic User by Hux
+          var _gaId = 'UA-163346001-1';
+          var _gaDomain = 'auto';
+      
+          // Originial
+          (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+          (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+          })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+      
+          ga('create', _gaId, _gaDomain);
+          ga('send', 'pageview');
+      </script> -->
+      
+      <!-- Global site tag (gtag.js) - Google Analytics -->
+      <script async src="https://www.googletagmanager.com/gtag/js?id=UA-163346001-1"></script>
+      <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+      
+        gtag('config', 'UA-163346001-1');
+      </script>
+      
+    <!-- google ad sense-->
+    <script data-ad-client="ca-pub-9561340457908416" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<meta name="generator" content="Hexo 4.2.1"><link rel="alternate" href="/atom.xml" title="星期五。見面" type="application/atom+xml">
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+	<!-- Modified by Yu-Hsuan Yen -->
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        
+            
+                background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.5)), url('/img/header_img/header-bg.jpg')
+            
+        
+    }
+    
+</style>
+
+<header class="intro-header" >
+    <!-- Signature -->
+    <div id="signature">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                
+                    <div class="post-heading">
+                        <div class="tags">
+                            
+                              <a class="tag" href="/tags/#deep learning" title="deep learning">deep learning</a>
+                            
+                              <a class="tag" href="/tags/#paper" title="paper">paper</a>
+                            
+                        </div>
+                        <h1>[論文速速讀]NEURAL MACHINE TRANSLATION BY JOINTLY LEARNING TO ALIGN AND TRANSLATE</h1>
+                        <h2 class="subheading"></h2>
+                        <span class="meta">
+                            Posted by John on
+                            2020-05-06
+                        </span>
+
+                        
+                            <div class="blank_box"></div>
+                            <span class="meta">
+                                Words <span class="post-count">1.5k</span> and
+                                Reading Time <span class="post-count">6</span> Minutes
+                            </span>
+                            <div class="blank_box"></div>
+                            <!-- 不蒜子统计 start -->
+                            <span class="meta">
+                                Viewed <span id="busuanzi_value_page_pv"><i class="fa fa-spinner fa-spin"></i></span> Times
+                            </span>
+                            <!-- 不蒜子统计 end -->
+                        
+
+                    </div>
+                
+
+                </div>
+            </div>
+        </div>      
+    </div>
+
+    
+        
+            <div class="waveWrapper">
+                <div class="wave wave_before" style="background-image: url('/img/wave-dark.png')"></div>
+                <div class="wave wave_after" style="background-image: url('/img/wave-dark.png')"></div>
+            </div>
+        
+    
+</header>
+
+	
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">星期五。見面</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archive/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/categories/">Categories</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/reading/">Reading</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+    
+    <!-- Main Content -->
+    <!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+            <!-- Post Container -->
+
+    
+        
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+        
+    
+
+                <p>〖想觀看更多中文論文導讀，至<a href="https://meetonfriday.com/posts/aa55d3f9/">[論文速速讀]系列文章介紹</a>可以看到目前已發布的所有文章！〗</p>
+<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>attention在nlp很紅眾所皆知，這篇據說是nlp第一個將attention概念引入的paper，還不來拜見衣食父母</p>
+<p>paper: <a href="https://arxiv.org/pdf/1409.0473.pdf?fbclid=IwAR0d3Fe7egKP0zz8wAe2A-UX-ZIeUzj7MlfFmk_WwkfBeCWx-mkynfFNFls" target="_blank" rel="noopener">NEURAL MACHINE TRANSLATION BY JOINTLY LEARNING TO ALIGN AND TRANSLATE</a></p>
+<p>作者的slide: <a href="https://aisc.ai.science/static/slides/20181018_XiyangChen.pdf" target="_blank" rel="noopener">Neural Machine Translation by Jointly Learning to Align and Translate</a></p>
+<h2 id="ABSTRACT"><a href="#ABSTRACT" class="headerlink" title="ABSTRACT"></a>ABSTRACT</h2><blockquote>
+<p> In this paper, we conjecture that the use of a fixed-length vector is a bottleneck in improving the performance of this basic encoder–decoder architecture, and propose to extend this by allowing a model to automatically (soft-)search for parts of a source sentence that are relevant to predicting a target word, without having to form these parts as a hard segment explicitly.</p>
+</blockquote>
+<p>以往神經網路再翻譯的任務上都是建立在encoder-decoder的架構上，<strong>固定長度的context vector會成為效能的bottleneck</strong>，所以這篇文章提出了dynamic context vector的概念，讓model自己去搜尋input和related predict的相關部分，使得效能upupup。</p>
+<p>這也是<strong>最早提出attention mechanism的paper</strong>。</p>
+<h2 id="INTRODUCTION"><a href="#INTRODUCTION" class="headerlink" title="INTRODUCTION"></a>INTRODUCTION</h2><a id="more"></a>
+<p>一開始先後介紹了Neural machine translation, encoder-decoder架構。</p>
+<p>接下來講了encoder-decoder的缺點: <strong>context vector必須要足以包含整個input sentence的information，否則效果就會不好，當句子長度變長時這個問題就會浮現出來</strong>。</p>
+<p>接下來講自己的方法棒棒哒:</p>
+<blockquote>
+<p>In order to address this issue, we introduce an extension to the encoder–decoder model which learns to align and translate jointly. Each time the proposed model generates a word in a translation, it (soft-)searches for a set of positions in a source sentence where the most relevant information is concentrated. The model then predicts a target word based on the context vectors associated with these source positions and all the previous generated target words.</p>
+</blockquote>
+<p>模型會自到去找出source sentence中對當前最富有資訊量的部分，並透過這些部分與context vector結合來進行預測。</p>
+<ul>
+<li>直接翻有點難懂，就是注意力機制，看當前哪個部分是最重要的!</li>
+</ul>
+<blockquote>
+<p>The most important distinguishing feature of this approach from the basic encoder–decoder is that it does not attempt to encode a whole input sentence into a single fixed-length vector. Instead, it encodes the input sentence into a sequence of vectors and chooses a subset of these vectors adaptively while decoding the translation. This frees a neural translation model from having to squash all the information of a source sentence, regardless of its length, into a fixed-length vector. We show this allows a model to cope better with long sentences.</p>
+</blockquote>
+<p>如果對attention還不熟的可以看這段，相較原本encoder會把所有input sequence壓成一個固定的context vector，透過了attention機制選擇了一個subset區域，特別針對那一區段來動態產生context vector，使得context vector能夠更有變化。</p>
+<p>相關閱讀</p>
+<ul>
+<li><a href="https://meetonfriday.com/posts/5839a8bf/">論文速速讀: Attention Is All You Need</a></li>
+<li><a href="https://meetonfriday.com/posts/e26b7840/">[DL]Attention Mechanism學習筆記</a></li>
+</ul>
+<h2 id="BACKGROUND-NEURAL-MACHINE-TRANSLATION"><a href="#BACKGROUND-NEURAL-MACHINE-TRANSLATION" class="headerlink" title="BACKGROUND: NEURAL MACHINE TRANSLATION"></a>BACKGROUND: NEURAL MACHINE TRANSLATION</h2><h3 id="RNN-ENCODER–DECODER"><a href="#RNN-ENCODER–DECODER" class="headerlink" title="RNN ENCODER–DECODER"></a>RNN ENCODER–DECODER</h3><p>RNN based的encoder-decoder，有興趣的自己去paper看，想說這裡還算簡單不想打一堆annotation…QQ</p>
+<h2 id="LEARNING-TO-ALIGN-AND-TRANSLAT"><a href="#LEARNING-TO-ALIGN-AND-TRANSLAT" class="headerlink" title="LEARNING TO ALIGN AND TRANSLAT"></a>LEARNING TO ALIGN AND TRANSLAT</h2><h3 id="DECODER-GENERAL-DESCRIPTION"><a href="#DECODER-GENERAL-DESCRIPTION" class="headerlink" title="DECODER: GENERAL DESCRIPTION"></a>DECODER: GENERAL DESCRIPTION</h3><script type="math/tex; mode=display">s_i=f(s_{i-1},y_{i-1},c_i)</script><p>$s<em>i$是RNN的在time $i$的hidden state，前一個時刻的output$y</em>{i-1}$和context vector$c_i$</p>
+<p>也就是每一個time stamp，context vector都會不同，透過下列公式得出:</p>
+<script type="math/tex; mode=display">c_i=\sum^{T_x}_{j=1}\alpha_{ij}h_j</script><p>$h$是intput sequence丟到RNN的output，這裡RNN用的是雙向所以output vector會是2倍。而$\alpha$則是透過下列公式計算:</p>
+<script type="math/tex; mode=display">\alpha_{ij}=\frac{exp(e_{ij})}{\sum^{T_x}_{k=1}exp(e_{ik})}</script><p>$e<em>ij=a(s</em>{i-1}, h_j)$是一個alignment model，透過一個分數紀錄了對於第i個output，input j附近的位置的重要性</p>
+<ul>
+<li><strong>注意在這篇paper中這一項是被train出來的</strong>，attention機制在後面的研究不一定需要train</li>
+<li>這個model會被加入原本的task一起train</li>
+<li>細節在最後的附錄有提到</li>
+</ul>
+<blockquote>
+<p>Intuitively, this implements a mechanism of attention in the decoder. The decoder decides parts of the source sentence to pay attention to. By letting the decoder have an attention mechanism, we relieve the encoder from the burden of having to encode all information in the source sentence into a fixed length vector.</p>
+</blockquote>
+<h3 id="ENCODER-BIDIRECTIONAL-RNN-FOR-ANNOTATING-SEQUENCES"><a href="#ENCODER-BIDIRECTIONAL-RNN-FOR-ANNOTATING-SEQUENCES" class="headerlink" title="ENCODER: BIDIRECTIONAL RNN FOR ANNOTATING SEQUENCES"></a>ENCODER: BIDIRECTIONAL RNN FOR ANNOTATING SEQUENCES</h3><p>Encoder使用了Bidirectional RNN，好這裡應該不是重點xD</p>
+<p>所以全部合起來的架構就會變成下面這張圖<br><img src="https://meetonfriday.com/img/lazy-loading-animation.gif" data-original="https://i.imgur.com/cu63oIR.png" alt=""></p>
+<p>Encoder就是藍色跟紅色的BiRNN，產出$h_i= [ \overrightarrow{h_i} ; \overleftarrow{h_i} ]$，後面decoder做的事情就跟上面講的一樣了</p>
+<h2 id="EXPERIMENT-SETTINGS"><a href="#EXPERIMENT-SETTINGS" class="headerlink" title="EXPERIMENT SETTINGS"></a>EXPERIMENT SETTINGS</h2><h3 id="QUALITATIVE-ANALYSIS"><a href="#QUALITATIVE-ANALYSIS" class="headerlink" title="QUALITATIVE ANALYSIS"></a>QUALITATIVE ANALYSIS</h3><h4 id="ALIGNMENT"><a href="#ALIGNMENT" class="headerlink" title="ALIGNMENT"></a>ALIGNMENT</h4><p>比較了attention(左邊)機制下和原本encoder-decoder(右邊)的效果，數據棒棒哒的部分就不提了</p>
+<p>來提一下比較有趣的attention分析，作者把他們模型train好後把對應的$\alpha_{ij}$值畫了出來<br><img src="https://meetonfriday.com/img/lazy-loading-animation.gif" data-original="https://i.imgur.com/VQqsBAV.png" alt=""><br>可以看到中間有一個很特別的斜槓，作者有提到由於<strong>英文跟法語在形容詞和名詞語法上的不同</strong>，所以</p>
+<p>[European Economic Area]</p>
+<p>會變成</p>
+<p>[zone economique europ ´ een]</p>
+<p>儘管如此，attention還是棒棒哒知道Area對應zone呢!</p>
+<p>此外也提到了soft-align(attention)跟hard-align(每個位置依序對其)的優缺點:</p>
+<ul>
+<li>可以更有彈性</li>
+<li>可以多對多</li>
+<li>soft-align允許input/output長度不同<ul>
+<li>hard-align如果長度不同就要加入一些額外的token，Ex: [NULL]，不過這是別篇論文在做的事情了</li>
+</ul>
+</li>
+</ul>
+<h4 id="LONG-SENTENCES"><a href="#LONG-SENTENCES" class="headerlink" title="LONG SENTENCES"></a>LONG SENTENCES</h4><p><img src="https://meetonfriday.com/img/lazy-loading-animation.gif" data-original="https://i.imgur.com/6bhk5Hy.png" alt=""></p>
+<h2 id="RELATED-WORK"><a href="#RELATED-WORK" class="headerlink" title="RELATED WORK"></a>RELATED WORK</h2><h3 id="LEARNING-TO-ALIGN"><a href="#LEARNING-TO-ALIGN" class="headerlink" title="LEARNING TO ALIGN"></a>LEARNING TO ALIGN</h3><blockquote>
+<p>…Our approach, on the other hand, requires computing the annotation weight of every word in the source sentence for each word in the translation. This drawback is not severe with the task of translation in which most of input and output sentences are only 15–40 words. However, this may limit the applicability of the proposed scheme to other tasks.</p>
+</blockquote>
+<p>由於attention會看input sequence的每一個token，在機器翻譯這個task中還好，因為每一句長度不大，不過當句子過長的時候可能就會造成計算上的cost</p>
+<h2 id="CONCLUSION"><a href="#CONCLUSION" class="headerlink" title="CONCLUSION"></a>CONCLUSION</h2><p>哎呀，雖然attention很有名，不過這篇提出的model叫做RNNsearch唷!<br>前面我都忘記提了補一下</p>
+<h2 id="Appendix"><a href="#Appendix" class="headerlink" title="Appendix"></a>Appendix</h2><p>不要覺得附錄都不重要，我們直接來看那個神奇的alignment model，也就是$e$到底是怎麼設計的:</p>
+<script type="math/tex; mode=display">e_{ij}=v^T_{a}tanh(W_a s_{i-1}+U_a h_j)</script><p>p.s. 這裡是把$s_{i-1}$跟$h_j$加起來唷，之後再繼續看其他的attention paper會看到有很多種作法(add, concat…)</p>
+<ul>
+<li>題外話，關於對add跟concat的理解可以參考這篇:<a href="https://meetonfriday.com/posts/45f8d851/">[DL]Difference between add/concat operation in Neural Network</a></li>
+</ul>
+
+                <hr>
+                <!-- Pager -->
+                <ul class="pager">
+    
+    <li class="previous">
+        <a href="/posts/8cad39eb/" data-toggle="tooltip" data-placement="top" title="[論文速速讀]Hierarchical Attention Networks for Document Classification">&larr; Newer Post</a>
+    </li>
+    
+    
+    <li class="next">
+        <a href="/posts/66a59c98/" data-toggle="tooltip" data-placement="top" title="解決NVIDIA-SMI has failed because it could not communicate with the NVIDIA driver">Older Post &rarr;</a>
+    </li>
+    
+</ul>
+
+                <!-- tip start -->
+                
+
+                
+                <!-- tip end -->
+
+                <!-- Sharing -->
+                
+                <!-- Sharing -->
+
+                <!-- gitment start -->
+                
+                <!-- gitment end -->
+
+                <!-- 来必力City版安装代码 -->
+                
+                <!-- City版安装代码已完成 -->
+
+                <!-- disqus comment start -->
+                
+                <div class="comment">
+                    <div id="disqus_thread" class="disqus-thread"></div>
+                </div>
+                
+                <!-- disqus comment end -->
+            </div>
+            
+            <!-- Tabe of Content -->
+            <!-- Table of Contents -->
+
+    
+      
+        <aside id="sidebar">
+          <div id="toc" class="toc-article">
+          <strong class="toc-title">Contents</strong>
+          
+            <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#前言"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">前言</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#ABSTRACT"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">ABSTRACT</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#INTRODUCTION"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">INTRODUCTION</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#BACKGROUND-NEURAL-MACHINE-TRANSLATION"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">BACKGROUND: NEURAL MACHINE TRANSLATION</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#RNN-ENCODER–DECODER"><span class="toc-nav-number">4.1.</span> <span class="toc-nav-text">RNN ENCODER–DECODER</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#LEARNING-TO-ALIGN-AND-TRANSLAT"><span class="toc-nav-number">5.</span> <span class="toc-nav-text">LEARNING TO ALIGN AND TRANSLAT</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#DECODER-GENERAL-DESCRIPTION"><span class="toc-nav-number">5.1.</span> <span class="toc-nav-text">DECODER: GENERAL DESCRIPTION</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#ENCODER-BIDIRECTIONAL-RNN-FOR-ANNOTATING-SEQUENCES"><span class="toc-nav-number">5.2.</span> <span class="toc-nav-text">ENCODER: BIDIRECTIONAL RNN FOR ANNOTATING SEQUENCES</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#EXPERIMENT-SETTINGS"><span class="toc-nav-number">6.</span> <span class="toc-nav-text">EXPERIMENT SETTINGS</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#QUALITATIVE-ANALYSIS"><span class="toc-nav-number">6.1.</span> <span class="toc-nav-text">QUALITATIVE ANALYSIS</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#ALIGNMENT"><span class="toc-nav-number">6.1.1.</span> <span class="toc-nav-text">ALIGNMENT</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#LONG-SENTENCES"><span class="toc-nav-number">6.1.2.</span> <span class="toc-nav-text">LONG SENTENCES</span></a></li></ol></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#RELATED-WORK"><span class="toc-nav-number">7.</span> <span class="toc-nav-text">RELATED WORK</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#LEARNING-TO-ALIGN"><span class="toc-nav-number">7.1.</span> <span class="toc-nav-text">LEARNING TO ALIGN</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#CONCLUSION"><span class="toc-nav-number">8.</span> <span class="toc-nav-text">CONCLUSION</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Appendix"><span class="toc-nav-number">9.</span> <span class="toc-nav-text">Appendix</span></a></li></ol>
+          
+          </div>
+        </aside>
+      
+    
+
+        </div>
+    </div>
+</article>
+
+	
+    <!-- disqus embedded js code start (one page only need to embed once) -->	
+    <script type="text/javascript">	
+        /* * * CONFIGURATION VARIABLES * * */	
+        var disqus_shortname = "meetonfriday";	
+        var disqus_identifier = "https://meetonfriday.com/posts/4f49bf9b/";	
+        var disqus_url = "https://meetonfriday.com/posts/4f49bf9b/";	
+        (function() {	
+            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;	
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';	
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);	
+        })();	
+    </script>	
+    <!-- disqus embedded js code start end -->	
+    
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/john850512">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://www.linkedin.com/in/john85051232">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                
+                    <li>
+                        <a target="_blank" href="https://www.facebook.com/meetonfridayyy">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+                
+                    <li>
+                        <a target="_blank"  href="https://mail.google.com/mail/?view=cm&fs=1&to=john85051232@gmail.com">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-envelope-o fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+                
+                
+
+                
+
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; John 2025 
+                    <br>
+                    Powered by 
+                    <a href="https://github.com/john850512/hexo-theme-jiji" target="_blank" rel="noopener">
+                        <i>hexo-theme-jiji</i>
+                    </a> | 
+                    <iframe name="star" style="margin-left: 2px; margin-bottom:-5px;" frameborder="0" scrolling="0"
+                        width="100px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=john850512&repo=hexo-theme-jiji&type=star&count=true">
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+
+</footer>
+
+<!-- jQuery -->
+
+<script src="/js/jquery.min.js"></script>
+
+
+<!-- Bootstrap Core JavaScript -->
+
+<script src="/js/bootstrap.min.js"></script>
+
+
+<!-- Custom Theme JavaScript -->
+
+<script src="/js/hux-blog.min.js"></script>
+
+
+<!-- Search -->
+
+<script src="/js/search.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("https://meetonfriday.com/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+<!-- Search -->
+
+    <script type="text/javascript">      
+        var search_path = "search.xml";
+        if (search_path.length == 0) {
+            search_path = "search.xml";
+        }
+    var path = "/" + search_path;
+    searchFunc(path, 'local-search-input', 'local-search-result');
+    </script>
+
+
+<!-- busuanzi -->
+<!--<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>-->
+<script async src="//cdn.jsdelivr.net/npm/busuanzi@2.3.0"></script>
+
+
+
+
+	<a id="rocket" href="#top" class=""></a>
+	<script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script>
+    <script type="text/javascript" src="/js/toc.js?v=1.0.0" async=""></script>
+
+    
+        <!-- background effects line -->
+        
+        <!-- background effects end -->
+    
+    
+    <!-- background animation-->>
+    <!--<script size="50" alpha='0.3' zIndex="-999" src="/js/ribbonStatic.js"></script>-->
+    
+        <script src="/js/ribbonDynamic.js"></script>
+    
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script>
+            window.imageLazyLoadSetting = {
+                isSPA: false,
+                processImages: null,
+            };
+        </script><script>window.addEventListener("load",function(){var t=/\.(gif|jpg|jpeg|tiff|png)$/i,r=/^data:image\/[a-z]+;base64,/;Array.prototype.slice.call(document.querySelectorAll("img[data-original]")).forEach(function(a){var e=a.parentNode;"A"===e.tagName&&(e.href.match(t)||e.href.match(r))&&(e.href=a.dataset.original)})});</script><script>!function(n){n.imageLazyLoadSetting.processImages=o;var i=n.imageLazyLoadSetting.isSPA,r=Array.prototype.slice.call(document.querySelectorAll("img[data-original]"));function o(){i&&(r=Array.prototype.slice.call(document.querySelectorAll("img[data-original]")));for(var t,e,a=0;a<r.length;a++)t=r[a],0<=(e=t.getBoundingClientRect()).bottom&&0<=e.left&&e.top<=(n.innerHeight||document.documentElement.clientHeight)&&function(){var t,e,n,i,o=r[a];t=o,e=function(){r=r.filter(function(t){return o!==t})},n=new Image,i=t.getAttribute("data-original"),n.onload=function(){t.src=i,e&&e()},n.src=i}()}o(),n.addEventListener("scroll",function(){var t,e;t=o,e=n,clearTimeout(t.tId),t.tId=setTimeout(function(){t.call(e)},500)})}(this);</script></body>
+
+</html>

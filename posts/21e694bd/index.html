@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<!-- Head tag -->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="baidu-site-verification" content="093lY4ziMu" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="keyword"  content="programming, study, daily, entertainment">
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="星期五。見面">
+    <meta property="og:locale" content="zh-TW" />
+    
+    <meta property="og:title" content="[C/C++]Optimize string use: a case study閱讀筆記" />
+    
+    
+    <meta property="og:description" content="最近真是挫折，修了C越覺得自己其實不懂C，修了OSDI的課發現越來越不懂OS...不過越是不懂就越要努力把知識補起來!   這篇是一篇介紹如何最佳化string coding(C/C++)的文章的閱讀心得&amp;重點摘要，以及自己的一些深入研究" />
+    <meta name="description" content="最近真是挫折，修了C越覺得自己其實不懂C，修了OSDI的課發現越來越不懂OS...不過越是不懂就越要努力把知識補起來!   這篇是一篇介紹如何最佳化string coding(C/C++)的文章的閱讀心得&amp;重點摘要，以及自己的一些深入研究">
+    
+    
+    <meta property="og:image" content="/img/avatar.jpg" />
+    
+
+    <link rel="shortcut icon" href="/img/avatar.jpg">
+    <!-- Place this tag in your head or just before your close body tag. -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <!--<link href='http://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>-->
+    <title>
+        
+          [C/C++]Optimize string use: a case study閱讀筆記 - MeetonFriday
+        
+    </title>
+    <!-- canonical -->
+    
+    
+      <link rel="canonical" href="https://meetonfriday.com/posts/21e694bd/">
+    
+
+    <!-- Bootstrap Core CSS -->
+    
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+
+
+    <!-- Custom CSS --> 
+    
+<link rel="stylesheet" href="/css/dusign-dark.css">
+
+    
+<link rel="stylesheet" href="/css/dusign-common-dark.css">
+
+    <!-- 
+<link rel="stylesheet" href="/css/font-awesome.css">
+ -->
+    
+<link rel="stylesheet" href="/css/toc.css">
+
+
+    
+    <!-- Pygments Highlight CSS -->
+    
+<link rel="stylesheet" href="/css/highlight.css">
+
+
+    
+<link rel="stylesheet" href="/css/widget.css">
+
+
+    
+<link rel="stylesheet" href="/css/rocket.css">
+
+
+    
+<link rel="stylesheet" href="/css/signature.css">
+
+
+    
+<link rel="stylesheet" href="/css/fonts.googleapis.css">
+
+
+    <!-- <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.3.0/css/font-awesome.min.css">-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.min.css">
+    
+    <!-- Google Analytics -->
+    
+      <!-- <script>
+          // dynamic User by Hux
+          var _gaId = 'UA-163346001-1';
+          var _gaDomain = 'auto';
+      
+          // Originial
+          (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+          (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+          })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+      
+          ga('create', _gaId, _gaDomain);
+          ga('send', 'pageview');
+      </script> -->
+      
+      <!-- Global site tag (gtag.js) - Google Analytics -->
+      <script async src="https://www.googletagmanager.com/gtag/js?id=UA-163346001-1"></script>
+      <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+      
+        gtag('config', 'UA-163346001-1');
+      </script>
+      
+    <!-- google ad sense-->
+    <script data-ad-client="ca-pub-9561340457908416" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<meta name="generator" content="Hexo 4.2.1"><link rel="alternate" href="/atom.xml" title="星期五。見面" type="application/atom+xml">
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+	<!-- Modified by Yu-Hsuan Yen -->
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        
+            
+                background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.5)), url('/img/header_img/header-bg.jpg')
+            
+        
+    }
+    
+</style>
+
+<header class="intro-header" >
+    <!-- Signature -->
+    <div id="signature">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                
+                    <div class="post-heading">
+                        <div class="tags">
+                            
+                              <a class="tag" href="/tags/#c" title="c">c</a>
+                            
+                              <a class="tag" href="/tags/#c++" title="c++">c++</a>
+                            
+                        </div>
+                        <h1>[C/C++]Optimize string use: a case study閱讀筆記</h1>
+                        <h2 class="subheading"></h2>
+                        <span class="meta">
+                            Posted by John on
+                            2020-03-14
+                        </span>
+
+                        
+                            <div class="blank_box"></div>
+                            <span class="meta">
+                                Words <span class="post-count">3.5k</span> and
+                                Reading Time <span class="post-count">17</span> Minutes
+                            </span>
+                            <div class="blank_box"></div>
+                            <!-- 不蒜子统计 start -->
+                            <span class="meta">
+                                Viewed <span id="busuanzi_value_page_pv"><i class="fa fa-spinner fa-spin"></i></span> Times
+                            </span>
+                            <!-- 不蒜子统计 end -->
+                        
+
+                    </div>
+                
+
+                </div>
+            </div>
+        </div>      
+    </div>
+
+    
+        
+            <div class="waveWrapper">
+                <div class="wave wave_before" style="background-image: url('/img/wave-dark.png')"></div>
+                <div class="wave wave_after" style="background-image: url('/img/wave-dark.png')"></div>
+            </div>
+        
+    
+</header>
+
+	
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">星期五。見面</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archive/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/categories/">Categories</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/reading/">Reading</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+    
+    <!-- Main Content -->
+    <!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+            <!-- Post Container -->
+
+    
+        
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+        
+    
+
+                <p>文章網址: <a href="https://www.oreilly.com/content/optimize-string-use-case-study/" target="_blank" rel="noopener">Optimize string use: a case study</a><br>Hackmd好讀版: <a href="https://hackmd.io/@sXG2cRDpRbONCsrtz8jfqg/SkQkY4FS8" target="_blank" rel="noopener">[閱讀筆記]Optimize string use: a case study</a></p>
+<p>最近真是挫折，修了C越覺得自己其實不懂C，修了OSDI的課發現越來越不懂OS…不過越是不懂就越要努力把知識補起來!<br>這篇是一篇介紹如何<strong>最佳化string coding(C/C++)的文章的閱讀心得&amp;重點摘要，以及自己的一些深入研究</strong>。</p>
+<p>該篇文章很長，我也還沒看完，不過這裡記錄到了原作者的第一個最佳化case study的重點和心得。以下有著大量的文字敘述以及程式碼，請小心服用，不過看完應該能學到不少。<br><a id="more"></a></p>
+<h2 id="Why-Strings-Are-a-Problem"><a href="#Why-Strings-Are-a-Problem" class="headerlink" title="Why Strings Are a Problem"></a>Why Strings Are a Problem</h2><blockquote>
+<p>Furthermore, the behavior of std::string has been changed over the years to keep up with changes in the C++ standard. This means that a conforming std::string implementation from a C++98 compiler may not behave the same way as a std::string implementation after C++11.</p>
+<p>Strings have some behaviors that make them expensive to use, no matter the implementation. They are dynamically allocated, they behave as values in expressions, and their implementation requires a lot of copying.</p>
+</blockquote>
+<h2 id="Strings-Are-Dynamically-Allocated"><a href="#Strings-Are-Dynamically-Allocated" class="headerlink" title="Strings Are Dynamically Allocated"></a>Strings Are Dynamically Allocated</h2><p>std:string是動態分配memory的，使用到了大量的複製，動態配置的成本極高，在C裡面動態配置的寫法類似下方這樣:<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">char</span>* p = (<span class="keyword">char</span>*) <span class="built_in">malloc</span>(<span class="number">7</span>);</span><br><span class="line"><span class="built_in">strcpy</span>(p, <span class="string">"string"</span>);</span><br><span class="line">   ...</span><br><span class="line"><span class="built_in">free</span>(p);</span><br></pre></td></tr></table></figure><br>不過，string的內部mem space(internal character buffer)仍然是固定的，當操作string造成空間超出原本配置的大小時，會重新分配一段空間，再將內容複製過去。</p>
+<blockquote>
+<p>std::string implementations do a trick to amortize the cost of reallocating storage for the character buffer as the string grows. Instead of making a request to the memory manager for the exact number of characters needed, the string implementation rounds up the request to some larger number of characters. For instance, some implementations round up the request to the next power of 2. The string then has the capacity to grow to twice its current size before needing to call the into the memory manager again. The next time an operation needs to extend the length of the string, there is room in the existing buffer, avoiding the need to allocate a new buffer. The benefit of this trick is that the cost of appending characters to a string approaches a constant asymptotically as the string grows longer. The cost of this trick is that strings carry around some unused space. If the string implements a policy of rounding up requests to a power of 2, up to half the storage in a string may be unused.</p>
+</blockquote>
+<ul>
+<li>一種技巧是，每次都為請求的空間配置搭約多兩倍的記憶體(round up the request to the next power of 2)，從而降低了重新配置的次數</li>
+<li>不過缺點就是可能會有一些空間沒使用到</li>
+</ul>
+<h2 id="Strings-Are-Values"><a href="#Strings-Are-Values" class="headerlink" title="Strings Are Values"></a>Strings Are Values</h2><p>strings是values，如同下方integer是values的範例:</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> i,j;</span><br><span class="line">i = <span class="number">3</span>; <span class="comment">// i has the value 3</span></span><br><span class="line">j = i; <span class="comment">// j also has the value 3</span></span><br><span class="line">i = <span class="number">5</span>; <span class="comment">// i now has the value 5, j still has the value 3</span></span><br></pre></td></tr></table></figure>
+<p>string也有相同的特性</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">std</span>::<span class="built_in">string</span> s1, s2;</span><br><span class="line">s1 = “hot”;  <span class="comment">// s1 is "hot"</span></span><br><span class="line">s2 = s1;     <span class="comment">// s2 is "hot"</span></span><br><span class="line">s1[<span class="number">0</span>] = <span class="string">'n'</span>; <span class="comment">// s2 is still "hot", s1 is "not"</span></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>Because strings are values, the results of string expressions are also values. If you concatenate strings, as in the statement s1 = s2 + s3 + s4;, the result of s2 + s3 is a newly allocated temporary string value. The result of concatenating s4 to this temporary string is another temporary string value. This value replaces the previous value of s1. Then the dynamically allocated storage for the first temporary string and the previous value of s1 are freed. This adds up to a lot of calls into the memory manager.</p>
+</blockquote>
+<ul>
+<li><strong>所以在對string做操作的時候，並不是更改原本memory的value，而是先去產生一個新的string儲存結果，然後在把原本的memory釋放掉。因此string的相關操作會大量的呼叫到memory manager</strong></li>
+</ul>
+<h3 id="Strings-Do-a-Lot-of-Copying"><a href="#Strings-Do-a-Lot-of-Copying" class="headerlink" title="Strings Do a Lot of Copying"></a>Strings Do a Lot of Copying</h3><p><strong>Copy on Write: 讓string都先指向相同的空間，透過counter來統計複製的數量，有需要修改時在另外開一個空間配置</strong></p>
+<blockquote>
+<p>There is a well-known programming idiom for things that behave as values but are expensive to copy. It is called “copy on write,” and often abbreviated COW in C++ literature (see not available). In a COW string, the dynamically allocated storage can be shared between strings. A reference count lets each string know if it is using shared storage. When one string is assigned to another, only a pointer is copied, and the reference count is incremented. Any operation that changes a string’s value first checks to see that there is only one pointer to that storage. If multiple strings point to the storage, any mutating operation (any operation that may change the contents of the string) allocates new storage and makes a copy of the string before making its change</p>
+</blockquote>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">COWstring s1, s2;</span><br><span class="line">s1 = <span class="string">"hot"</span>;  <span class="comment">// s1 is "hot"</span></span><br><span class="line">s2 = s1;     <span class="comment">// s2 is "hot" (s1 and s2 point to the same storage)</span></span><br><span class="line">s1[<span class="number">0</span>] = <span class="string">'n'</span>; <span class="comment">// s1 makes a new copy of its storage before </span></span><br><span class="line">             <span class="comment">// changing anything</span></span><br><span class="line">             <span class="comment">// s2 is still "hot", s1 is "not"</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li><strong>儘管這樣在assignment和argument-passing時cost很低，但non-const references和any call to a mutating function的cost就很大</strong></li>
+<li><strong>在平行化時，Cow的cost也很大，需要確保同時間不會有人更改共同的空間</strong></li>
+</ul>
+<blockquote>
+<p>In C++11 and later, the burden of copying is somewhat reduced by the presence of rvalue references and the move semantics (see not available) that go with them. If a function takes an rvalue reference as argument, the string can do an inexpensive pointer copy when the actual argument is an rvalue expression, saving one copy.</p>
+</blockquote>
+<h2 id="Case-Study-First-Attempt-at-Optimizing-Strings"><a href="#Case-Study-First-Attempt-at-Optimizing-Strings" class="headerlink" title="Case Study: First Attempt at Optimizing Strings"></a>Case Study: First Attempt at Optimizing Strings</h2><p>考慮以下code:</p>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="built_in">std</span>::<span class="built_in">string</span> <span class="title">remove_ctrl</span><span class="params">(<span class="built_in">std</span>::<span class="built_in">string</span> s)</span> </span>&#123;</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">string</span> result;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;s.length(); ++i) &#123;</span><br><span class="line">        <span class="keyword">if</span> (s[i] &gt;= <span class="number">0x20</span>)</span><br><span class="line">            result = result + s[i];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>糟糕透了，<strong>這僅僅只是一段可以執行的危險代碼，因為有著對大量記憶體的更動，每次更改string都會重新產生一個memory去更改，然後再把原本的刪除</strong><ul>
+<li>假設string長度100，則會create storage和release storage各100次</li>
+</ul>
+</li>
+<li>此外，根據assignment的實作不同，可能會有更多的memory call</li>
+</ul>
+<blockquote>
+<ul>
+<li>If strings are implemented using the copy-on-write idiom, then the assignment operator performs an efficient pointer copy and increments the reference count.</li>
+<li>If strings have a non–shared buffer implementation, then the assignment operator must copy the contents of the temporary string. If the implementation is naïve, or result‘s buffer does not have enough capacity, then the assignment operator also allocates a new buffer to copy into. This results in 100 copy operations and as many as 100 additional allocations.</li>
+<li>If the compiler implements C++11-style rvalue references and move semantics, then the fact that the concatenation expression’s result is an rvalue allows the compiler to call result‘s move constructor instead of its copy constructor. The result is that the program performs an efficient pointer copy.</li>
+</ul>
+</blockquote>
+<p>在作者的設備上，each call took 24.8 microseconds，數字沒有意義，僅作為後續優化的比較參考值，接下來作者會介紹如何一步步的優化</p>
+<h2 id="Use-Mutating-String-Operations-to-Eliminate-Temporaries"><a href="#Use-Mutating-String-Operations-to-Eliminate-Temporaries" class="headerlink" title="Use Mutating String Operations to Eliminate Temporaries"></a>Use Mutating String Operations to Eliminate Temporaries</h2><figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="built_in">std</span>::<span class="built_in">string</span> <span class="title">remove_ctrl_mutating</span><span class="params">(<span class="built_in">std</span>::<span class="built_in">string</span> s)</span> </span>&#123;</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">string</span> result;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;s.length(); ++i) &#123;</span><br><span class="line">        <span class="keyword">if</span> (s[i] &gt;= <span class="number">0x20</span>)</span><br><span class="line">            result += s[i];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>This improvement comes from eliminating all the calls to allocate temporary string objects to hold the concatenation expression result, and the associated copying and deleting of temporaries. Depending on the string implementation, allocation and copying on assignment are also eliminated.</p>
+</blockquote>
+<ul>
+<li>修改第五行的concatenation expression，省去了暫時儲存計算結果的 temporary object allocate, 存回去的copying和釋放的deleting。</li>
+</ul>
+<p>現在each call是1.72 microseconds per call，進步了13倍</p>
+<h2 id="從source-code理解上述兩種寫法的差異"><a href="#從source-code理解上述兩種寫法的差異" class="headerlink" title="從source code理解上述兩種寫法的差異"></a>從source code理解上述兩種寫法的差異</h2><p>看不懂上面這兩個差在哪?來看source code</p>
+<ol>
+<li>從<a href="https://gcc.gnu.org/onlinedocs/gcc-4.8.2/libstdc++/api/a01053_source.html" target="_blank" rel="noopener">libstdc++</a>可以看到<code>operator+=</code>其實就是呼叫了<code>string::append()</code></li>
+</ol>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">926</span><br><span class="line">927</span><br><span class="line">928</span><br><span class="line">929</span><br><span class="line">930</span><br><span class="line">931</span><br><span class="line">932</span><br><span class="line">933</span><br><span class="line">934</span><br><span class="line">935</span><br></pre></td><td class="code"><pre><span class="line">...</span><br><span class="line"><span class="comment">// Modifiers:</span></span><br><span class="line">/\*\*</span><br><span class="line"> \*  @brief  Append a <span class="built_in">string</span> to <span class="keyword">this</span> <span class="built_in">string</span>.</span><br><span class="line"> \*  @param __str  The <span class="built_in">string</span> to append.</span><br><span class="line"> \*  @<span class="keyword">return</span>  Reference to <span class="keyword">this</span> <span class="built_in">string</span>.</span><br><span class="line"> */</span><br><span class="line">basic_string&amp;</span><br><span class="line"><span class="keyword">operator</span>+=(<span class="keyword">const</span> basic_string&amp; __str)</span><br><span class="line">&#123; <span class="keyword">return</span> <span class="keyword">this</span>-&gt;append(__str); &#125;</span><br></pre></td></tr></table></figure>
+<ol>
+<li>來看看<a href="https://android.googlesource.com/platform/external/astl/+/9cb0478662a7c988146fff0d868bba2839ea80f2/src/string.cpp" target="_blank" rel="noopener"><code>string:append()</code></a>都在做啥</li>
+</ol>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">269</span><br><span class="line">270</span><br><span class="line">271</span><br><span class="line">272</span><br><span class="line">273</span><br><span class="line">274</span><br><span class="line">275</span><br><span class="line">276</span><br><span class="line">277</span><br><span class="line">278</span><br><span class="line">279</span><br><span class="line">280</span><br><span class="line">281</span><br><span class="line">282</span><br><span class="line">283</span><br><span class="line">284</span><br><span class="line">285</span><br><span class="line">286</span><br><span class="line">287</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">string::Append</span><span class="params">(<span class="keyword">const</span> value_type *str, size_type n)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">const</span> size_type total_len = mLength + n;</span><br><span class="line">    <span class="comment">// n &gt; 0 and no overflow for the string length + terminating null.</span></span><br><span class="line">    <span class="keyword">if</span> (n &gt; <span class="number">0</span> &amp;&amp; (total_len + <span class="number">1</span>) &gt; mLength)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">if</span> (total_len &gt; mCapacity)</span><br><span class="line">        &#123;</span><br><span class="line">            reserve(total_len);</span><br><span class="line">            <span class="keyword">if</span> (total_len &gt; mCapacity)</span><br><span class="line">            &#123;  <span class="comment">// something went wrong in the reserve call.</span></span><br><span class="line">                <span class="keyword">return</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="built_in">memcpy</span>(mData + mLength, str, n);</span><br><span class="line">        mLength = total_len;</span><br><span class="line">        mData[mLength] = '\\0';</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>原來就是先用<code>reserve()</code>string的capacity變大，然後memcpy過去，這樣就不用產生一個占存的memory space先記錄改變的結果，然後在assign了(這就是<code>operator+</code>在做的事情)</p>
+<ol>
+<li>來看看<a href="https://gcc.gnu.org/onlinedocs/gcc-4.6.2/libstdc++/api/a01075_source.html" target="_blank" rel="noopener"><code>operator+</code></a>在幹啥</li>
+</ol>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// operator+</span></span><br><span class="line">/\*\*</span><br><span class="line">\*  @brief  Concatenate two strings.</span><br><span class="line">\*  @param __lhs  First <span class="built_in">string</span>.</span><br><span class="line">\*  @param __rhs  Last <span class="built_in">string</span>.</span><br><span class="line">\*  @<span class="keyword">return</span>  New <span class="built_in">string</span> with value of @a __lhs followed by @a __rhs.</span><br><span class="line">*/</span><br><span class="line">   <span class="keyword">template</span>&lt;<span class="keyword">typename</span> _CharT, <span class="keyword">typename</span> _Traits, <span class="keyword">typename</span> _Alloc&gt;</span><br><span class="line">     basic_string&lt;_CharT, _Traits, _Alloc&gt;</span><br><span class="line">     <span class="keyword">operator</span>+(<span class="keyword">const</span> basic_string&lt;_CharT, _Traits, _Alloc&gt;&amp; __lhs,</span><br><span class="line">           <span class="keyword">const</span> basic_string&lt;_CharT, _Traits, _Alloc&gt;&amp; __rhs)</span><br><span class="line">     &#123;</span><br><span class="line">       basic_string&lt;_CharT, _Traits, _Alloc&gt; __str(__lhs);</span><br><span class="line">       __str.append(__rhs);</span><br><span class="line">       <span class="keyword">return</span> __str;</span><br><span class="line">     &#125;</span><br></pre></td></tr></table></figure>
+<p>注意到他先創造了一個新的variable <code>basic_string</code>，然後初始值放其中一個string，才把另一個變數進行<code>append</code></p>
+<h2 id="Reduce-Reallocation-by-Reserving-Storage"><a href="#Reduce-Reallocation-by-Reserving-Storage" class="headerlink" title="Reduce Reallocation by Reserving Storage"></a>Reduce Reallocation by Reserving Storage</h2><p>上面提到，string空間不足時的re-allocate也是成本，透過reserve()是確認好大小以減少re-allocate的次數。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">881</span><br><span class="line">882</span><br><span class="line">883</span><br><span class="line">884</span><br><span class="line">885</span><br><span class="line">886</span><br><span class="line">887</span><br><span class="line">888</span><br><span class="line">889</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="built_in">std</span>::<span class="built_in">string</span> <span class="title">remove_ctrl_reserve</span><span class="params">(<span class="built_in">std</span>::<span class="built_in">string</span> s)</span> </span>&#123;</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">string</span> result;</span><br><span class="line">    result.reserve(s.length());</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;s.length(); ++i) &#123;</span><br><span class="line">        <span class="keyword">if</span> (s[i] &gt;= <span class="number">0x20</span>)</span><br><span class="line">            result += s[i];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>Not only does use of reserve() eliminate reallocation of the string buffer, but it also improves the cache locality of the data accessed by the function</p>
+</blockquote>
+<ul>
+<li>除了降低重新配置的cost，也增加了cache locality，使得data能夠更快速的存取</li>
+</ul>
+<p>A test using remove_ctrl_reserve() consumes 1.47 microseconds per call, an improvement of 17% over remove_ctrl_mutating().</p>
+<h2 id="Eliminate-Copying-of-String-Arguments"><a href="#Eliminate-Copying-of-String-Arguments" class="headerlink" title="Eliminate Copying of String Arguments"></a>Eliminate Copying of String Arguments</h2><blockquote>
+<p>When a string expression is passed into a function by value, the formal argument (in this case, s) is copy-constructed.</p>
+</blockquote>
+<p>在function傳遞參數時，參數會被copy，根據string的implementation，copy的動作有多種可能的情況:</p>
+<blockquote>
+<ul>
+<li>If strings are implemented using the copy-on-write idiom, then the compiler generates a call to the copy constructor, which performs an efficient pointer copy and increments the reference count.</li>
+<li>If strings have a nonshared buffer implementation, then the copy constructor must allocate a new buffer and copy the contents of the actual argument.</li>
+<li>If the compiler implemented C++11-style rvalue references and move semantics, then if the actual argument is an expression, it will be an rvalue, so the compiler will generate a call to the move constructor, resulting in an efficient pointer copy. If the actual argument is a variable, then the formal argument’s copy constructor is called, resulting in an allocation-and-copy. Rvalue references and move semantics are described in more detail in not available.</li>
+</ul>
+</blockquote>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="built_in">std</span>::<span class="built_in">string</span> <span class="title">remove_ctrl_ref_args</span><span class="params">(<span class="built_in">std</span>::<span class="built_in">string</span> <span class="keyword">const</span>&amp; s)</span> </span>&#123;</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">string</span> result;</span><br><span class="line">    result.reserve(s.length());</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;s.length(); ++i) &#123;</span><br><span class="line">        <span class="keyword">if</span> (s[i] &gt;= <span class="number">0x20</span>)</span><br><span class="line">            result += s[i];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li><strong>由於s不會被修改，所以不用另外copy一份，透過const reference來節省空間</strong></li>
+</ul>
+<blockquote>
+<p>The result is a surprise. The timing test of remove_ctrl_ref_args() took 1.60 microseconds per call, 8% worse than remove_ctrl_reserve(). …Reference variables are implemented as pointers. So, everywhere s appears in remove_ctrl_ref_args(), the program dereferences a pointer that it did not have to dereference in remove_ctrl_reserve(). I hypothesize that this extra work might be enough to account for the reduced performance.</p>
+</blockquote>
+<ul>
+<li>但在這一步的結果卻沒有優化到code(在Visual Studio上)，作者推測是VS對於copy有額外做一些事情，還有因為reference是透過dereference pointer實作的，在dereference上可能有一些額外的工作增加了時間</li>
+</ul>
+<h2 id="Eliminate-Pointer-Dereference-Using-Iterators"><a href="#Eliminate-Pointer-Dereference-Using-Iterators" class="headerlink" title="Eliminate Pointer Dereference Using Iterators"></a>Eliminate Pointer Dereference Using Iterators</h2><blockquote>
+<p>String iterators are simple pointers into the character buffer. That saves two dereference operations versus the non-iterator code in the loop.</p>
+</blockquote>
+<ul>
+<li>string iterators直接指向string的char buffer，所以不用在額外做兩次的dereference(loop一次合併一次)</li>
+</ul>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="built_in">std</span>::<span class="built_in">string</span> <span class="title">remove_ctrl_ref_args_it</span><span class="params">(<span class="built_in">std</span>::<span class="built_in">string</span> <span class="keyword">const</span>&amp; s)</span> </span>&#123;</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">string</span> result;</span><br><span class="line">    result.reserve(s.length());</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">auto</span> it=s.<span class="built_in">begin</span>(),<span class="built_in">end</span>=s.<span class="built_in">end</span>(); it != <span class="built_in">end</span>; ++it) &#123;</span><br><span class="line">        <span class="keyword">if</span> (*it &gt;= <span class="number">0x20</span>)</span><br><span class="line">            result += *it;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>The timing test for remove_ctrl_ref_args_it() produced a satisfying result of 1.04 microseconds per call.</p>
+<p>remove_ctrl_ref_args_it() contains one other optimization of note. The value s.end(), used to control the for loop, is cached on loop initialization. This saves another 2n indirections, where n is the length of the argument string.</p>
+</blockquote>
+<ul>
+<li>另一種版本的優化是，把<code>s.end()</code>位址先記錄下來，就不用每次loop都重找一次</li>
+</ul>
+<h3 id="為什麼是2n"><a href="#為什麼是2n" class="headerlink" title="為什麼是2n?"></a>為什麼是2n?</h3><p>來看看<code>string::end()</code>的<a href="https://code.woboq.org/llvm/libcxx/include/string.html" target="_blank" rel="noopener">source code</a>，可以看到每次呼叫<code>end()</code>，都會取得原始的pointer + size()，這個別需要一次operation(可以在追下去看<code>__get_pointer</code>和<code>size()</code>各別做了什麼事情)，迴圈執行了n次，所以2n可能是這樣來的</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">910</span><br><span class="line">911</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">const_iterator <span class="title">end</span><span class="params">()</span> <span class="keyword">const</span> _NOEXCEPT</span></span><br><span class="line"><span class="function">    </span>&#123;<span class="keyword">return</span> const_iterator(<span class="keyword">this</span>, __get_pointer() + <span class="built_in">size</span>());&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="Eliminate-Copying-of-Returned-String-Values"><a href="#Eliminate-Copying-of-Returned-String-Values" class="headerlink" title="Eliminate Copying of Returned String Values"></a>Eliminate Copying of Returned String Values</h2><p>為了回傳結果，function內必須要create一個變數，最後在將該變數copy給等待接收的變數中。有些compiler會幫忙做優化(though the compiler is permitted to elide (that is, simplify by removing) the copy construction if it can)，不過如果要確保沒有copy，有兩種方法，一種是所有C++版本都適用的，也就是<strong>call function的時候同時reference一個保存結果的string進來(這也是編譯器優化時在做的事情)</strong></p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">remove_ctrl_ref_result_it</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">    <span class="built_in">std</span>::<span class="built_in">string</span>&amp; result,</span></span></span><br><span class="line"><span class="function"><span class="params">    <span class="built_in">std</span>::<span class="built_in">string</span> <span class="keyword">const</span>&amp; s)</span> </span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    result.<span class="built_in">clear</span>();</span><br><span class="line">    result.reserve(s.length());</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">auto</span> it=s.<span class="built_in">begin</span>(),<span class="built_in">end</span>=s.<span class="built_in">end</span>(); it != <span class="built_in">end</span>; ++it) &#123;</span><br><span class="line">        <span class="keyword">if</span> (*it &gt;= <span class="number">0x20</span>)</span><br><span class="line">            result += *it;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>Measured performance of remove_ctrl_ref_result_it() is 1.02 microseconds per call, about 2% faster than the previous version.</p>
+</blockquote>
+<p>不過這種用法要注意，比方說下列的情況就會得到不正確的結果(return empty string)</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="built_in">std</span>::<span class="built_in">string</span> <span class="title">foo</span><span class="params">(<span class="string">"this is a string"</span>)</span></span>;</span><br><span class="line">remove_ctrl_ref_result_it(foo, foo);</span><br></pre></td></tr></table></figure>
+<h2 id="Use-Character-Arrays-Instead-of-Strings"><a href="#Use-Character-Arrays-Instead-of-Strings" class="headerlink" title="Use Character Arrays Instead of Strings"></a>Use Character Arrays Instead of Strings</h2><p>要效能?用C++幹嘛，用C阿</p>
+<blockquote>
+<p>To use the C-style string functions, the programmer must choose either to manually allocate and free character buffers, or to use static arrays dimensioned to worst-case sizes</p>
+</blockquote>
+<ul>
+<li><strong>不過C需要手動配置和釋放記憶體，以及以worst-case決定static array size</strong></li>
+</ul>
+<blockquote>
+<p>Declaring a bunch of static arrays is problematic if memory is at all constrained. However, there is usually room to statically declare large temporary buffers in local storage (that is, on the function call stack). These buffers are reclaimed at negligible runtime cost when the function exits. Except in the most constrained embedded environments, it is no problem to declare a worst-case buffer of 1,000 or even 10,000 characters on the stack.</p>
+</blockquote>
+<ul>
+<li><strong>在記憶體有限的狀況下，宣告一堆static array是不好的，不過在function內宣告的memory由於function結束時會釋放出來，除非是真的記憶體非常受限的狀況下(embedded system)，不然宣告個1000~10000的 char空間還是沒問題的</strong></li>
+</ul>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">remove_ctrl_cstrings</span><span class="params">(<span class="keyword">char</span>* destp, <span class="keyword">char</span> <span class="keyword">const</span>* srcp, <span class="keyword">size_t</span> <span class="built_in">size</span>)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">size_t</span> i=<span class="number">0</span>; i&lt;<span class="built_in">size</span>; ++i) &#123;</span><br><span class="line">        <span class="keyword">if</span> (srcp[i] &gt;= <span class="number">0x20</span>)</span><br><span class="line">            *destp++ = srcp[i];</span><br><span class="line">    &#125;</span><br><span class="line">    *destp = <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>remove_ctrl_cstrings() took 0.15 microseconds per call in the timing test. This is 6 times faster than its predecessor, and an astonishing 170 times faster than the original function. One reason for the improvement is the elimination of several function calls, with a corresponding improvement in cache locality.</p>
+</blockquote>
+<ul>
+<li>比上一版快了6倍，比最原始版本快了170倍，我的老天鵝阿!<ul>
+<li>減少了大量的function call和增加了cache locality(char* 是連續的memory space)</li>
+</ul>
+</li>
+</ul>
+<h2 id="Stop-and-Think"><a href="#Stop-and-Think" class="headerlink" title="Stop and Think"></a>Stop and Think</h2><p>儘管過程中一步步的優化了程式碼，但<strong>這些效能可能是犧牲了簡單性和安全性換來的</strong>，比方說</p>
+<ul>
+<li>remove_ctrl_ref_result_it()具有潛在的不正確使用方式</li>
+<li>remove_ctrl_cstrings()需要手動管理char*的記憶體空間，設計上較複雜</li>
+</ul>
+<blockquote>
+<p>C++ offers developers a range of choices between simple and safe code that is slow and radically fast code that must be used carefully. Advocates of other languages may call this a weakness, but for optimization, it is one of the greatest strengths of C++.</p>
+<p>In the end, the team must answer the question, “How much do we need this performance improvement?”</p>
+</blockquote>
+<h2 id="Summary-of-First-Optimization-Attempt"><a href="#Summary-of-First-Optimization-Attempt" class="headerlink" title="Summary of First Optimization Attempt"></a>Summary of First Optimization Attempt</h2><p>作者也比較了debug mode 和 release mode的差異，能看出好的coding對於程式效能真的影響很大</p>
+<p><img src="https://meetonfriday.com/img/lazy-loading-animation.gif" data-original="https://i.imgur.com/w1QD7au.png" alt=""></p>
+<hr>
+<p>你知道花為什麼會笑嗎?</p>
+<p>: 因為它有梗。</p>
+<p>…好啦，雖然不知道有多少人能看到最後這裡，不過恭喜你看完原文的第一部份了！</p>
+<p>第二部分之後閱讀完在和大家分享~</p>
+
+                <hr>
+                <!-- Pager -->
+                <ul class="pager">
+    
+    <li class="previous">
+        <a href="/posts/df742442/" data-toggle="tooltip" data-placement="top" title="Device rebooting during deep learning training">&larr; Newer Post</a>
+    </li>
+    
+    
+    <li class="next">
+        <a href="/posts/98f60d1d/" data-toggle="tooltip" data-placement="top" title="[論文速速讀]ReZero is All You Need: Fast Convergence at Large Depth">Older Post &rarr;</a>
+    </li>
+    
+</ul>
+
+                <!-- tip start -->
+                
+
+                
+                <!-- tip end -->
+
+                <!-- Sharing -->
+                
+                <!-- Sharing -->
+
+                <!-- gitment start -->
+                
+                <!-- gitment end -->
+
+                <!-- 来必力City版安装代码 -->
+                
+                <!-- City版安装代码已完成 -->
+
+                <!-- disqus comment start -->
+                
+                <div class="comment">
+                    <div id="disqus_thread" class="disqus-thread"></div>
+                </div>
+                
+                <!-- disqus comment end -->
+            </div>
+            
+            <!-- Tabe of Content -->
+            <!-- Table of Contents -->
+
+    
+      
+        <aside id="sidebar">
+          <div id="toc" class="toc-article">
+          <strong class="toc-title">Contents</strong>
+          
+            <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Why-Strings-Are-a-Problem"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">Why Strings Are a Problem</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Strings-Are-Dynamically-Allocated"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">Strings Are Dynamically Allocated</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Strings-Are-Values"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">Strings Are Values</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Strings-Do-a-Lot-of-Copying"><span class="toc-nav-number">3.1.</span> <span class="toc-nav-text">Strings Do a Lot of Copying</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Case-Study-First-Attempt-at-Optimizing-Strings"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">Case Study: First Attempt at Optimizing Strings</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Use-Mutating-String-Operations-to-Eliminate-Temporaries"><span class="toc-nav-number">5.</span> <span class="toc-nav-text">Use Mutating String Operations to Eliminate Temporaries</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#從source-code理解上述兩種寫法的差異"><span class="toc-nav-number">6.</span> <span class="toc-nav-text">從source code理解上述兩種寫法的差異</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Reduce-Reallocation-by-Reserving-Storage"><span class="toc-nav-number">7.</span> <span class="toc-nav-text">Reduce Reallocation by Reserving Storage</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Eliminate-Copying-of-String-Arguments"><span class="toc-nav-number">8.</span> <span class="toc-nav-text">Eliminate Copying of String Arguments</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Eliminate-Pointer-Dereference-Using-Iterators"><span class="toc-nav-number">9.</span> <span class="toc-nav-text">Eliminate Pointer Dereference Using Iterators</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#為什麼是2n"><span class="toc-nav-number">9.1.</span> <span class="toc-nav-text">為什麼是2n?</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Eliminate-Copying-of-Returned-String-Values"><span class="toc-nav-number">10.</span> <span class="toc-nav-text">Eliminate Copying of Returned String Values</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Use-Character-Arrays-Instead-of-Strings"><span class="toc-nav-number">11.</span> <span class="toc-nav-text">Use Character Arrays Instead of Strings</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Stop-and-Think"><span class="toc-nav-number">12.</span> <span class="toc-nav-text">Stop and Think</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Summary-of-First-Optimization-Attempt"><span class="toc-nav-number">13.</span> <span class="toc-nav-text">Summary of First Optimization Attempt</span></a></li></ol>
+          
+          </div>
+        </aside>
+      
+    
+
+        </div>
+    </div>
+</article>
+
+	
+    <!-- disqus embedded js code start (one page only need to embed once) -->	
+    <script type="text/javascript">	
+        /* * * CONFIGURATION VARIABLES * * */	
+        var disqus_shortname = "meetonfriday";	
+        var disqus_identifier = "https://meetonfriday.com/posts/21e694bd/";	
+        var disqus_url = "https://meetonfriday.com/posts/21e694bd/";	
+        (function() {	
+            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;	
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';	
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);	
+        })();	
+    </script>	
+    <!-- disqus embedded js code start end -->	
+    
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/john850512">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://www.linkedin.com/in/john85051232">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                
+                    <li>
+                        <a target="_blank" href="https://www.facebook.com/meetonfridayyy">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+                
+                    <li>
+                        <a target="_blank"  href="https://mail.google.com/mail/?view=cm&fs=1&to=john85051232@gmail.com">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-envelope-o fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+                
+                
+
+                
+
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; John 2025 
+                    <br>
+                    Powered by 
+                    <a href="https://github.com/john850512/hexo-theme-jiji" target="_blank" rel="noopener">
+                        <i>hexo-theme-jiji</i>
+                    </a> | 
+                    <iframe name="star" style="margin-left: 2px; margin-bottom:-5px;" frameborder="0" scrolling="0"
+                        width="100px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=john850512&repo=hexo-theme-jiji&type=star&count=true">
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+
+</footer>
+
+<!-- jQuery -->
+
+<script src="/js/jquery.min.js"></script>
+
+
+<!-- Bootstrap Core JavaScript -->
+
+<script src="/js/bootstrap.min.js"></script>
+
+
+<!-- Custom Theme JavaScript -->
+
+<script src="/js/hux-blog.min.js"></script>
+
+
+<!-- Search -->
+
+<script src="/js/search.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("https://meetonfriday.com/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+<!-- Search -->
+
+    <script type="text/javascript">      
+        var search_path = "search.xml";
+        if (search_path.length == 0) {
+            search_path = "search.xml";
+        }
+    var path = "/" + search_path;
+    searchFunc(path, 'local-search-input', 'local-search-result');
+    </script>
+
+
+<!-- busuanzi -->
+<!--<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>-->
+<script async src="//cdn.jsdelivr.net/npm/busuanzi@2.3.0"></script>
+
+
+
+
+	<a id="rocket" href="#top" class=""></a>
+	<script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script>
+    <script type="text/javascript" src="/js/toc.js?v=1.0.0" async=""></script>
+
+    
+        <!-- background effects line -->
+        
+        <!-- background effects end -->
+    
+    
+    <!-- background animation-->>
+    <!--<script size="50" alpha='0.3' zIndex="-999" src="/js/ribbonStatic.js"></script>-->
+    
+        <script src="/js/ribbonDynamic.js"></script>
+    
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script>
+            window.imageLazyLoadSetting = {
+                isSPA: false,
+                processImages: null,
+            };
+        </script><script>window.addEventListener("load",function(){var t=/\.(gif|jpg|jpeg|tiff|png)$/i,r=/^data:image\/[a-z]+;base64,/;Array.prototype.slice.call(document.querySelectorAll("img[data-original]")).forEach(function(a){var e=a.parentNode;"A"===e.tagName&&(e.href.match(t)||e.href.match(r))&&(e.href=a.dataset.original)})});</script><script>!function(n){n.imageLazyLoadSetting.processImages=o;var i=n.imageLazyLoadSetting.isSPA,r=Array.prototype.slice.call(document.querySelectorAll("img[data-original]"));function o(){i&&(r=Array.prototype.slice.call(document.querySelectorAll("img[data-original]")));for(var t,e,a=0;a<r.length;a++)t=r[a],0<=(e=t.getBoundingClientRect()).bottom&&0<=e.left&&e.top<=(n.innerHeight||document.documentElement.clientHeight)&&function(){var t,e,n,i,o=r[a];t=o,e=function(){r=r.filter(function(t){return o!==t})},n=new Image,i=t.getAttribute("data-original"),n.onload=function(){t.src=i,e&&e()},n.src=i}()}o(),n.addEventListener("scroll",function(){var t,e;t=o,e=n,clearTimeout(t.tId),t.tId=setTimeout(function(){t.call(e)},500)})}(this);</script></body>
+
+</html>

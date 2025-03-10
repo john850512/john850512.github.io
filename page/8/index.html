@@ -1,0 +1,1440 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<!-- Head tag -->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="baidu-site-verification" content="093lY4ziMu" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="keyword"  content="programming, study, daily, entertainment">
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="星期五。見面">
+    <meta property="og:locale" content="zh-TW" />
+    
+    <meta property="og:title" content="星期五。見面 - 程式 | 學習 | 日記 | 玩樂" />
+    
+    
+    <meta property="og:description" content="John的個人部落格，不定時撰寫一些技術文章(Programming, Machine Learning, Deep Learning)和生活札記。" />
+    <meta name="description" content="John的個人部落格，不定時撰寫一些技術文章(Programming, Machine Learning, Deep Learning)和生活札記。">
+    
+    
+    <meta property="og:image" content="/img/avatar.jpg" />
+    
+
+    <link rel="shortcut icon" href="/img/avatar.jpg">
+    <!-- Place this tag in your head or just before your close body tag. -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <!--<link href='http://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>-->
+    <title>
+        
+          MeetonFriday - 程式 | 學習 | 日記 | 玩樂
+        
+    </title>
+    <!-- canonical -->
+    
+    
+      <link rel="canonical" href="https://meetonfriday.com/page/8/">
+    
+
+    <!-- Bootstrap Core CSS -->
+    
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+
+
+    <!-- Custom CSS --> 
+    
+<link rel="stylesheet" href="/css/dusign-dark.css">
+
+    
+<link rel="stylesheet" href="/css/dusign-common-dark.css">
+
+    <!-- 
+<link rel="stylesheet" href="/css/font-awesome.css">
+ -->
+    
+<link rel="stylesheet" href="/css/toc.css">
+
+
+    
+    <!-- Pygments Highlight CSS -->
+    
+<link rel="stylesheet" href="/css/highlight.css">
+
+
+    
+<link rel="stylesheet" href="/css/widget.css">
+
+
+    
+<link rel="stylesheet" href="/css/rocket.css">
+
+
+    
+<link rel="stylesheet" href="/css/signature.css">
+
+
+    
+<link rel="stylesheet" href="/css/fonts.googleapis.css">
+
+
+    <!-- <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.3.0/css/font-awesome.min.css">-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.min.css">
+    
+    <!-- Google Analytics -->
+    
+      <!-- <script>
+          // dynamic User by Hux
+          var _gaId = 'UA-163346001-1';
+          var _gaDomain = 'auto';
+      
+          // Originial
+          (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+          (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+          })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+      
+          ga('create', _gaId, _gaDomain);
+          ga('send', 'pageview');
+      </script> -->
+      
+      <!-- Global site tag (gtag.js) - Google Analytics -->
+      <script async src="https://www.googletagmanager.com/gtag/js?id=UA-163346001-1"></script>
+      <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+      
+        gtag('config', 'UA-163346001-1');
+      </script>
+      
+    <!-- google ad sense-->
+    <script data-ad-client="ca-pub-9561340457908416" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<meta name="generator" content="Hexo 4.2.1"><link rel="alternate" href="/atom.xml" title="星期五。見面" type="application/atom+xml">
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+	<!-- Modified by Yu-Hsuan Yen -->
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        
+            
+                background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.5)), url('/img/header_img/header-bg.jpg')
+            
+        
+    }
+    
+</style>
+
+<header class="intro-header" >
+    <!-- Signature -->
+    <div id="signature">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                
+                    <div class="site-heading">
+                        <h1>星期五。見面</h1>
+                        <!--<hr class="small">-->
+                        <span id="subdusi" class="subheading">程式 | 學習 | 日記 | 玩樂</span>
+                    </div>
+                
+
+                </div>
+            </div>
+        </div>      
+    </div>
+
+    
+        
+            <div class="waveWrapper">
+                <div class="wave wave_before" style="background-image: url('/img/wave-dark.png')"></div>
+                <div class="wave wave_after" style="background-image: url('/img/wave-dark.png')"></div>
+            </div>
+        
+    
+</header>
+
+	
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">星期五。見面</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archive/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/categories/">Categories</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/reading/">Reading</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+    
+    <!-- Main Content -->
+    <!-- Main Content -->
+<div class="container">
+    <div class="row">
+        
+
+    <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-1
+                col-md-8 col-md-offset-1
+                col-sm-12
+                col-xs-12
+            ">
+                <!-- Top -->
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+        <div class="post-preview">
+            <!-- <a href="/posts/aa55d3f9/"> -->
+            <h2 class="post-title">
+                <img class="top_logo" src="/img/tp.png"/>
+                &nbsp;&nbsp;&nbsp;&nbsp;[論文速速讀]系列文章介紹
+            </h2>
+            <h3 class="post-subtitle">
+                
+            </h3>
+            <div class="post-content-preview">
+                <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>論文速速讀系列是從今年四月開始，我開始寫一些論文的中文讀書筆記，還記得第一篇是<a href="https://meetonfriday.com/posts/98f60d1d/">[論文速速讀]ReZero is All You Need: Fast Convergence at Large Depth</a>，之後發現儘管自己已經陸續產出了幾篇文章，可是好像都沒正式的跟大家介紹這系列文章的由來xD</p>
+<p>所以這篇文章就是來講講這系列文章到底是什麼，以及我會和會想寫這些文章。</p>
+<h2 id="論文速速讀系列是什麼"><a href="#論文速速讀系列是什麼" class="headerlink" title="論文速速讀系列是什麼?"></a>論文速速讀系列是什麼?</h2><p>由於在AI領域每年總是有一些非常重大的突破和應用，如果跟不上潮流很有可能就會錯失許多機會。例如，對NLP領域熟悉的話你一定聽過2013年的word2vec、2014年開始流行的attention、2018年的Bert…這些很有名的技術。</p>
+<p>還記得Bert剛出的時候我好像剛進碩士實驗室，當時只知道這個技術屌打了當時一堆NLP的研究，但我想也想不到兩年後Bert已經造成如此大的影響力，一堆基於Bert的變形應用在各大領域上都取得了非常優異的結果。</p>
+<p>因此，我想要藉由這系列的文章讓自己能夠更加快速的了解AI的新技術和研究，同時逼迫自己看論文xD</p>
+            </div>
+
+            <div class="post-read-more">
+                <a href="/posts/aa55d3f9/">繼續閱讀</a>
+            </div>       
+
+            <!-- </a> -->
+            
+                <p class="post-meta">
+                    Posted by John on
+                    2020-07-09
+                </p>
+            
+
+        </div>
+        <hr>
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+        <div class="post-preview">
+            <!-- <a href="/posts/85f1c2a/"> -->
+            <h2 class="post-title">
+                <img class="top_logo" src="/img/tp.png"/>
+                &nbsp;&nbsp;&nbsp;&nbsp;[課程筆記]課程筆記系列總覽
+            </h2>
+            <h3 class="post-subtitle">
+                
+            </h3>
+            <div class="post-content-preview">
+                <p>本文記錄了自己在上課時所記錄的一些課程筆記，可以透過這邊文章連結到所有以往發過的課程筆記文章。</p>
+<p><img src="https://res.cloudinary.com/meet-on-friday/image/upload/c_scale,w_400/v1605107656/headerimage/001_yqduwu_c28mgu.png" alt=""></p>
+            </div>
+
+            <div class="post-read-more">
+                <a href="/posts/85f1c2a/">繼續閱讀</a>
+            </div>       
+
+            <!-- </a> -->
+            
+                <p class="post-meta">
+                    Posted by John on
+                    2021-01-24
+                </p>
+            
+
+        </div>
+        <hr>
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+
+<!-- Main Content -->
+
+    
+
+        <div class="post-preview">
+            <!-- <a href="/posts/e54c12ea/"> -->
+            <h2 class="post-title">
+                [論文速速讀]ImageNet Classification with Deep Convolutional Neural Networks
+            </h2>
+            <h3 class="post-subtitle">
+                
+            </h3>
+            <div class="post-content-preview">
+                <p>〖想觀看更多中文論文導讀，至<a href="https://meetonfriday.com/posts/aa55d3f9/">[論文速速讀]系列文章介紹</a>可以看到目前已發布的所有文章！〗</p>
+<p>paper: <a href="https://papers.nips.cc/paper/4824-imagenet-classification-with-deep-convolutional-neural-networks.pdf" target="_blank" rel="noopener">https://papers.nips.cc/paper/4824-imagenet-classification-with-deep-convolutional-neural-networks.pdf</a></p>
+<p>AlexNet，2012年的ILSVRC冠軍，也是首度使用了CNN模型屌打傳統的ML方法，讓大家開始脫離手工提取特徵的時代。</p>
+<p>這一篇只有9頁，對比於上一篇LeNet，真是感激萬分。</p>
+<h2 id="Abstract"><a href="#Abstract" class="headerlink" title="Abstract"></a>Abstract</h2><blockquote>
+<p>To make training faster, we used non-saturating neurons and a very efficient GPU implementation of the convolution operation. To reduce overfitting in the fully-connected layers we employed a recently-developed regularization method called “dropout” that proved to be very effective.</p>
+</blockquote>
+<p>摘要主要點出了幾個使用到的技術:</p>
+<ul>
+<li>non-saturating neurons: 就是<strong>ReLU</strong> La~</li>
+<li>effifient GPU implementation: 各位當時的設備很可憐阿QQ GPU的memory非常少R，所以他們把model分到兩個不同的gpu，然後再去共享data</li>
+<li><strong>使用了dropout來避免overfitting</strong></li>
+</ul>
+            </div>
+            <div class="post-read-more">
+                <a href="/posts/e54c12ea/">繼續閱讀</a>
+            </div>       
+
+            <!-- </a> -->
+            
+                <p class="post-meta">
+                    Posted by John on
+                    2020-07-13
+                </p>
+            
+
+        </div>
+        <hr>
+
+    
+
+    
+
+        <div class="post-preview">
+            <!-- <a href="/posts/d5321308/"> -->
+            <h2 class="post-title">
+                [論文速速讀]Gradient Based Learning Applied to Document Recognition
+            </h2>
+            <h3 class="post-subtitle">
+                
+            </h3>
+            <div class="post-content-preview">
+                <p>〖想觀看更多中文論文導讀，至<a href="https://meetonfriday.com/posts/aa55d3f9/">[論文速速讀]系列文章介紹</a>可以看到目前已發布的所有文章！〗</p>
+<p>paper: <a href="http://vision.stanford.edu/cs598_spring07/papers/Lecun98.pdf" target="_blank" rel="noopener">http://vision.stanford.edu/cs598_spring07/papers/Lecun98.pdf</a></p>
+<p><strong>CNN系列的開山始祖，LeNet(因為作者是Yann LeCun)</strong>，被應用在手寫辨識上，簡單的幾層Conv就可以在MNIST dataset上達到90%以上的Acc.。至今已經有兩萬以上的cite數量。</p>
+<h2 id="Abstract"><a href="#Abstract" class="headerlink" title="Abstract"></a>Abstract</h2><blockquote>
+<p>Multilayer neural networks trained with the back-propagation algorithm constitute the best example of a successful gradient-based learning technique. Given an appropriate network architecture, gradient-based learning algorithms can be used to synthesize a complex decision surface that can classify high-dimensional patterns, such as handwritten characters, with minimal preprocessing.</p>
+</blockquote>
+<p>基於gradient based learning的多層神經網路可以合成一個複雜的decision surface，使得在高維下也能夠很好地區分不同的pattern，例如手寫辨識，並且相較於傳統的技術，不需要太多的前處理就可以做得很好。</p>
+<p>這篇paper的貢獻可以簡述成下列幾項:</p>
+<ul>
+<li>傳統的手寫辨識技術需要較多的前處理來提取特徵，透過自動學習來建立一個pattern recognition systems，降低前處理的步驟</li>
+<li>提出了基於梯度學習的神經網路，並和當前手寫辨識的各類方法進行了比較</li>
+<li>手寫辨識系統不只有辨識的部分，還包含了句子的分段，paper中也提出設計了一個通用化的架構: graph transformer networks (GTN’s)來做這件事。</li>
+</ul>
+<p>這篇文章中會聚焦在Deep learning的部分，關於後面的系統架構不會做太多的介紹，畢竟長達46頁看得頭很痛QQ</p>
+            </div>
+            <div class="post-read-more">
+                <a href="/posts/d5321308/">繼續閱讀</a>
+            </div>       
+
+            <!-- </a> -->
+            
+                <p class="post-meta">
+                    Posted by John on
+                    2020-07-12
+                </p>
+            
+
+        </div>
+        <hr>
+
+    
+
+    
+
+    
+
+        <div class="post-preview">
+            <!-- <a href="/posts/abd81088/"> -->
+            <h2 class="post-title">
+                [論文速速讀]Efficient Estimation of Word Representation in Vector Space
+            </h2>
+            <h3 class="post-subtitle">
+                
+            </h3>
+            <div class="post-content-preview">
+                <p>〖想觀看更多中文論文導讀，至<a href="https://meetonfriday.com/posts/aa55d3f9/">[論文速速讀]系列文章介紹</a>可以看到目前已發布的所有文章！〗</p>
+<p>這篇就是<strong>鼎鼎大名的word2vec，在2013年由google提出</strong>。</p>
+<p>Word2vec是一種word embedding技術，為什麼需要word embedding? 因為這樣可以<strong>將NLP task的word轉成一個numeric vector，然後加以進行分析和運算</strong>。</p>
+<p>paper: <a href="https://arxiv.org/pdf/1301.3781.pdf" target="_blank" rel="noopener">Efficient Estimation of Word Representation in Vector Space
+</a></p>
+<h2 id="Abstract"><a href="#Abstract" class="headerlink" title="Abstract"></a>Abstract</h2><blockquote>
+<p>We propose two novel model architectures for computing continuous vector representations of words from very large data sets. The quality of these representations is measured in a word similarity task, and the results are compared to the previously best performing techniques based on different types of neural networks. We observe large improvements in accuracy at much lower computational cost, i.e. it takes less than a day to learn high quality word vectors from a 1.6 billion words data set. Furthermore, we show that these vectors provide state-of-the-art performance on our test set for measuring syntactic and semantic word similarities.</p>
+</blockquote>
+<p>word2vec的paper，提出了Skip-gram跟CBOW，相較於傳統的方法，能夠大幅提高訓練速度。</p>
+            </div>
+            <div class="post-read-more">
+                <a href="/posts/abd81088/">繼續閱讀</a>
+            </div>       
+
+            <!-- </a> -->
+            
+                <p class="post-meta">
+                    Posted by John on
+                    2020-06-29
+                </p>
+            
+
+        </div>
+        <hr>
+
+    
+
+    
+
+        <div class="post-preview">
+            <!-- <a href="/posts/aa73b0a2/"> -->
+            <h2 class="post-title">
+                [論文速速讀]PEGASUS: Pre-training with Extracted Gap-sentences for Abstractive Summarization
+            </h2>
+            <h3 class="post-subtitle">
+                
+            </h3>
+            <div class="post-content-preview">
+                <p>〖想觀看更多中文論文導讀，至<a href="https://meetonfriday.com/posts/aa55d3f9/">[論文速速讀]系列文章介紹</a>可以看到目前已發布的所有文章！〗</p>
+<p>paper: <a href="https://arxiv.org/pdf/1912.08777.pdf" target="_blank" rel="noopener">https://arxiv.org/pdf/1912.08777.pdf</a></p>
+<p>Google ICML 2020的paper，一打開發現有54頁…哎呀我的媽</p>
+<p>好險後面都是附錄，實際上只有8頁而已。</p>
+<h2 id="Abstract"><a href="#Abstract" class="headerlink" title="Abstract"></a>Abstract</h2><blockquote>
+<p>　Recent work pre-training Transformers with self-supervised objectives on large text corpora has shown great success when fine-tuned on downstream NLP tasks including text summarization. However, pre-training objectives tailored for abstractive text summarization have not been explored. Furthermore there is a lack of systematic evaluation across diverse domains.</p>
+</blockquote>
+<p>基於transformers的self-supervised模型(bert以及相關變形)已經橫掃一遍了NLP的應用，透過bert的pretrained model來fine tune後續的task已經被證實可以達到很好的結果，包含文本摘要。不過在抽象式文本摘要(abstractive text summarization)的部分還做得不夠好。所以這篇就是提出一個NLP的pre-trained model來做這件事。</p>
+<p>抽象式文本摘要是啥，跟一般文本摘要又差在哪裡? 可以看下面Introduction一開始的介紹。</p>
+            </div>
+            <div class="post-read-more">
+                <a href="/posts/aa73b0a2/">繼續閱讀</a>
+            </div>       
+
+            <!-- </a> -->
+            
+                <p class="post-meta">
+                    Posted by John on
+                    2020-06-24
+                </p>
+            
+
+        </div>
+        <hr>
+
+    
+
+    
+
+        <div class="post-preview">
+            <!-- <a href="/posts/c41c815d/"> -->
+            <h2 class="post-title">
+                [DL]深入了解gradient descent
+            </h2>
+            <h3 class="post-subtitle">
+                
+            </h3>
+            <div class="post-content-preview">
+                <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>“在深度學習中，你(設計)的(損失)函數是怎麼更新的，他可微嗎?”</p>
+<p>最近有聽到有人提了這個問題，一開始聽到這個問題也沒太放在心上，由於deep learning framework(Tensorflow, Pytorch)的便利性，大家可以不用管求導這件事，開開心心寫code。</p>
+<p>不過後來想了想這的確是個可以來認真思考的事情，畢竟是走這行的，總不能一直都只依靠工具而不去了解背後的原理。於是努力上網東找西找拼湊了一套我覺得還算合理的說法，不過畢竟我不是數學系背景出生，如果有講錯的地方歡迎提出指教~</p>
+<h2 id="How-Deep-Learning-Update"><a href="#How-Deep-Learning-Update" class="headerlink" title="How Deep Learning Update?"></a>How Deep Learning Update?</h2><p>我們知道，一個Deep learning model的參數量往往很大，在更新過程中是透過我們定義好的loss function(可能是cross-entropy或mse)來做gradient descent，gradient descent會去算每個參數的gradient，搭配learning rate來更新這些參數，使得讓模型越來越好。</p>
+<p>不過算gradient這個動作在tensorflow/pytorch都自動幫我們算好了，以pytorch為例，我們可以從他的code來看到他更新的步驟(可以參考我寫的另一篇:<a href="https://meetonfriday.com/posts/18392404/">Pytorch的zero_grad()和backward()使用技巧</a>)</p>
+<h2 id="Why-Gradient-Descent"><a href="#Why-Gradient-Descent" class="headerlink" title="Why Gradient Descent?"></a>Why Gradient Descent?</h2><p><strong>我們知道沿著gradient的方向走可以讓模型越來越好</strong>，但為什麼?</p>
+<p>首先先來快速了解gradient是什麼，以下介紹引用自<a href="https://zh.wikipedia.org/wiki/%E6%A2%AF%E5%BA%A6" target="_blank" rel="noopener">wiki</a>: </p>
+            </div>
+            <div class="post-read-more">
+                <a href="/posts/c41c815d/">繼續閱讀</a>
+            </div>       
+
+            <!-- </a> -->
+            
+                <p class="post-meta">
+                    Posted by John on
+                    2020-06-15
+                </p>
+            
+
+        </div>
+        <hr>
+
+    
+
+
+<!-- Pager -->
+<ul class="pager">
+    
+        <li class="previous">
+            <a href="/page/7/">&larr; Newer Posts</a>
+        </li>
+    
+    
+        <li class="next">
+            <a href="/page/9/">Older Posts &rarr;</a>
+        </li>
+    
+</ul>
+
+
+
+            </div>
+
+    <!-- Sidebar Container -->
+            <div class="
+                col-lg-3 col-lg-offset-0
+                col-md-3 col-md-offset-0
+                col-sm-12
+                col-xs-12
+                sidebar-container
+            ">
+                
+    
+<!--
+<h5>SEARCH</h5>
+<div class="search-article" class="tags">
+	<input id="search-kw" type="text" name="search_article" placeholder="Enter keywords for search" />
+	<div class="search-img">
+		<img 
+			src="/img/search.png" 
+			alt="search" 
+			onMouseOver="this.src='/img/search-focus.png'" 
+			onMouseOut="this.src='/img/search.png'"/>
+	</div>
+</div>-->
+
+<h5>SEARCH</h5>
+<div id="site_search">
+	<div class="form-group">
+		<input type="text" id="local-search-input" name="q" results="0" placeholder="search" class="st-search-input st-default-search-input form-control"/>
+	</div>  
+	<div id="local-search-result"></div>
+</div>
+
+    <hr>
+
+    <!-- Short About -->
+<section class="visible-md visible-lg">
+    <h5>ABOUT ME</h5>
+    <div class="short-about">
+
+        
+            <img id = "avatar_pic" src="/img/avatar.jpg" />
+        
+
+        
+            <p>Just John, 就是醬</p>
+        
+
+        <!-- SNS Link -->
+        <ul class="list-inline">
+            
+                <li>
+                    <a target="_blank"  href="https://github.com/john850512">
+                        <span class="fa-stack fa-lg">
+                            <i class="fa fa-circle fa-stack-2x"></i>
+                            <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                        </span>
+                    </a>
+                </li>
+            
+
+            
+                <li>
+                    <a target="_blank"  href="https://www.linkedin.com/in/john85051232">
+                        <span class="fa-stack fa-lg">
+                            <i class="fa fa-circle fa-stack-2x"></i>
+                            <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
+                        </span>
+                    </a>
+                </li>
+            
+
+            
+                <li>
+                    <a target="_blank"  href="https://www.facebook.com/meetonfridayyy">
+                        <span class="fa-stack fa-lg">
+                            <i class="fa fa-circle fa-stack-2x"></i>
+                            <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                        </span>
+                    </a>
+                </li>
+            
+
+            
+                <li>
+                    <a target="_blank"  href="https://mail.google.com/mail/?view=cm&fs=1&to=john85051232@gmail.com">
+                        <span class="fa-stack fa-lg">
+                            <i class="fa fa-circle fa-stack-2x"></i>
+                            <i class="fa fa-envelope-o fa-stack-1x fa-inverse"></i>
+                        </span>
+                    </a>
+                </li>
+            
+            
+            
+
+            
+
+            
+
+            
+
+        </ul>
+    </div>
+</section>
+
+    <hr>
+
+    <!-- Categories -->
+
+    <h5>categories</h5>
+    <div class="widget">
+      <ul>
+        
+          <!-- 【論文速速讀】 -->
+          
+            <li><a href="/categories/#【論文速速讀】">【論文速速讀】(23)</a></li>
+           
+        
+          <!-- 【課程筆記】 -->
+          
+            <li><a href="/categories/#【課程筆記】">【課程筆記】(5)</a></li>
+           
+        
+          <!-- 【Linux-Kernel慢慢學】 -->
+          
+            <li><a href="/categories/#【Linux Kernel慢慢學】">【Linux Kernel慢慢學】(8)</a></li>
+           
+        
+          <!-- study -->
+          
+            <li><a href="/categories/#study">study(17)</a></li>
+           
+        
+          <!-- reading -->
+          
+            <li><a href="/categories/#reading">reading(3)</a></li>
+           
+        
+          <!-- programming -->
+          
+            <li><a href="/categories/#programming">programming(68)</a></li>
+           
+        
+          <!-- daily -->
+          
+            <li><a href="/categories/#daily">daily(47)</a></li>
+           
+        
+      </ul> 
+    </div>
+
+
+    <hr>
+
+    <!-- Featured Tags -->
+
+<section>
+    <!-- no hr -->
+    <h5>FEATURED TAGS</h5>
+    <div class="tags">
+        
+            
+            <a href="/tags/#c" title="c" rel="40">c</a>
+            
+        
+            
+            <a href="/tags/#c++" title="c++" rel="23">c++</a>
+            
+        
+            
+            <a href="/tags/#uva" title="uva" rel="16">uva</a>
+            
+        
+            
+            <a href="/tags/#conference" title="conference" rel="4">conference</a>
+            
+        
+            
+            <a href="/tags/#ncpc" title="ncpc" rel="4">ncpc</a>
+            
+        
+            
+            <a href="/tags/#competitive programming" title="competitive programming" rel="4">competitive programming</a>
+            
+        
+            
+            <a href="/tags/#competition" title="competition" rel="4">competition</a>
+            
+        
+            
+        
+            
+        
+            
+            <a href="/tags/#recommendation" title="recommendation" rel="6">recommendation</a>
+            
+        
+            
+            <a href="/tags/#c#" title="c#" rel="4">c#</a>
+            
+        
+            
+            <a href="/tags/#unity" title="unity" rel="5">unity</a>
+            
+        
+            
+        
+            
+        
+            
+            <a href="/tags/#travel" title="travel" rel="5">travel</a>
+            
+        
+            
+        
+            
+        
+            
+            <a href="/tags/#deep learning" title="deep learning" rel="51">deep learning</a>
+            
+        
+            
+            <a href="/tags/#machine learning" title="machine learning" rel="14">machine learning</a>
+            
+        
+            
+        
+            
+            <a href="/tags/#python" title="python" rel="28">python</a>
+            
+        
+            
+        
+            
+            <a href="/tags/#pytorch" title="pytorch" rel="8">pytorch</a>
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+            <a href="/tags/#linux kernel" title="linux kernel" rel="15">linux kernel</a>
+            
+        
+            
+        
+            
+            <a href="/tags/#paper" title="paper" rel="23">paper</a>
+            
+        
+            
+        
+            
+        
+            
+            <a href="/tags/#study" title="study" rel="5">study</a>
+            
+        
+            
+        
+    </div>
+</section>
+
+    <hr>
+
+    
+  <h5>VISITORS</h5>
+  <div class="widget">
+    <span>
+    	Viewed <b><i><span id="busuanzi_value_site_pv"><i class="fa fa-spinner fa-spin"></i></span></i></b> Times
+	</span>
+	<br/>
+	<span>
+		<b><i><span id="busuanzi_value_site_uv"><i class="fa fa-spinner fa-spin"></i></span></i></b> Visitors In Total
+	</span>
+  </div>
+
+    <hr>
+
+    
+  <h5>RECENT POSTS</h5>
+  <div class="widget">
+    <ul>
+      
+        <li>
+          <a href="/posts/666bbf67/">Google從Android 15 (Android-V)開始將淘汰NNAPI改推LiteRT (TensorFlow Lite)</a>
+        </li>
+      
+        <li>
+          <a href="/posts/edcd30e6/">[課程筆記]Linux Driver正點原子課程筆記5 - 新字元設備驅動實驗</a>
+        </li>
+      
+        <li>
+          <a href="/posts/638f6f64/">[讀書心得]跟著柴鼠學FQ 做自己的提款機</a>
+        </li>
+      
+        <li>
+          <a href="/posts/5cb74faa/">令人搖頭的羅技產品品質? G413鍵盤出保紀錄(2021年)</a>
+        </li>
+      
+        <li>
+          <a href="/posts/dedf856f/">[讀書心得]35歲，為什麼還沒被重用？</a>
+        </li>
+      
+    </ul>
+  </div>
+
+    <hr>
+
+    
+    <h5>ARCHIVES</h5>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/#2025">2025</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/#2021">2021</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/#2020">2020</a><span class="archive-list-count">61</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/#2019">2019</a><span class="archive-list-count">23</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/#2018">2018</a><span class="archive-list-count">24</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/#2017">2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/#2016">2016</a><span class="archive-list-count">37</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/#2015">2015</a><span class="archive-list-count">6</span></li></ul>
+    </div>
+
+
+    <hr>
+
+
+            </div>
+
+        
+    </div>
+</div>
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/john850512">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://www.linkedin.com/in/john85051232">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                
+                    <li>
+                        <a target="_blank" href="https://www.facebook.com/meetonfridayyy">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+                
+                    <li>
+                        <a target="_blank"  href="https://mail.google.com/mail/?view=cm&fs=1&to=john85051232@gmail.com">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-envelope-o fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+                
+                
+
+                
+
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; John 2025 
+                    <br>
+                    Powered by 
+                    <a href="https://github.com/john850512/hexo-theme-jiji" target="_blank" rel="noopener">
+                        <i>hexo-theme-jiji</i>
+                    </a> | 
+                    <iframe name="star" style="margin-left: 2px; margin-bottom:-5px;" frameborder="0" scrolling="0"
+                        width="100px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=john850512&repo=hexo-theme-jiji&type=star&count=true">
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+
+</footer>
+
+<!-- jQuery -->
+
+<script src="/js/jquery.min.js"></script>
+
+
+<!-- Bootstrap Core JavaScript -->
+
+<script src="/js/bootstrap.min.js"></script>
+
+
+<!-- Custom Theme JavaScript -->
+
+<script src="/js/hux-blog.min.js"></script>
+
+
+<!-- Search -->
+
+<script src="/js/search.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("https://meetonfriday.com/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+<!-- Search -->
+
+    <script type="text/javascript">      
+        var search_path = "search.xml";
+        if (search_path.length == 0) {
+            search_path = "search.xml";
+        }
+    var path = "/" + search_path;
+    searchFunc(path, 'local-search-input', 'local-search-result');
+    </script>
+
+
+<!-- busuanzi -->
+<!--<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>-->
+<script async src="//cdn.jsdelivr.net/npm/busuanzi@2.3.0"></script>
+
+
+
+
+	<a id="rocket" href="#top" class=""></a>
+	<script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script>
+    <script type="text/javascript" src="/js/toc.js?v=1.0.0" async=""></script>
+
+    
+        <!-- background effects line -->
+        
+        <!-- background effects end -->
+    
+    
+    <!-- background animation-->>
+    <!--<script size="50" alpha='0.3' zIndex="-999" src="/js/ribbonStatic.js"></script>-->
+    
+        <script src="/js/ribbonDynamic.js"></script>
+    
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script>
+            window.imageLazyLoadSetting = {
+                isSPA: false,
+                processImages: null,
+            };
+        </script><script>window.addEventListener("load",function(){var t=/\.(gif|jpg|jpeg|tiff|png)$/i,r=/^data:image\/[a-z]+;base64,/;Array.prototype.slice.call(document.querySelectorAll("img[data-original]")).forEach(function(a){var e=a.parentNode;"A"===e.tagName&&(e.href.match(t)||e.href.match(r))&&(e.href=a.dataset.original)})});</script><script>!function(n){n.imageLazyLoadSetting.processImages=o;var i=n.imageLazyLoadSetting.isSPA,r=Array.prototype.slice.call(document.querySelectorAll("img[data-original]"));function o(){i&&(r=Array.prototype.slice.call(document.querySelectorAll("img[data-original]")));for(var t,e,a=0;a<r.length;a++)t=r[a],0<=(e=t.getBoundingClientRect()).bottom&&0<=e.left&&e.top<=(n.innerHeight||document.documentElement.clientHeight)&&function(){var t,e,n,i,o=r[a];t=o,e=function(){r=r.filter(function(t){return o!==t})},n=new Image,i=t.getAttribute("data-original"),n.onload=function(){t.src=i,e&&e()},n.src=i}()}o(),n.addEventListener("scroll",function(){var t,e;t=o,e=n,clearTimeout(t.tId),t.tId=setTimeout(function(){t.call(e)},500)})}(this);</script></body>
+
+</html>

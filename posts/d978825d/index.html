@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<!-- Head tag -->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="baidu-site-verification" content="093lY4ziMu" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="keyword"  content="programming, study, daily, entertainment">
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="星期五。見面">
+    <meta property="og:locale" content="zh-TW" />
+    
+    <meta property="og:title" content="[論文速速讀]Attentive CutMix: An Enhanced Data Augmentation Approach for Deep Learning Based Image Classification" />
+    
+    
+    <meta property="og:description" content="CutMix的進化版，以往的data augumentation都是random operation。Attentive CutMix透過取出中間層的attention map來挑選最具有解釋性的區域進行CutMix。" />
+    <meta name="description" content="CutMix的進化版，以往的data augumentation都是random operation。Attentive CutMix透過取出中間層的attention map來挑選最具有解釋性的區域進行CutMix。">
+    
+    
+    <meta property="og:image" content="https://i.imgur.com/mfFweSp.png" />
+    
+
+    <link rel="shortcut icon" href="/img/avatar.jpg">
+    <!-- Place this tag in your head or just before your close body tag. -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <!--<link href='http://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>-->
+    <title>
+        
+          [論文速速讀]Attentive CutMix: An Enhanced Data Augmentation Approach for Deep Learning Based Image Classification - MeetonFriday
+        
+    </title>
+    <!-- canonical -->
+    
+    
+      <link rel="canonical" href="https://meetonfriday.com/posts/d978825d/">
+    
+
+    <!-- Bootstrap Core CSS -->
+    
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+
+
+    <!-- Custom CSS --> 
+    
+<link rel="stylesheet" href="/css/dusign-dark.css">
+
+    
+<link rel="stylesheet" href="/css/dusign-common-dark.css">
+
+    <!-- 
+<link rel="stylesheet" href="/css/font-awesome.css">
+ -->
+    
+<link rel="stylesheet" href="/css/toc.css">
+
+
+    
+    <!-- Pygments Highlight CSS -->
+    
+<link rel="stylesheet" href="/css/highlight.css">
+
+
+    
+<link rel="stylesheet" href="/css/widget.css">
+
+
+    
+<link rel="stylesheet" href="/css/rocket.css">
+
+
+    
+<link rel="stylesheet" href="/css/signature.css">
+
+
+    
+<link rel="stylesheet" href="/css/fonts.googleapis.css">
+
+
+    <!-- <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.3.0/css/font-awesome.min.css">-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.min.css">
+    
+    <!-- Google Analytics -->
+    
+      <!-- <script>
+          // dynamic User by Hux
+          var _gaId = 'UA-163346001-1';
+          var _gaDomain = 'auto';
+      
+          // Originial
+          (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+          (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+          })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+      
+          ga('create', _gaId, _gaDomain);
+          ga('send', 'pageview');
+      </script> -->
+      
+      <!-- Global site tag (gtag.js) - Google Analytics -->
+      <script async src="https://www.googletagmanager.com/gtag/js?id=UA-163346001-1"></script>
+      <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+      
+        gtag('config', 'UA-163346001-1');
+      </script>
+      
+    <!-- google ad sense-->
+    <script data-ad-client="ca-pub-9561340457908416" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<meta name="generator" content="Hexo 4.2.1"><link rel="alternate" href="/atom.xml" title="星期五。見面" type="application/atom+xml">
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+	<!-- Modified by Yu-Hsuan Yen -->
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        
+            
+                background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.5)), url('/img/header_img/header-bg.jpg')
+            
+        
+    }
+    
+</style>
+
+<header class="intro-header" >
+    <!-- Signature -->
+    <div id="signature">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                
+                    <div class="post-heading">
+                        <div class="tags">
+                            
+                              <a class="tag" href="/tags/#deep learning" title="deep learning">deep learning</a>
+                            
+                              <a class="tag" href="/tags/#paper" title="paper">paper</a>
+                            
+                        </div>
+                        <h1>[論文速速讀]Attentive CutMix: An Enhanced Data Augmentation Approach for Deep Learning Based Image Classification</h1>
+                        <h2 class="subheading"></h2>
+                        <span class="meta">
+                            Posted by John on
+                            2020-04-26
+                        </span>
+
+                        
+                            <div class="blank_box"></div>
+                            <span class="meta">
+                                Words <span class="post-count">1.1k</span> and
+                                Reading Time <span class="post-count">5</span> Minutes
+                            </span>
+                            <div class="blank_box"></div>
+                            <!-- 不蒜子统计 start -->
+                            <span class="meta">
+                                Viewed <span id="busuanzi_value_page_pv"><i class="fa fa-spinner fa-spin"></i></span> Times
+                            </span>
+                            <!-- 不蒜子统计 end -->
+                        
+
+                    </div>
+                
+
+                </div>
+            </div>
+        </div>      
+    </div>
+
+    
+        
+            <div class="waveWrapper">
+                <div class="wave wave_before" style="background-image: url('/img/wave-dark.png')"></div>
+                <div class="wave wave_after" style="background-image: url('/img/wave-dark.png')"></div>
+            </div>
+        
+    
+</header>
+
+	
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">星期五。見面</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archive/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/categories/">Categories</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/reading/">Reading</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+    
+    <!-- Main Content -->
+    <!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+            <!-- Post Container -->
+
+    
+        
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+        
+    
+
+                <p>〖想觀看更多中文論文導讀，至<a href="https://meetonfriday.com/posts/aa55d3f9/">[論文速速讀]系列文章介紹</a>可以看到目前已發布的所有文章！〗</p>
+<p>論文網址: <a href="https://arxiv.org/pdf/2003.13048.pdf" target="_blank" rel="noopener">https://arxiv.org/pdf/2003.13048.pdf</a></p>
+<h2 id="Abstract"><a href="#Abstract" class="headerlink" title="Abstract"></a>Abstract</h2><blockquote>
+<p> However, all of them perform this operation randomly, without capturing the most important region(s) within an object. In this paper, we propose Attentive CutMix, a naturally enhanced augmentation strategy based on CutMix [3]. In each training iteration, we choose the most descriptive regions based on the intermediate attention maps from a feature extractor, which enables searching for the most discriminative parts in an image.</p>
+</blockquote>
+<p>CutMix的進化版，以往的data augumentation都是random operation。Attentive CutMix透過取出中間層的attention map來挑選最具有解釋性的區域進行CutMix。</p>
+<h2 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h2><p>Attentive CutMix想要基於CutMix的情況下，找出最具代表性的region來進行替換。</p>
+<p>下圖高能，非戰鬥人員請迅速撤離<br><img src="https://meetonfriday.com/img/lazy-loading-animation.gif" data-original="https://i.imgur.com/mfFweSp.png" alt=""></p>
+<p>這已經沒在顧及動物的感受了…求那隻狗的心理面積…</p>
+<a id="more"></a>
+<blockquote>
+<p>Our goal is to learn a more robust network that can attend to the most important part(s) of an object with better recognition performance without incurring any additional testing costs. We achieve this by utilizing the attention maps generated from a pretrained network to guide the localization operation of cutting and pasting among training image pairs in CutMix.</p>
+<p>wherein we initially discern the most important parts from an object, then use cut and paste inspired from CutMix to generate a new image which helps the networks better attend to the local regions of an image.</p>
+</blockquote>
+<p>透過pretrained network來得到attention maps，所以並不會造成額外的cost(對於model本身)</p>
+<p>不過這個paper只在Cifar-100上進行了實驗而已。</p>
+<h2 id="Proposed-Approach"><a href="#Proposed-Approach" class="headerlink" title="Proposed Approach"></a>Proposed Approach</h2><h3 id="Algorithm"><a href="#Algorithm" class="headerlink" title="Algorithm"></a>Algorithm</h3><p><img src="https://meetonfriday.com/img/lazy-loading-animation.gif" data-original="https://i.imgur.com/LMdYdjO.png" alt=""></p>
+<p>Regularization的做法都跟CutMix一樣: 細節可以看<a href="https://meetonfriday.com/posts/b4202d1/">論文速速讀: CutMix: Regularization Strategy to Train Strong Classifiers with Localizable Features</a><br>$x\in R^{W\times H\times C}$是圖片, $y$是label，CutMix做的是合成兩張圖片$(x_A, y_A)$和$(x_B, y_B)$然後產生新圖片$(\tilde{x}, \tilde{y})$，透過以下公式:</p>
+<script type="math/tex; mode=display">\begin{aligned}\tilde{x}&=M\odot x_A+(1-M)\odot{x_B}\\\tilde{y}&=\lambda y_A+(1-\lambda)y_B\end{aligned}</script><ul>
+<li>$M\in {0,1}^{W\times H}$是一個binary mask，在bounding box內的值是0；否則是1</li>
+<li>$\odot$是element-wise multiplication</li>
+<li>combination ratio$\lambda$來自beta distribution $Beta(\alpha, \alpha)$<ul>
+<li>$\lambda$來自Mixup的原始paper</li>
+</ul>
+</li>
+</ul>
+<p>重點是patches怎麼選，在CutMix中是來自一個uniform distribution，不過在這篇用到了attention機制:</p>
+<blockquote>
+<p>We first obtain a heatmap (generally a 7×7 grid map) of the first image by passing it through a pretrained classification model like ResNet-50 and take out the final 7×7 output feature map. We then select the top “N” patches from this 7×7 grid as our attentive region patches to cut from the given image. Here N can range from 1 to 49 (i.e. the entire image itself). Later, we will present an ablation study on the number of attentive patches to be cut from a given image.</p>
+</blockquote>
+<p>透過將一張圖片餵到一個pretrained model，把最後一層的 7x7 feature map取出，選前N個patches，這篇提到N可以是1~49</p>
+<blockquote>
+<p>We then map the selected attentive patches back to the original image. For example, a single patch in a 7×7 grid would map back to a 32×32 image patch on a 224×224 size input image. The patches are cut from the first image and pasted onto the second image at their respective original locations, assuming both images are of the same size. The pair of training samples are randomly selected during each training phase. For the composite label, considering that we pick the top 6 attentive patches from a 7×7 grid, λ would then be 6 49 . Every image in the training batch is augmented with patches cutout from another randomly selected image in the original batch. Please refer Fig. 2 for an illustrative representation of our method.</p>
+</blockquote>
+<p>把attentive patches upsampling回原本的size，然後對應到相同的位置上蓋掉(如果大小相同)</p>
+<ul>
+<li>Ex: 對於224x224的image，7x7的每個patch都變回32x32</li>
+</ul>
+<p>而對於混和label則是根據使用了幾個patches，例如N=6則$\lambda=6/49$</p>
+<h3 id="Theoretical-Improvements-over-CutMix"><a href="#Theoretical-Improvements-over-CutMix" class="headerlink" title="Theoretical Improvements over CutMix"></a>Theoretical Improvements over CutMix</h3><p>講說其實CutMix雖然效果很好，但沒有好的理論根據佐證，其中一個假設是: <strong>在隨機蓋掉patch時可能蓋掉了圖像中的重點區塊，使得降低了模型對於特定主題的overfitting</strong>。</p>
+<p>在這個假設下，CutMix隨機蓋掉部分的做法就不合理了，蓋掉不重要的位置並不能幫助模型robust(例如補丁的其實是一個背景區塊)，這也是為什麼Attentive CutMix會被提出來的原因，<strong>希望蓋的部分都是重點部分</strong>。</p>
+<p>此外，Attentive CutMix的效用很大一部分取決於pretrained model能否有效的找出important part。</p>
+<h2 id="Experiments-and-Analysis"><a href="#Experiments-and-Analysis" class="headerlink" title="Experiments and Analysis"></a>Experiments and Analysis</h2><p>在Cifar-10和Cifar-100上做測試，Attentive CutMix棒棒哒<br><img src="https://meetonfriday.com/img/lazy-loading-animation.gif" data-original="https://i.imgur.com/vIgvYZU.png" alt=""></p>
+<p><img src="https://meetonfriday.com/img/lazy-loading-animation.gif" data-original="https://i.imgur.com/paxxSlj.png" alt=""></p>
+<h3 id="Ablation-Study"><a href="#Ablation-Study" class="headerlink" title="Ablation Study"></a>Ablation Study</h3><p>此外，N到底該選多少他們也做了實驗(N=1~15)，得到的結論是N=6的結果最好，不過</p>
+<ul>
+<li>過少(小於6)的話可能會造成重點區塊無法被遮蓋住</li>
+<li>過多的話則會造成遮蔽太多，使得模型沒辦法有效學習</li>
+</ul>
+<h3 id="Discussion"><a href="#Discussion" class="headerlink" title="Discussion"></a>Discussion</h3><p>需要額外的pretrained model，不過paper認為這項成本對於效能的提升來說小Case啦~</p>
+
+                <hr>
+                <!-- Pager -->
+                <ul class="pager">
+    
+    <li class="previous">
+        <a href="/posts/3a69a72/" data-toggle="tooltip" data-placement="top" title="Difference average method in sklearn.metrics.classification_report()">&larr; Newer Post</a>
+    </li>
+    
+    
+    <li class="next">
+        <a href="/posts/b4202d1/" data-toggle="tooltip" data-placement="top" title="[論文速速讀]CutMix: Regularization Strategy to Train Strong Classifiers with Localizable Features">Older Post &rarr;</a>
+    </li>
+    
+</ul>
+
+                <!-- tip start -->
+                
+
+                
+                <!-- tip end -->
+
+                <!-- Sharing -->
+                
+                <!-- Sharing -->
+
+                <!-- gitment start -->
+                
+                <!-- gitment end -->
+
+                <!-- 来必力City版安装代码 -->
+                
+                <!-- City版安装代码已完成 -->
+
+                <!-- disqus comment start -->
+                
+                <div class="comment">
+                    <div id="disqus_thread" class="disqus-thread"></div>
+                </div>
+                
+                <!-- disqus comment end -->
+            </div>
+            
+            <!-- Tabe of Content -->
+            <!-- Table of Contents -->
+
+    
+      
+        <aside id="sidebar">
+          <div id="toc" class="toc-article">
+          <strong class="toc-title">Contents</strong>
+          
+            <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Abstract"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">Abstract</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Introduction"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">Introduction</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Proposed-Approach"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">Proposed Approach</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Algorithm"><span class="toc-nav-number">3.1.</span> <span class="toc-nav-text">Algorithm</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Theoretical-Improvements-over-CutMix"><span class="toc-nav-number">3.2.</span> <span class="toc-nav-text">Theoretical Improvements over CutMix</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Experiments-and-Analysis"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">Experiments and Analysis</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Ablation-Study"><span class="toc-nav-number">4.1.</span> <span class="toc-nav-text">Ablation Study</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Discussion"><span class="toc-nav-number">4.2.</span> <span class="toc-nav-text">Discussion</span></a></li></ol></li></ol>
+          
+          </div>
+        </aside>
+      
+    
+
+        </div>
+    </div>
+</article>
+
+	
+    <!-- disqus embedded js code start (one page only need to embed once) -->	
+    <script type="text/javascript">	
+        /* * * CONFIGURATION VARIABLES * * */	
+        var disqus_shortname = "meetonfriday";	
+        var disqus_identifier = "https://meetonfriday.com/posts/d978825d/";	
+        var disqus_url = "https://meetonfriday.com/posts/d978825d/";	
+        (function() {	
+            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;	
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';	
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);	
+        })();	
+    </script>	
+    <!-- disqus embedded js code start end -->	
+    
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/john850512">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://www.linkedin.com/in/john85051232">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                
+                    <li>
+                        <a target="_blank" href="https://www.facebook.com/meetonfridayyy">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+                
+                    <li>
+                        <a target="_blank"  href="https://mail.google.com/mail/?view=cm&fs=1&to=john85051232@gmail.com">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-envelope-o fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+                
+                
+
+                
+
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; John 2025 
+                    <br>
+                    Powered by 
+                    <a href="https://github.com/john850512/hexo-theme-jiji" target="_blank" rel="noopener">
+                        <i>hexo-theme-jiji</i>
+                    </a> | 
+                    <iframe name="star" style="margin-left: 2px; margin-bottom:-5px;" frameborder="0" scrolling="0"
+                        width="100px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=john850512&repo=hexo-theme-jiji&type=star&count=true">
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+
+</footer>
+
+<!-- jQuery -->
+
+<script src="/js/jquery.min.js"></script>
+
+
+<!-- Bootstrap Core JavaScript -->
+
+<script src="/js/bootstrap.min.js"></script>
+
+
+<!-- Custom Theme JavaScript -->
+
+<script src="/js/hux-blog.min.js"></script>
+
+
+<!-- Search -->
+
+<script src="/js/search.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("https://meetonfriday.com/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+<!-- Search -->
+
+    <script type="text/javascript">      
+        var search_path = "search.xml";
+        if (search_path.length == 0) {
+            search_path = "search.xml";
+        }
+    var path = "/" + search_path;
+    searchFunc(path, 'local-search-input', 'local-search-result');
+    </script>
+
+
+<!-- busuanzi -->
+<!--<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>-->
+<script async src="//cdn.jsdelivr.net/npm/busuanzi@2.3.0"></script>
+
+
+
+
+	<a id="rocket" href="#top" class=""></a>
+	<script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script>
+    <script type="text/javascript" src="/js/toc.js?v=1.0.0" async=""></script>
+
+    
+        <!-- background effects line -->
+        
+        <!-- background effects end -->
+    
+    
+    <!-- background animation-->>
+    <!--<script size="50" alpha='0.3' zIndex="-999" src="/js/ribbonStatic.js"></script>-->
+    
+        <script src="/js/ribbonDynamic.js"></script>
+    
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script>
+            window.imageLazyLoadSetting = {
+                isSPA: false,
+                processImages: null,
+            };
+        </script><script>window.addEventListener("load",function(){var t=/\.(gif|jpg|jpeg|tiff|png)$/i,r=/^data:image\/[a-z]+;base64,/;Array.prototype.slice.call(document.querySelectorAll("img[data-original]")).forEach(function(a){var e=a.parentNode;"A"===e.tagName&&(e.href.match(t)||e.href.match(r))&&(e.href=a.dataset.original)})});</script><script>!function(n){n.imageLazyLoadSetting.processImages=o;var i=n.imageLazyLoadSetting.isSPA,r=Array.prototype.slice.call(document.querySelectorAll("img[data-original]"));function o(){i&&(r=Array.prototype.slice.call(document.querySelectorAll("img[data-original]")));for(var t,e,a=0;a<r.length;a++)t=r[a],0<=(e=t.getBoundingClientRect()).bottom&&0<=e.left&&e.top<=(n.innerHeight||document.documentElement.clientHeight)&&function(){var t,e,n,i,o=r[a];t=o,e=function(){r=r.filter(function(t){return o!==t})},n=new Image,i=t.getAttribute("data-original"),n.onload=function(){t.src=i,e&&e()},n.src=i}()}o(),n.addEventListener("scroll",function(){var t,e;t=o,e=n,clearTimeout(t.tId),t.tId=setTimeout(function(){t.call(e)},500)})}(this);</script></body>
+
+</html>

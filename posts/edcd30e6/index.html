@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<!-- Head tag -->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="baidu-site-verification" content="093lY4ziMu" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="keyword"  content="programming, study, daily, entertainment">
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="星期五。見面">
+    <meta property="og:locale" content="zh-TW" />
+    
+    <meta property="og:title" content="[課程筆記]Linux Driver正點原子課程筆記5 - 新字元設備驅動實驗" />
+    
+    
+    <meta property="og:description" content="在之前的課程中了解到了怎麼註冊一個chrdev，但之前使用的api是舊版的存在著一些問題，例如`register_chrdev()`這個function: 1. 會佔用主設備號下的所有次設備號，浪費了很多次設備號 2. 必須手動指定主設備號，也就是說你得先手動查詢哪個主設備號還沒被佔用，然後再去指定。所以這節課程會使用新的api來撰寫字元驅動，新版的api有兩種方式..." />
+    <meta name="description" content="在之前的課程中了解到了怎麼註冊一個chrdev，但之前使用的api是舊版的存在著一些問題，例如`register_chrdev()`這個function: 1. 會佔用主設備號下的所有次設備號，浪費了很多次設備號 2. 必須手動指定主設備號，也就是說你得先手動查詢哪個主設備號還沒被佔用，然後再去指定。所以這節課程會使用新的api來撰寫字元驅動，新版的api有兩種方式...">
+    
+    
+    <meta property="og:image" content="/img/avatar.jpg" />
+    
+
+    <link rel="shortcut icon" href="/img/avatar.jpg">
+    <!-- Place this tag in your head or just before your close body tag. -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <!--<link href='http://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>-->
+    <title>
+        
+          [課程筆記]Linux Driver正點原子課程筆記5 - 新字元設備驅動實驗 - MeetonFriday
+        
+    </title>
+    <!-- canonical -->
+    
+    
+      <link rel="canonical" href="https://meetonfriday.com/posts/edcd30e6/">
+    
+
+    <!-- Bootstrap Core CSS -->
+    
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+
+
+    <!-- Custom CSS --> 
+    
+<link rel="stylesheet" href="/css/dusign-dark.css">
+
+    
+<link rel="stylesheet" href="/css/dusign-common-dark.css">
+
+    <!-- 
+<link rel="stylesheet" href="/css/font-awesome.css">
+ -->
+    
+<link rel="stylesheet" href="/css/toc.css">
+
+
+    
+    <!-- Pygments Highlight CSS -->
+    
+<link rel="stylesheet" href="/css/highlight.css">
+
+
+    
+<link rel="stylesheet" href="/css/widget.css">
+
+
+    
+<link rel="stylesheet" href="/css/rocket.css">
+
+
+    
+<link rel="stylesheet" href="/css/signature.css">
+
+
+    
+<link rel="stylesheet" href="/css/fonts.googleapis.css">
+
+
+    <!-- <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.3.0/css/font-awesome.min.css">-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.min.css">
+    
+    <!-- Google Analytics -->
+    
+      <!-- <script>
+          // dynamic User by Hux
+          var _gaId = 'UA-163346001-1';
+          var _gaDomain = 'auto';
+      
+          // Originial
+          (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+          (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+          })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+      
+          ga('create', _gaId, _gaDomain);
+          ga('send', 'pageview');
+      </script> -->
+      
+      <!-- Global site tag (gtag.js) - Google Analytics -->
+      <script async src="https://www.googletagmanager.com/gtag/js?id=UA-163346001-1"></script>
+      <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+      
+        gtag('config', 'UA-163346001-1');
+      </script>
+      
+    <!-- google ad sense-->
+    <script data-ad-client="ca-pub-9561340457908416" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<meta name="generator" content="Hexo 4.2.1"><link rel="alternate" href="/atom.xml" title="星期五。見面" type="application/atom+xml">
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+	<!-- Modified by Yu-Hsuan Yen -->
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        
+            
+                background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.5)), url('/img/header_img/header-bg.jpg')
+            
+        
+    }
+    
+</style>
+
+<header class="intro-header" >
+    <!-- Signature -->
+    <div id="signature">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                
+                    <div class="post-heading">
+                        <div class="tags">
+                            
+                              <a class="tag" href="/tags/#linux kernel" title="linux kernel">linux kernel</a>
+                            
+                              <a class="tag" href="/tags/#study" title="study">study</a>
+                            
+                        </div>
+                        <h1>[課程筆記]Linux Driver正點原子課程筆記5 - 新字元設備驅動實驗</h1>
+                        <h2 class="subheading"></h2>
+                        <span class="meta">
+                            Posted by John on
+                            2021-03-29
+                        </span>
+
+                        
+                            <div class="blank_box"></div>
+                            <span class="meta">
+                                Words <span class="post-count">2.4k</span> and
+                                Reading Time <span class="post-count">11</span> Minutes
+                            </span>
+                            <div class="blank_box"></div>
+                            <!-- 不蒜子统计 start -->
+                            <span class="meta">
+                                Viewed <span id="busuanzi_value_page_pv"><i class="fa fa-spinner fa-spin"></i></span> Times
+                            </span>
+                            <!-- 不蒜子统计 end -->
+                        
+
+                    </div>
+                
+
+                </div>
+            </div>
+        </div>      
+    </div>
+
+    
+        
+            <div class="waveWrapper">
+                <div class="wave wave_before" style="background-image: url('/img/wave-dark.png')"></div>
+                <div class="wave wave_after" style="background-image: url('/img/wave-dark.png')"></div>
+            </div>
+        
+    
+</header>
+
+	
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">星期五。見面</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archive/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/categories/">Categories</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/reading/">Reading</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+    
+    <!-- Main Content -->
+    <!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+            <!-- Post Container -->
+
+    
+        
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+        
+    
+
+                <p>〖想觀看更多課程筆記，至<a href="https://meetonfriday.com/posts/85f1c2a/">[課程筆記]課程筆記系列總覽</a>可以看到目前已發布的所有文章！〗</p>
+<h2 id="Course-5-新字元設備驅動實驗"><a href="#Course-5-新字元設備驅動實驗" class="headerlink" title="Course 5 - 新字元設備驅動實驗"></a>Course 5 - 新字元設備驅動實驗</h2><h3 id="新字元設備驅動原理"><a href="#新字元設備驅動原理" class="headerlink" title="新字元設備驅動原理"></a>新字元設備驅動原理</h3><p>在之前的課程中了解到了怎麼註冊一個chrdev，但之前使用的api是舊版的存在著一些問題，例如<code>register_chrdev()</code>這個function</p>
+<ol>
+<li><strong>會佔用主設備號下的所有次設備號</strong>，浪費了很多次設備號</li>
+<li>必須手動指定主設備號，也就是說你得先手動查詢哪個主設備號還沒被佔用，然後再去指定</li>
+</ol>
+<p>所以這節課程會使用新的api來撰寫字元驅動，新版的api有兩種方式:</p>
+<ul>
+<li><code>alloc_chrdev_region()</code>: 向linux kernel申請設備號<ul>
+<li>給定次設備號和名字，告訴linux要申請幾個設備號，讓linux直接幫你尋找主設備號</li>
+</ul>
+</li>
+<li><code>register_chrdev_region()</code>: 給定主設備號去向linux申請<ul>
+<li>給定次設備號為0的devid，讓linux自己去找該主設備下可使用的次設備號</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">0</span><br><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* fs/char_dev.c */</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">alloc_chrdev_region</span><span class="params">(<span class="keyword">dev_t</span> *dev, <span class="keyword">unsigned</span> baseminor, <span class="keyword">unsigned</span> count,</span></span></span><br><span class="line"><span class="function"><span class="params">			<span class="keyword">const</span> <span class="keyword">char</span> *name)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">register_chrdev_region</span><span class="params">(<span class="keyword">dev_t</span> from, <span class="keyword">unsigned</span> count, <span class="keyword">const</span> <span class="keyword">char</span> *name)</span></span>;</span><br></pre></td></tr></table></figure>
+<p>不論是哪種申請方式，釋放時都是call <code>unregister_chrdev_region()</code></p>
+<a id="more"></a>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">0</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">unregister_chrdev_region</span><span class="params">(<span class="keyword">dev_t</span> from, <span class="keyword">unsigned</span> count)</span></span>;</span><br></pre></td></tr></table></figure>
+<p>一般來說在設計時兩種情況都會考慮到，一個範例code如下:</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">0</span><br><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> major, minor;</span><br><span class="line"><span class="keyword">dev_t</span> devid;</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (major) &#123;</span><br><span class="line">    devid = MKDEV(major, <span class="number">0</span>);</span><br><span class="line">    register_chrdev_region(devid, <span class="number">1</span>, <span class="string">"test"</span>);</span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    alloc_chrdev_region(&amp;devid, <span class="number">0</span>, <span class="number">1</span>, <span class="string">"test"</span>);</span><br><span class="line">    major = MAJOR(devid);</span><br><span class="line">    minor = MINOR(devid);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="新字元設備註冊方式"><a href="#新字元設備註冊方式" class="headerlink" title="新字元設備註冊方式"></a>新字元設備註冊方式</h3><p>介紹一個新的char structure: cdev</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">0</span><br><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* include/linux/cdev.h */</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">cdev</span> &#123;</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">kobject</span> <span class="title">kobj</span>;</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">module</span> *<span class="title">owner</span>;</span></span><br><span class="line">    <span class="keyword">const</span> <span class="class"><span class="keyword">struct</span> <span class="title">file_operations</span> *<span class="title">ops</span>;</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">list_head</span> <span class="title">list</span>;</span></span><br><span class="line">    <span class="keyword">dev_t</span> dev;</span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">int</span> count;</span><br><span class="line">&#125; __randomize_layout;</span><br></pre></td></tr></table></figure>
+<p>使用cdev表示char device，然後使用<code>cdev_init()</code>初始化結構體，然後透過<code>cdev_add()</code>進行添加到linux kernel中。最後，註銷時使用<code>cdev_del()</code></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">0</span><br><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* fs/char_dev.c */</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">cdev_init</span><span class="params">(struct cdev *cdev, <span class="keyword">const</span> struct file_operations *fops)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">memset</span>(cdev, <span class="number">0</span>, <span class="keyword">sizeof</span> *cdev);</span><br><span class="line">    INIT_LIST_HEAD(&amp;cdev-&gt;<span class="built_in">list</span>);</span><br><span class="line">    kobject_init(&amp;cdev-&gt;kobj, &amp;ktype_cdev_default);</span><br><span class="line">    cdev-&gt;ops = fops;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">cdev_add</span><span class="params">(struct cdev *p, <span class="keyword">dev_t</span> dev, <span class="keyword">unsigned</span> count)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> error;</span><br><span class="line"></span><br><span class="line">    p-&gt;dev = dev;</span><br><span class="line">    p-&gt;count = count;</span><br><span class="line"></span><br><span class="line">    error = kobj_map(cdev_map, dev, count, <span class="literal">NULL</span>,</span><br><span class="line">             exact_match, exact_lock, p);</span><br><span class="line">    <span class="keyword">if</span> (error)</span><br><span class="line">        <span class="keyword">return</span> error;</span><br><span class="line"></span><br><span class="line">    kobject_get(p-&gt;kobj.parent);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">cdev_del</span><span class="params">(struct cdev *p)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    cdev_unmap(p-&gt;dev, p-&gt;count);</span><br><span class="line">    kobject_put(&amp;p-&gt;kobj);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>如果回頭去trace <code>register_chrdev()</code>的code，其實他背後的本質就是上述這些flow，既然這樣為何不用<code>register_chrdev()</code>就好？</p>
+<ul>
+<li>還記得一開始提到<code>register_chrdev()</code>的缺點嗎？他會佔用主設備號下的所有次設備號</li>
+</ul>
+<h3 id="自動創建設備節點"><a href="#自動創建設備節點" class="headerlink" title="自動創建設備節點"></a>自動創建設備節點</h3><p>到這裡還有另一個需要探討的議題: </p>
+<p>driver儘管寫完了，但目前為止每次都仍要透過<code>mknod</code>來創建設備節點，例如<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">0</span><br></pre></td><td class="code"><pre><span class="line">mknod /dev/newchrled c 249 0</span><br></pre></td></tr></table></figure></p>
+<p>接下來將介紹如何自動創建設備節點</p>
+<h4 id="udev"><a href="#udev" class="headerlink" title="udev"></a>udev</h4><p>udev是Linux kernel 2.6系列引入的設備管理器，主要功能是管理/dev目錄下的設備節點，在熱插拔機制下，添加/刪除硬體時需要負責處理/dev目錄以及所有user space的行為。</p>
+<p>傳統的建立設備節點需要手動添加，透過使用<code>mknod</code>方法，但這樣並不易管理，比方說可能有設備根本沒掛載，但他仍然再/dev下存在著設備節點。</p>
+<p>採用udev的方法的話，只有備kernel檢測到的設備才會去添加設備節點。因為這些設備節點在每次系統啟動時被創建，他們會備存在ramfs(一個內存中的文件系統，不占用任何空間)，設備節點不會占用大量的磁碟空間，因此使用的memory可以忽略。</p>
+<h4 id="mdev"><a href="#mdev" class="headerlink" title="mdev"></a>mdev</h4><p>在使用busybox建構rootfs的時候，busybox會創建一個udev的簡化版本-mdev的簡化版本 - mdev，在嵌入式系統一般都是用mdev來管理設備節點的自動插入和刪除。</p>
+<p>在/etc/init.d/rcS中可以看到如下的設置</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">echo &#x2F;sbin&#x2F;mdev &gt; &#x2F;proc&#x2F;sys&#x2F;kernel&#x2F;hotplug</span><br></pre></td></tr></table></figure>
+<p>上述命令設置熱插拔事件由mdev來管理，所以接下來來看一下如何用mdev來實現設備節點的新增和刪除。</p>
+<p>自動創建設備節點是在驅動的entry function完成的，一般會在<code>cdev_add</code>後面加入相關代碼。</p>
+<p>首先需要<strong>創建一個class</strong>，class被定義在include/linux/device.h內</p>
+<h4 id="創建-註銷class"><a href="#創建-註銷class" class="headerlink" title="創建/註銷class"></a>創建/註銷class</h4><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">/* include/linux/device.h */</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">class</span> &#123;</span></span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">char</span>		*name;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">module</span>		*<span class="title">owner</span>;</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">const</span> <span class="class"><span class="keyword">struct</span> <span class="title">attribute_group</span>	**<span class="title">class_groups</span>;</span></span><br><span class="line">    <span class="keyword">const</span> <span class="class"><span class="keyword">struct</span> <span class="title">attribute_group</span>	**<span class="title">dev_groups</span>;</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">kobject</span>			*<span class="title">dev_kobj</span>;</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">int</span> (*dev_uevent)(struct device *dev, struct kobj_uevent_env *env);</span><br><span class="line">    <span class="keyword">char</span> *(*devnode)(struct device *dev, <span class="keyword">umode_t</span> *mode);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">void</span> (*class_release)(struct class *class);</span><br><span class="line">    <span class="keyword">void</span> (*dev_release)(struct device *dev);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">int</span> (*shutdown_pre)(struct device *dev);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">const</span> <span class="class"><span class="keyword">struct</span> <span class="title">kobj_ns_type_operations</span> *<span class="title">ns_type</span>;</span></span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">void</span> *(*<span class="keyword">namespace</span>)(struct device *dev);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">void</span> (*get_ownership)(struct device *dev, <span class="keyword">kuid_t</span> *uid, <span class="keyword">kgid_t</span> *gid);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">const</span> <span class="class"><span class="keyword">struct</span> <span class="title">dev_pm_ops</span> *<span class="title">pm</span>;</span></span><br><span class="line"></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">subsys_private</span> *<span class="title">p</span>;</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>使用時需要<code>#include &lt;linux/device.h&gt;</code>透過<code>class_create</code>來自動創建class</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">0</span><br><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* include/linux/device.h */</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/* This is a #define to keep the compiler from merging different</span></span><br><span class="line"><span class="comment"> * instances of the __key variable */</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> class_create(owner, name)		\</span></span><br><span class="line">(&#123;						\</span><br><span class="line">    <span class="keyword">static</span> struct lock_class_key __key;	\</span><br><span class="line">    __class_create(owner, name, &amp;__key);	\</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+<ul>
+<li>第一個參數是owner, 通常都帶THIS_MODULE</li>
+<li>第二個參數帶入driver name</li>
+</ul>
+<p>而註銷class的時候則是透過<code>class_destroy</code></p>
+<ul>
+<li>帶入class參數</li>
+</ul>
+<h4 id="創建-註銷設備"><a href="#創建-註銷設備" class="headerlink" title="創建/註銷設備"></a>創建/註銷設備</h4><p>有了創建/註銷class後，需要在該class下創建一個設備，使用<code>device_create</code>來創立</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">0</span><br><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* include/linux/device.h */</span></span><br><span class="line"><span class="function">struct device *<span class="title">device_create</span><span class="params">(struct class *cls, struct device *parent,</span></span></span><br><span class="line"><span class="function"><span class="params">			     <span class="keyword">dev_t</span> devt, <span class="keyword">void</span> *drvdata,</span></span></span><br><span class="line"><span class="function"><span class="params">			     <span class="keyword">const</span> <span class="keyword">char</span> *fmt, ...)</span></span>;</span><br></pre></td></tr></table></figure>
+<ul>
+<li><code>device_create</code>是一個不定參數的function</li>
+<li>class代表設備要建立在哪個class下面</li>
+<li>parent代表父設備, 一般為NULL</li>
+<li>devt是設備號</li>
+<li>drvdata是設備可能會使用到的一些數據, 一般為NULL</li>
+<li>fmt是設備名稱, 如果fmt=xxx的話就會生成/dev/xxx文件</li>
+</ul>
+<p>同樣的，卸載驅動的時候也要註銷設備，透過<code>device_destroy</code>來註銷</p>
+<h3 id="文件私有數據和goto對錯誤的處理"><a href="#文件私有數據和goto對錯誤的處理" class="headerlink" title="文件私有數據和goto對錯誤的處理"></a>文件私有數據和goto對錯誤的處理</h3><p>driver常常會用到一些私有的數據，好的設計方式是透過structure把他們都包起來</p>
+<p>在<code>struct file</code>中其實有個private_data的變數可以用來將需要的data struct存起來，如此就不用在code中另外宣告需要的變數</p>
+<ul>
+<li>通常會在<code>open()</code>內設置filp-&gt;private_data，然後在其他function來存取私有數據</li>
+<li><code>release()</code>的時候會做對應的釋放</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">0</span><br><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* include/linux/fs.h */</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">file</span> &#123;</span></span><br><span class="line">    <span class="keyword">union</span> &#123;</span><br><span class="line">        <span class="class"><span class="keyword">struct</span> <span class="title">llist_node</span>	<span class="title">fu_llist</span>;</span></span><br><span class="line">        <span class="class"><span class="keyword">struct</span> <span class="title">rcu_head</span> 	<span class="title">fu_rcuhead</span>;</span></span><br><span class="line">    &#125; f_u;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">path</span>		<span class="title">f_path</span>;</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">inode</span>		*<span class="title">f_inode</span>;</span>	<span class="comment">/* cached value */</span></span><br><span class="line">    <span class="keyword">const</span> <span class="class"><span class="keyword">struct</span> <span class="title">file_operations</span>	*<span class="title">f_op</span>;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">/*</span></span><br><span class="line"><span class="comment">	 * Protects f_ep_links, f_flags.</span></span><br><span class="line"><span class="comment">	 * Must not be taken from IRQ context.</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">    <span class="keyword">spinlock_t</span>		f_lock;</span><br><span class="line">    <span class="keyword">enum</span> rw_hint		f_write_hint;</span><br><span class="line">    <span class="keyword">atomic_long_t</span>		f_count;</span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">int</span> 		f_flags;</span><br><span class="line">    <span class="keyword">fmode_t</span>			f_mode;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">mutex</span>		<span class="title">f_pos_lock</span>;</span></span><br><span class="line">    <span class="keyword">loff_t</span>			f_pos;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">fown_struct</span>	<span class="title">f_owner</span>;</span></span><br><span class="line">    <span class="keyword">const</span> <span class="class"><span class="keyword">struct</span> <span class="title">cred</span>	*<span class="title">f_cred</span>;</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">file_ra_state</span>	<span class="title">f_ra</span>;</span></span><br><span class="line"></span><br><span class="line">    u64			f_version;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> CONFIG_SECURITY</span></span><br><span class="line">    <span class="keyword">void</span>			*f_security;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line">    <span class="comment">/* needed for tty driver, and maybe others */</span></span><br><span class="line">    <span class="keyword">void</span>			*private_data;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> CONFIG_EPOLL</span></span><br><span class="line">    <span class="comment">/* Used by fs/eventpoll.c to link all the hooks to this file */</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">list_head</span>	<span class="title">f_ep_links</span>;</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">list_head</span>	<span class="title">f_tfile_llink</span>;</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span> <span class="comment">/* #ifdef CONFIG_EPOLL */</span></span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">address_space</span>	*<span class="title">f_mapping</span>;</span></span><br><span class="line">    <span class="keyword">errseq_t</span>		f_wb_err;</span><br><span class="line">&#125; __randomize_layout</span><br><span class="line">  __attribute__((aligned(<span class="number">4</span>)));	<span class="comment">/* lest something weird decides that 2 is OK */</span></span><br></pre></td></tr></table></figure>
+<p>最後來講講linux driver在init過程中如果發生錯誤時，我們需要將我們init的東西都釋放掉，這時我們常常會透過<code>goto</code>來做流程的控制，透過好的goto流程設計可以讓我們的driver code有更好的可讀性以及程式架構。</p>
+<p>了解了上述的所有內容後，最後來重寫之前寫過的led driver code</p>
+<ul>
+<li>下方的code還不包含init錯誤時goto的處理</li>
+</ul>
+<h4 id="driver"><a href="#driver" class="headerlink" title="driver"></a>driver</h4><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">0</span><br><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;linux/module.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;linux/kernel.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;linux/init.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;linux/fs.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;linux/slab.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;linux/uaccess.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;linux/io.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;linux/cdev.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;linux/device.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> LED_MAJOR 200</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> LED_NAME <span class="meta-string">"led"</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">/* register PA */</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> CCM_CCGR1_BASE         (0x020C406C)</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> SW_MUX_GPIO1_IO03_BASE (0x020E0068)</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> SW_PAD_GPIO1_IO03_BASE (0x020E02F4)</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> GPIO1_DR_BASE          (0x0209C000)</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> GPIO1_GDIR_BASE        (0x0209C004)</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/* pointer of VA */</span></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">void</span> __iomem *IMX6U_CCM_CCGR1;</span><br><span class="line"><span class="keyword">static</span> <span class="keyword">void</span> __iomem *SW_MUX_GPIO1_IO03;</span><br><span class="line"><span class="keyword">static</span> <span class="keyword">void</span> __iomem *SW_PAD_GPIO1_IO03;</span><br><span class="line"><span class="keyword">static</span> <span class="keyword">void</span> __iomem *GPIO1_DR;</span><br><span class="line"><span class="keyword">static</span> <span class="keyword">void</span> __iomem *GPIO1_GDIR;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> LEDOFF 0</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> LEDON 1</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> NEWCHRLED_NAME <span class="meta-string">"newchrled"</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> NEWCHRLED_CNT 1</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">newchrled_dev</span>&#123;</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">cdev</span> <span class="title">cdev</span>;</span></span><br><span class="line">    <span class="keyword">dev_t</span> devid; <span class="comment">// device num</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">class</span> *<span class="title">class</span>;</span> <span class="comment">// class </span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">device</span> *<span class="title">device</span>;</span> <span class="comment">// device</span></span><br><span class="line">    <span class="keyword">int</span> major;</span><br><span class="line">    <span class="keyword">int</span> minor;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">led_switch</span><span class="params">(u8 sta)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    u32 val = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">if</span> (databuf[<span class="number">0</span>] == LEDOFF) &#123;</span><br><span class="line">        val = readl(GPIO1_DR);</span><br><span class="line">        val |= ~(<span class="number">1</span> &lt;&lt; <span class="number">3</span>);</span><br><span class="line">        writel(val, GPIO1_DR); <span class="comment">// close led</span></span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        val = readl(GPIO1_DR);</span><br><span class="line">        val &amp;= ~(<span class="number">1</span> &lt;&lt; <span class="number">3</span>);</span><br><span class="line">        writel(val, GPIO1_DR); <span class="comment">// open led</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">int</span> <span class="title">newchrled_open</span><span class="params">(struct inode *inode, struct file *filp)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    filp-&gt;private_data = &amp;newchrled;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">int</span> <span class="title">newchrled_release</span><span class="params">(struct inode *inode, struct file *filp)</span></span></span><br><span class="line"><span class="function"></span>&#123;   </span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">newchrled_dev</span> *<span class="title">dev</span> = (<span class="title">struct</span> <span class="title">newchrled_dev</span>)<span class="title">filp</span>-&gt;<span class="title">private_data</span>;</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">ssize_t</span> <span class="title">newchrled_write</span><span class="params">(struct file *filp, <span class="keyword">const</span> <span class="keyword">char</span> __user *buf, <span class="keyword">size_t</span> count, <span class="keyword">loff_t</span> *ppos)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> ret;</span><br><span class="line">    <span class="keyword">int</span> val = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">char</span> databuf[<span class="number">1</span>];</span><br><span class="line">    ret = copy_from_user(databuf, buf, count);</span><br><span class="line">    <span class="keyword">if</span> (ret &lt; <span class="number">0</span>)&#123;</span><br><span class="line">        printk(<span class="string">"kernel write fail\n"</span>);</span><br><span class="line">        <span class="keyword">return</span> -EFAULT;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    led_switch(databuf[<span class="number">0</span>]);</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">newchrled_dev</span> <span class="title">newchrled</span>;</span></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">const</span> <span class="class"><span class="keyword">struct</span> <span class="title">file_operations</span> <span class="title">newchrled_fops</span> = &#123;</span></span><br><span class="line">    .owner = THIS_MODULE,</span><br><span class="line">    .<span class="built_in">write</span> = newchrled_write,</span><br><span class="line">    .<span class="built_in">open</span>  = newchrled_open,</span><br><span class="line">    .<span class="built_in">release</span> = newchrled_release,</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">void</span> __init <span class="title">newchrled_init</span><span class="params">(<span class="keyword">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> ret = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">int</span> val = <span class="number">0</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">/* 1. init led */</span></span><br><span class="line">    IMX6U_CCM_CCGR1 = ioremap(CCM_CCGR1_BASE, <span class="number">4</span>);</span><br><span class="line">    SW_MUX_GPIO1_IO03 = ioremap(SW_MUX_GPIO1_IO03_BASE, <span class="number">4</span>);</span><br><span class="line">    SW_PAD_GPIO1_IO03 = ioremap(SW_PAD_GPIO1_IO03_BASE, <span class="number">4</span>);</span><br><span class="line">    GPIO1_DR = ioremap(GPIO1_DR_BASE, <span class="number">4</span>);</span><br><span class="line">    GPIO1_GDIR = ioremap(GPIO1_GDIR_BASE, <span class="number">4</span>);</span><br><span class="line">    </span><br><span class="line">    val = readl(IMX6U_CCM_CCGR1);</span><br><span class="line">    val &amp;= ~(<span class="number">3</span> &lt;&lt; <span class="number">26</span>); <span class="comment">// clr IMX6U_CCM_CCGR1[26:27]</span></span><br><span class="line">    val |= <span class="number">3</span> &lt;&lt; <span class="number">26</span>; <span class="comment">// set IMX6U_CCM_CCGR1[26:27] to 1</span></span><br><span class="line">    writel(val, IMX6U_CCM_CCGR1);</span><br><span class="line">    </span><br><span class="line">    writel(<span class="number">0x5</span>, SW_MUX_GPIO1_IO03);</span><br><span class="line">    writel(<span class="number">0x10B0</span>, SW_PAD_GPIO1_IO03);</span><br><span class="line">  </span><br><span class="line">    val = readl(GPIO1_GDIR);</span><br><span class="line">    val |= <span class="number">1</span> &lt;&lt; <span class="number">3</span>;</span><br><span class="line">    writel(val, GPIO1_GDIR);</span><br><span class="line">  </span><br><span class="line">    val = readl(GPIO1_DR);</span><br><span class="line">    val &amp;= ~(<span class="number">1</span> &lt;&lt; <span class="number">3</span>);</span><br><span class="line">    writel(val, GPIO1_DR); <span class="comment">// open led    </span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">/* 2. register dev number */</span></span><br><span class="line">    <span class="keyword">if</span> (newchrled.major) &#123;</span><br><span class="line">        newchrled.devid = MKDEV(newchrled.major, <span class="number">0</span>);</span><br><span class="line">        register_chrdev_region(newchrled.devid, NEWCHRLED_CNT, NEWCHRLED_NAME);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        ret = alloc_chrdev_region(&amp;newchrled.devid, <span class="number">0</span>, NEWCHRLED_CNT, NEWCHRLED_NAME);</span><br><span class="line">        newchrled.major = MAJOR(newchrled.devid);</span><br><span class="line">        newchrled.minor = MINOR(newchrled.devid);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (ret &lt; <span class="number">0</span>) &#123;</span><br><span class="line">        printk(<span class="string">"newchrled chr_dev region err\n"</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    printk(<span class="string">"major:%d, minor:%d\n"</span>, newchrled.majorm newchrled.minor);</span><br><span class="line">    </span><br><span class="line">    <span class="comment">/* 3. register chardev */</span></span><br><span class="line">    newchrled.cdev.owner = THIS_MODULE;</span><br><span class="line">    cdev_init(&amp;newchrled.cdev, &amp;newchrled_fops);</span><br><span class="line">    ret = cdev_add(&amp;newchrled.cdev, newchrled.devid, NEWCHRLED_CNT);</span><br><span class="line">    </span><br><span class="line">    <span class="comment">/* 4. auto create device node */</span></span><br><span class="line">    newchrled<span class="class">.<span class="keyword">class</span> = <span class="title">class_create</span>(<span class="title">THIS_MODULE</span>, <span class="title">NEWCHRLED_NAME</span>);</span></span><br><span class="line">    <span class="keyword">if</span> (IS_ERR(newchrled.class))</span><br><span class="line">        <span class="function">reutrn <span class="title">PTR_ERR</span><span class="params">(newchrled.class)</span></span>;</span><br><span class="line">        </span><br><span class="line">    newchrled.device = device_create(newchrled.class, <span class="literal">NULL</span>, newchrled.devid, <span class="literal">NULL</span>, NEWCHRLED_NAME);</span><br><span class="line">    <span class="keyword">if</span> (IS_ERR(newchrled.device))</span><br><span class="line">        <span class="keyword">return</span> PTR_ERR(newchrled.device);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">void</span> __exit <span class="title">newchrled_exit</span><span class="params">(<span class="keyword">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> val = <span class="number">0</span>;</span><br><span class="line">    val = readl(GPIO1_DR);</span><br><span class="line">    val |= ~(<span class="number">1</span> &lt;&lt; <span class="number">3</span>);</span><br><span class="line">    writel(val, GPIO1_DR); <span class="comment">// close led</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">/* 1. unmap va */</span></span><br><span class="line">    iounmap(IMX6U_CCM_CCGR1);</span><br><span class="line">    iounmap(SW_MUX_GPIO1_IO03);</span><br><span class="line">    iounmap(SW_PAD_GPIO1_IO03);</span><br><span class="line">    iounmap(GPIO1_DR);</span><br><span class="line">    iounmap(GPIO1_GDIR);</span><br><span class="line">    </span><br><span class="line">    <span class="comment">/* 2. unregister */</span></span><br><span class="line">    cdev_del(&amp;newchrled.cdev);</span><br><span class="line">    printk(<span class="string">"chrdev unregister\n"</span>);</span><br><span class="line">    </span><br><span class="line">    unregister_chrdev_region(newchrled.devid, NEWCHRLED_CNT);</span><br><span class="line">    </span><br><span class="line">    <span class="comment">/* 3. destroy device */</span></span><br><span class="line">    device_destroy(newchrled.class, newchrled.devid);</span><br><span class="line">    </span><br><span class="line">    <span class="comment">/* 4. dectroy class */</span></span><br><span class="line">    class_destroy(newchrled.class);</span><br><span class="line">    </span><br><span class="line">    reutrn <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">module_init(newchrled_init);</span><br><span class="line">module_exit(newchrled_exit);</span><br><span class="line">MODULE_LICENSE(<span class="string">"GPL"</span>);</span><br><span class="line">MODULE_AUTHOR(<span class="string">"john"</span>);</span><br></pre></td></tr></table></figure>
+<h4 id="app"><a href="#app" class="headerlink" title="app"></a>app</h4><p>app的部分沒有什麼變動，所以就不重寫了，要看的可以看前幾次的課程筆記</p>
+
+                <hr>
+                <!-- Pager -->
+                <ul class="pager">
+    
+    <li class="previous">
+        <a href="/posts/666bbf67/" data-toggle="tooltip" data-placement="top" title="Google從Android 15 (Android-V)開始將淘汰NNAPI改推LiteRT (TensorFlow Lite)">&larr; Newer Post</a>
+    </li>
+    
+    
+    <li class="next">
+        <a href="/posts/638f6f64/" data-toggle="tooltip" data-placement="top" title="[讀書心得]跟著柴鼠學FQ 做自己的提款機">Older Post &rarr;</a>
+    </li>
+    
+</ul>
+
+                <!-- tip start -->
+                
+
+                
+                <!-- tip end -->
+
+                <!-- Sharing -->
+                
+                <!-- Sharing -->
+
+                <!-- gitment start -->
+                
+                <!-- gitment end -->
+
+                <!-- 来必力City版安装代码 -->
+                
+                <!-- City版安装代码已完成 -->
+
+                <!-- disqus comment start -->
+                
+                <div class="comment">
+                    <div id="disqus_thread" class="disqus-thread"></div>
+                </div>
+                
+                <!-- disqus comment end -->
+            </div>
+            
+            <!-- Tabe of Content -->
+            <!-- Table of Contents -->
+
+    
+      
+        <aside id="sidebar">
+          <div id="toc" class="toc-article">
+          <strong class="toc-title">Contents</strong>
+          
+            <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Course-5-新字元設備驅動實驗"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">Course 5 - 新字元設備驅動實驗</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#新字元設備驅動原理"><span class="toc-nav-number">1.1.</span> <span class="toc-nav-text">新字元設備驅動原理</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#新字元設備註冊方式"><span class="toc-nav-number">1.2.</span> <span class="toc-nav-text">新字元設備註冊方式</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#自動創建設備節點"><span class="toc-nav-number">1.3.</span> <span class="toc-nav-text">自動創建設備節點</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#udev"><span class="toc-nav-number">1.3.1.</span> <span class="toc-nav-text">udev</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#mdev"><span class="toc-nav-number">1.3.2.</span> <span class="toc-nav-text">mdev</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#創建-註銷class"><span class="toc-nav-number">1.3.3.</span> <span class="toc-nav-text">創建&#x2F;註銷class</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#創建-註銷設備"><span class="toc-nav-number">1.3.4.</span> <span class="toc-nav-text">創建&#x2F;註銷設備</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#文件私有數據和goto對錯誤的處理"><span class="toc-nav-number">1.4.</span> <span class="toc-nav-text">文件私有數據和goto對錯誤的處理</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#driver"><span class="toc-nav-number">1.4.1.</span> <span class="toc-nav-text">driver</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#app"><span class="toc-nav-number">1.4.2.</span> <span class="toc-nav-text">app</span></a></li></ol></li></ol></li></ol>
+          
+          </div>
+        </aside>
+      
+    
+
+        </div>
+    </div>
+</article>
+
+	
+    <!-- disqus embedded js code start (one page only need to embed once) -->	
+    <script type="text/javascript">	
+        /* * * CONFIGURATION VARIABLES * * */	
+        var disqus_shortname = "meetonfriday";	
+        var disqus_identifier = "https://meetonfriday.com/posts/edcd30e6/";	
+        var disqus_url = "https://meetonfriday.com/posts/edcd30e6/";	
+        (function() {	
+            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;	
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';	
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);	
+        })();	
+    </script>	
+    <!-- disqus embedded js code start end -->	
+    
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/john850512">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://www.linkedin.com/in/john85051232">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                
+                    <li>
+                        <a target="_blank" href="https://www.facebook.com/meetonfridayyy">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+                
+                    <li>
+                        <a target="_blank"  href="https://mail.google.com/mail/?view=cm&fs=1&to=john85051232@gmail.com">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-envelope-o fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+                
+                
+
+                
+
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; John 2025 
+                    <br>
+                    Powered by 
+                    <a href="https://github.com/john850512/hexo-theme-jiji" target="_blank" rel="noopener">
+                        <i>hexo-theme-jiji</i>
+                    </a> | 
+                    <iframe name="star" style="margin-left: 2px; margin-bottom:-5px;" frameborder="0" scrolling="0"
+                        width="100px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=john850512&repo=hexo-theme-jiji&type=star&count=true">
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+
+</footer>
+
+<!-- jQuery -->
+
+<script src="/js/jquery.min.js"></script>
+
+
+<!-- Bootstrap Core JavaScript -->
+
+<script src="/js/bootstrap.min.js"></script>
+
+
+<!-- Custom Theme JavaScript -->
+
+<script src="/js/hux-blog.min.js"></script>
+
+
+<!-- Search -->
+
+<script src="/js/search.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("https://meetonfriday.com/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+<!-- Search -->
+
+    <script type="text/javascript">      
+        var search_path = "search.xml";
+        if (search_path.length == 0) {
+            search_path = "search.xml";
+        }
+    var path = "/" + search_path;
+    searchFunc(path, 'local-search-input', 'local-search-result');
+    </script>
+
+
+<!-- busuanzi -->
+<!--<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>-->
+<script async src="//cdn.jsdelivr.net/npm/busuanzi@2.3.0"></script>
+
+
+
+
+	<a id="rocket" href="#top" class=""></a>
+	<script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script>
+    <script type="text/javascript" src="/js/toc.js?v=1.0.0" async=""></script>
+
+    
+        <!-- background effects line -->
+        
+        <!-- background effects end -->
+    
+    
+    <!-- background animation-->>
+    <!--<script size="50" alpha='0.3' zIndex="-999" src="/js/ribbonStatic.js"></script>-->
+    
+        <script src="/js/ribbonDynamic.js"></script>
+    
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script>
+            window.imageLazyLoadSetting = {
+                isSPA: false,
+                processImages: null,
+            };
+        </script><script>window.addEventListener("load",function(){var t=/\.(gif|jpg|jpeg|tiff|png)$/i,r=/^data:image\/[a-z]+;base64,/;Array.prototype.slice.call(document.querySelectorAll("img[data-original]")).forEach(function(a){var e=a.parentNode;"A"===e.tagName&&(e.href.match(t)||e.href.match(r))&&(e.href=a.dataset.original)})});</script><script>!function(n){n.imageLazyLoadSetting.processImages=o;var i=n.imageLazyLoadSetting.isSPA,r=Array.prototype.slice.call(document.querySelectorAll("img[data-original]"));function o(){i&&(r=Array.prototype.slice.call(document.querySelectorAll("img[data-original]")));for(var t,e,a=0;a<r.length;a++)t=r[a],0<=(e=t.getBoundingClientRect()).bottom&&0<=e.left&&e.top<=(n.innerHeight||document.documentElement.clientHeight)&&function(){var t,e,n,i,o=r[a];t=o,e=function(){r=r.filter(function(t){return o!==t})},n=new Image,i=t.getAttribute("data-original"),n.onload=function(){t.src=i,e&&e()},n.src=i}()}o(),n.addEventListener("scroll",function(){var t,e;t=o,e=n,clearTimeout(t.tId),t.tId=setTimeout(function(){t.call(e)},500)})}(this);</script></body>
+
+</html>

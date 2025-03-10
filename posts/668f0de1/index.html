@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<!-- Head tag -->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="baidu-site-verification" content="093lY4ziMu" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="keyword"  content="programming, study, daily, entertainment">
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="星期五。見面">
+    <meta property="og:locale" content="zh-TW" />
+    
+    <meta property="og:title" content="Neural Networks API Introduction: Android APP背後是如何執行一個神經網路模型的?" />
+    
+    
+    <meta property="og:description" content="本篇是對於官方文檔的中文閱讀筆記，內容是閱讀後透過自己的理解重新撰寫的，所以不全然是文檔的翻譯內容。深度學習的任務如果應用於手機端，為了使手機上的應用端可以更加方便的使用底層的不同裝置，Google在Android 8.1 (API level 27)後提供了ANN API(Android Neural Networks API)。ANN API使用C語言所撰寫，對於上層的深度學習框架(Tensorflow Lite, Caffe2...)提供了底層不同硬體資源的支持。" />
+    <meta name="description" content="本篇是對於官方文檔的中文閱讀筆記，內容是閱讀後透過自己的理解重新撰寫的，所以不全然是文檔的翻譯內容。深度學習的任務如果應用於手機端，為了使手機上的應用端可以更加方便的使用底層的不同裝置，Google在Android 8.1 (API level 27)後提供了ANN API(Android Neural Networks API)。ANN API使用C語言所撰寫，對於上層的深度學習框架(Tensorflow Lite, Caffe2...)提供了底層不同硬體資源的支持。">
+    
+    
+    <meta property="og:image" content="https://res.cloudinary.com/meet-on-friday/image/upload/v1605107660/blog_posts/nnapi_architecture_px59gs.png" />
+    
+
+    <link rel="shortcut icon" href="/img/avatar.jpg">
+    <!-- Place this tag in your head or just before your close body tag. -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <!--<link href='http://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>-->
+    <title>
+        
+          Neural Networks API Introduction: Android APP背後是如何執行一個神經網路模型的? - MeetonFriday
+        
+    </title>
+    <!-- canonical -->
+    
+    
+      <link rel="canonical" href="https://meetonfriday.com/posts/668f0de1/">
+    
+
+    <!-- Bootstrap Core CSS -->
+    
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+
+
+    <!-- Custom CSS --> 
+    
+<link rel="stylesheet" href="/css/dusign-dark.css">
+
+    
+<link rel="stylesheet" href="/css/dusign-common-dark.css">
+
+    <!-- 
+<link rel="stylesheet" href="/css/font-awesome.css">
+ -->
+    
+<link rel="stylesheet" href="/css/toc.css">
+
+
+    
+    <!-- Pygments Highlight CSS -->
+    
+<link rel="stylesheet" href="/css/highlight.css">
+
+
+    
+<link rel="stylesheet" href="/css/widget.css">
+
+
+    
+<link rel="stylesheet" href="/css/rocket.css">
+
+
+    
+<link rel="stylesheet" href="/css/signature.css">
+
+
+    
+<link rel="stylesheet" href="/css/fonts.googleapis.css">
+
+
+    <!-- <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.3.0/css/font-awesome.min.css">-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.min.css">
+    
+    <!-- Google Analytics -->
+    
+      <!-- <script>
+          // dynamic User by Hux
+          var _gaId = 'UA-163346001-1';
+          var _gaDomain = 'auto';
+      
+          // Originial
+          (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+          (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+          })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+      
+          ga('create', _gaId, _gaDomain);
+          ga('send', 'pageview');
+      </script> -->
+      
+      <!-- Global site tag (gtag.js) - Google Analytics -->
+      <script async src="https://www.googletagmanager.com/gtag/js?id=UA-163346001-1"></script>
+      <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+      
+        gtag('config', 'UA-163346001-1');
+      </script>
+      
+    <!-- google ad sense-->
+    <script data-ad-client="ca-pub-9561340457908416" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<meta name="generator" content="Hexo 4.2.1"><link rel="alternate" href="/atom.xml" title="星期五。見面" type="application/atom+xml">
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+	<!-- Modified by Yu-Hsuan Yen -->
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        
+            
+                background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.5)), url('/img/header_img/header-bg.jpg')
+            
+        
+    }
+    
+</style>
+
+<header class="intro-header" >
+    <!-- Signature -->
+    <div id="signature">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                
+                    <div class="post-heading">
+                        <div class="tags">
+                            
+                              <a class="tag" href="/tags/#c" title="c">c</a>
+                            
+                              <a class="tag" href="/tags/#deep learning" title="deep learning">deep learning</a>
+                            
+                        </div>
+                        <h1>Neural Networks API Introduction: Android APP背後是如何執行一個神經網路模型的?</h1>
+                        <h2 class="subheading"></h2>
+                        <span class="meta">
+                            Posted by John on
+                            2020-11-15
+                        </span>
+
+                        
+                            <div class="blank_box"></div>
+                            <span class="meta">
+                                Words <span class="post-count">1.4k</span> and
+                                Reading Time <span class="post-count">5</span> Minutes
+                            </span>
+                            <div class="blank_box"></div>
+                            <!-- 不蒜子统计 start -->
+                            <span class="meta">
+                                Viewed <span id="busuanzi_value_page_pv"><i class="fa fa-spinner fa-spin"></i></span> Times
+                            </span>
+                            <!-- 不蒜子统计 end -->
+                        
+
+                    </div>
+                
+
+                </div>
+            </div>
+        </div>      
+    </div>
+
+    
+        
+            <div class="waveWrapper">
+                <div class="wave wave_before" style="background-image: url('/img/wave-dark.png')"></div>
+                <div class="wave wave_after" style="background-image: url('/img/wave-dark.png')"></div>
+            </div>
+        
+    
+</header>
+
+	
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">星期五。見面</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archive/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/categories/">Categories</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/reading/">Reading</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+    
+    <!-- Main Content -->
+    <!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+            <!-- Post Container -->
+
+    
+        
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+        
+    
+
+                <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>本篇是對於官方文檔<a href="https://developer.android.com/ndk/guides/neuralnetworks" target="_blank" rel="noopener">Neural Networks API</a>的中文閱讀筆記，內容是閱讀後透過自己的理解重新撰寫的，所以不全然是文檔的翻譯內容。</p>
+<h2 id="Android-Neural-Networks-API"><a href="#Android-Neural-Networks-API" class="headerlink" title="Android Neural Networks API"></a>Android Neural Networks API</h2><p>一個深度學習的應用分成兩個階段</p>
+<ul>
+<li><strong>training phase 訓練階段</strong>: 大部分的人都會在server上訓練好自家的深度學習模型(不會在手機上訓練，是想訓練多久…)</li>
+<li><strong>inference phase 推論階段</strong>: 將訓練好的模型拿來進行推論的應用，此時模型根據scenario就有可能放在手機、IOT device這些小型裝置，而不是將資料送到server上做再拿回來(因為這樣會有很高的latency)</li>
+</ul>
+<p>為什麼要在device端做推論? 當然也可以把資料傳到server上推論完在下載回來，但這樣會衍生出一些問題:</p>
+<ul>
+<li><strong>Latency</strong>: 儘管server端的運算速度快很多，但資料傳送之間的I/O會造成很大的延遲，尤其對於一些real time的應用至關重要</li>
+<li><strong>Availability</strong>: 在沒有網路的地方就無法將資料上傳到server計算</li>
+<li><strong>Speed</strong>: 現在的行動設備上有越來越多支持深度學習運算的特化晶片，使得行動端的推論計算效率也大大提升，也逐漸能cover目前的edge ai application</li>
+<li><strong>Privacy</strong>: 對於一些有隱私議題的應用來說，將資料上傳到server並不是一個好選擇，此時在local端自己處理資料匯市比較好的解決方案</li>
+<li><strong>Cost</strong>: 使用行動端裝置自己處理推論，省掉了許多額外的成本(例如server的費用)</li>
+</ul>
+<a id="more"></a>
+<p>也因此，現在的趨勢都是在裝置端自己處理推論，靠著深度學習特化晶片來加速深度學習的運算。而為了在這些裝置上能夠更加有效的執行推論，許多相對應的議題也被提出，例如: </p>
+<ul>
+<li>模型壓縮及量化(Quantization)</li>
+<li>根據不同需求客製化的晶片:例如 APU、VPU、GPU、DSP…</li>
+</ul>
+<p>對於手機端，為了使手機上的應用端可以更加方便的使用底層的不同裝置，Google在<strong>Android 8.1 (API level 27)後提供了ANN API(Android Neural Networks API)</strong>。</p>
+<p>ANN API使用C語言所撰寫，對於上層的深度學習框架(Tensorflow Lite, Caffe2…)提供了底層不同硬體資源的支持。</p>
+<ul>
+<li>例如你的手機晶片如果具備GPU、APU、或DSP等不同的硬體加速器，那就可以透過ANN API來選擇不同的底層執行你的模型</li>
+</ul>
+<h2 id="Understand-the-Neural-Networks-API-runtime"><a href="#Understand-the-Neural-Networks-API-runtime" class="headerlink" title="Understand the Neural Networks API runtime"></a>Understand the Neural Networks API runtime</h2><p>NN Runtime是什麼? 他是一個Android service，用來與底層的設備溝通，並將上層應用端的操作透過NN API傳遞給底層的硬體去執行。</p>
+<p><img src="https://meetonfriday.com/img/lazy-loading-animation.gif" data-original="https://res.cloudinary.com/meet-on-friday/image/upload/v1605107660/blog_posts/nnapi_architecture_px59gs.png" alt=""></p>
+<p>先來看一下NN runtime的架構圖，從圖中可以發現:</p>
+<ul>
+<li>NN API基本上是給上層的深度學習框架來使用的，所以一般的APP並不能直接使用它</li>
+<li>透過NN API來控制ANN Runtime這個Service，Android背後透過ANN Runtime來控制底層要用那些硬體加速器執行操作</li>
+<li>而硬體必須要透過<strong>Android NN HAL(Hardware abstraction layer)</strong>向上提供自己的資訊，例如自己是誰、可以支援那些操作…</li>
+</ul>
+<p>如此，ANN Runtime就可以知道上層模型有哪些指令，底層有哪些硬體，而這些指令又可以跑在那些硬體上，最後再去根據這些硬體適合哪些操作來分配他們。</p>
+<ul>
+<li>對於沒有特殊硬體加速器的設備，則會在CPU上執行</li>
+</ul>
+<h2 id="Use-NN-API-to-create-a-neural-network-model"><a href="#Use-NN-API-to-create-a-neural-network-model" class="headerlink" title="Use NN API to create a neural network model"></a>Use NN API to create a neural network model</h2><p>這章節簡單的介紹如何用NN API寫出一個神經網路模型。</p>
+<p>神經網路模型背後其實是一個計算圖(computational graph)，所以我們必須先用NN API創造出一個對應的有向圖(directed graph)，然後將對應的資料(weight, bias)指派給圖上的點。</p>
+<p>NN API主要有4個概念:</p>
+<ul>
+<li><strong>Model</strong>: 一個神經網路的模型，包含了模型的相關操作(例如Conv, activation function…)<ul>
+<li>創建Model的過程是一個synchronous operation，一旦創建成功就可以在不同thread和compilation之間使用</li>
+<li>NN API中是一個ANeuralNetworksModel的instance</li>
+</ul>
+</li>
+<li><strong>Compilation</strong>: 編譯器，負責將Model轉換成machine code<ul>
+<li>創建Compilation的過程是一個synchronous operation，一旦創建成功就可以在不同thread和executions之間使用</li>
+<li>在NN API中是使用ANeuralNetworksCompilation instance</li>
+</ul>
+</li>
+<li><strong>Memory</strong>: 是一個shared memory (memory mapped files，NN API可以使用該memory buffer與底層的driver有效率的進行數據存取。通常在創建一個model時，我們也必須為每個graph上的node創建對應的memory buffer，包含weight, input和output的tensor<ul>
+<li>在NN API中是一個ANeuralNetworksMemory instance</li>
+</ul>
+</li>
+<li><strong>Execution</strong>: 指定input、output，然後執行Model的Interface<ul>
+<li>這是一個asynchronous operation，不同thread都可以執行相同的execution。一旦execution執行完畢，則所有thread會被release</li>
+<li>在NN API中是一個ANeuralNetworksExecution instance</li>
+</ul>
+</li>
+</ul>
+<p>了解這四個概念後，就不難理解他的Programming Flow了</p>
+<p><img src="https://meetonfriday.com/img/lazy-loading-animation.gif" data-original="https://res.cloudinary.com/meet-on-friday/image/upload/v1605434414/blog_posts/nnapi_flow_y769wr.png" alt=""></p>
+<ol>
+<li>透過<code>ANeuralNetworksModel_create()</code>創建模型，包含以下步驟:<ol>
+<li>指定graph中的operands，並可以將預訓練好的權重等data載入ANeuralNetworksMemory，然後在此時從ANeuralNetworksMemory讀進來</li>
+<li>指定graph中的operations</li>
+<li>指定input &amp; output node</li>
+</ol>
+</li>
+<li>調用<code>ANeuralNetworksCompilation_create()</code>創建編譯器</li>
+<li>調用<code>ANeuralNetworksExecution_create()</code>創建執行單元</li>
+<li>調用<code>ANeuralNetworksExecution_startCompute()</code>呼叫底層開始執行，並等待執行結束(注意這裡是asynchronous operation，所以可以平行計算)</li>
+</ol>
+<p>此外，一個編譯好的Compilation也可以給不同的Execution使用，只要給定不同的input以及create一個新的ANeuralNetworksExecution instance即可。</p>
+<p>關於詳細的example code可以參考官方文檔學習。</p>
+<h2 id="References"><a href="#References" class="headerlink" title="References"></a>References</h2><ul>
+<li><a href="https://developer.android.com/ndk/guides/neuralnetworks" target="_blank" rel="noopener">Neural Networks API</a></li>
+<li><a href="https://blog.csdn.net/qkhhyga2016/article/details/78800912" target="_blank" rel="noopener">Android 之AI硬件和NNAPI介绍</a></li>
+</ul>
+
+                <hr>
+                <!-- Pager -->
+                <ul class="pager">
+    
+    <li class="previous">
+        <a href="/posts/8e7bb892/" data-toggle="tooltip" data-placement="top" title="[課堂筆記]深度學習優化器新霸主">&larr; Newer Post</a>
+    </li>
+    
+    
+    <li class="next">
+        <a href="/posts/5523c739/" data-toggle="tooltip" data-placement="top" title="[Linux Kernel慢慢學]快速上手Makefile和Kbuild Makefile">Older Post &rarr;</a>
+    </li>
+    
+</ul>
+
+                <!-- tip start -->
+                
+
+                
+                <!-- tip end -->
+
+                <!-- Sharing -->
+                
+                <!-- Sharing -->
+
+                <!-- gitment start -->
+                
+                <!-- gitment end -->
+
+                <!-- 来必力City版安装代码 -->
+                
+                <!-- City版安装代码已完成 -->
+
+                <!-- disqus comment start -->
+                
+                <div class="comment">
+                    <div id="disqus_thread" class="disqus-thread"></div>
+                </div>
+                
+                <!-- disqus comment end -->
+            </div>
+            
+            <!-- Tabe of Content -->
+            <!-- Table of Contents -->
+
+    
+      
+        <aside id="sidebar">
+          <div id="toc" class="toc-article">
+          <strong class="toc-title">Contents</strong>
+          
+            <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#前言"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">前言</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Android-Neural-Networks-API"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">Android Neural Networks API</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Understand-the-Neural-Networks-API-runtime"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">Understand the Neural Networks API runtime</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Use-NN-API-to-create-a-neural-network-model"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">Use NN API to create a neural network model</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#References"><span class="toc-nav-number">5.</span> <span class="toc-nav-text">References</span></a></li></ol>
+          
+          </div>
+        </aside>
+      
+    
+
+        </div>
+    </div>
+</article>
+
+	
+    <!-- disqus embedded js code start (one page only need to embed once) -->	
+    <script type="text/javascript">	
+        /* * * CONFIGURATION VARIABLES * * */	
+        var disqus_shortname = "meetonfriday";	
+        var disqus_identifier = "https://meetonfriday.com/posts/668f0de1/";	
+        var disqus_url = "https://meetonfriday.com/posts/668f0de1/";	
+        (function() {	
+            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;	
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';	
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);	
+        })();	
+    </script>	
+    <!-- disqus embedded js code start end -->	
+    
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/john850512">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://www.linkedin.com/in/john85051232">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                
+                    <li>
+                        <a target="_blank" href="https://www.facebook.com/meetonfridayyy">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+                
+                    <li>
+                        <a target="_blank"  href="https://mail.google.com/mail/?view=cm&fs=1&to=john85051232@gmail.com">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-envelope-o fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+                
+                
+
+                
+
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; John 2025 
+                    <br>
+                    Powered by 
+                    <a href="https://github.com/john850512/hexo-theme-jiji" target="_blank" rel="noopener">
+                        <i>hexo-theme-jiji</i>
+                    </a> | 
+                    <iframe name="star" style="margin-left: 2px; margin-bottom:-5px;" frameborder="0" scrolling="0"
+                        width="100px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=john850512&repo=hexo-theme-jiji&type=star&count=true">
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+
+</footer>
+
+<!-- jQuery -->
+
+<script src="/js/jquery.min.js"></script>
+
+
+<!-- Bootstrap Core JavaScript -->
+
+<script src="/js/bootstrap.min.js"></script>
+
+
+<!-- Custom Theme JavaScript -->
+
+<script src="/js/hux-blog.min.js"></script>
+
+
+<!-- Search -->
+
+<script src="/js/search.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("https://meetonfriday.com/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+<!-- Search -->
+
+    <script type="text/javascript">      
+        var search_path = "search.xml";
+        if (search_path.length == 0) {
+            search_path = "search.xml";
+        }
+    var path = "/" + search_path;
+    searchFunc(path, 'local-search-input', 'local-search-result');
+    </script>
+
+
+<!-- busuanzi -->
+<!--<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>-->
+<script async src="//cdn.jsdelivr.net/npm/busuanzi@2.3.0"></script>
+
+
+
+
+	<a id="rocket" href="#top" class=""></a>
+	<script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script>
+    <script type="text/javascript" src="/js/toc.js?v=1.0.0" async=""></script>
+
+    
+        <!-- background effects line -->
+        
+        <!-- background effects end -->
+    
+    
+    <!-- background animation-->>
+    <!--<script size="50" alpha='0.3' zIndex="-999" src="/js/ribbonStatic.js"></script>-->
+    
+        <script src="/js/ribbonDynamic.js"></script>
+    
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script>
+            window.imageLazyLoadSetting = {
+                isSPA: false,
+                processImages: null,
+            };
+        </script><script>window.addEventListener("load",function(){var t=/\.(gif|jpg|jpeg|tiff|png)$/i,r=/^data:image\/[a-z]+;base64,/;Array.prototype.slice.call(document.querySelectorAll("img[data-original]")).forEach(function(a){var e=a.parentNode;"A"===e.tagName&&(e.href.match(t)||e.href.match(r))&&(e.href=a.dataset.original)})});</script><script>!function(n){n.imageLazyLoadSetting.processImages=o;var i=n.imageLazyLoadSetting.isSPA,r=Array.prototype.slice.call(document.querySelectorAll("img[data-original]"));function o(){i&&(r=Array.prototype.slice.call(document.querySelectorAll("img[data-original]")));for(var t,e,a=0;a<r.length;a++)t=r[a],0<=(e=t.getBoundingClientRect()).bottom&&0<=e.left&&e.top<=(n.innerHeight||document.documentElement.clientHeight)&&function(){var t,e,n,i,o=r[a];t=o,e=function(){r=r.filter(function(t){return o!==t})},n=new Image,i=t.getAttribute("data-original"),n.onload=function(){t.src=i,e&&e()},n.src=i}()}o(),n.addEventListener("scroll",function(){var t,e;t=o,e=n,clearTimeout(t.tId),t.tId=setTimeout(function(){t.call(e)},500)})}(this);</script></body>
+
+</html>

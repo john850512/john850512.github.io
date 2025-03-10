@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<!-- Head tag -->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="baidu-site-verification" content="093lY4ziMu" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="keyword"  content="programming, study, daily, entertainment">
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="星期五。見面">
+    <meta property="og:locale" content="zh-TW" />
+    
+    <meta property="og:title" content="[Python]Call matlab function from python(matlab engine)" />
+    
+    
+    <meta property="og:description" content="這幾天我在研究一個matlab的程式碼，原本想看懂內容在用python自己實作一次，因為自己還是對python環境比較熟......但是我看不懂。對。不是數學系出生的我怎麼看就是看不懂我需要的那段matlab的code再寫啥，崩潰。於是念頭一轉，我有沒有辦法直接在python裡面呼叫matlab的function呢？嘿嘿，還真的有這個東西：[MATLAB API for Python]，所以我今天就來介紹它啦～" />
+    <meta name="description" content="這幾天我在研究一個matlab的程式碼，原本想看懂內容在用python自己實作一次，因為自己還是對python環境比較熟......但是我看不懂。對。不是數學系出生的我怎麼看就是看不懂我需要的那段matlab的code再寫啥，崩潰。於是念頭一轉，我有沒有辦法直接在python裡面呼叫matlab的function呢？嘿嘿，還真的有這個東西：[MATLAB API for Python]，所以我今天就來介紹它啦～">
+    
+    
+    <meta property="og:image" content="/img/avatar.jpg" />
+    
+
+    <link rel="shortcut icon" href="/img/avatar.jpg">
+    <!-- Place this tag in your head or just before your close body tag. -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <!--<link href='http://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>-->
+    <title>
+        
+          [Python]Call matlab function from python(matlab engine) - MeetonFriday
+        
+    </title>
+    <!-- canonical -->
+    
+    
+      <link rel="canonical" href="https://meetonfriday.com/posts/7d0fa0f6/">
+    
+
+    <!-- Bootstrap Core CSS -->
+    
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+
+
+    <!-- Custom CSS --> 
+    
+<link rel="stylesheet" href="/css/dusign-dark.css">
+
+    
+<link rel="stylesheet" href="/css/dusign-common-dark.css">
+
+    <!-- 
+<link rel="stylesheet" href="/css/font-awesome.css">
+ -->
+    
+<link rel="stylesheet" href="/css/toc.css">
+
+
+    
+    <!-- Pygments Highlight CSS -->
+    
+<link rel="stylesheet" href="/css/highlight.css">
+
+
+    
+<link rel="stylesheet" href="/css/widget.css">
+
+
+    
+<link rel="stylesheet" href="/css/rocket.css">
+
+
+    
+<link rel="stylesheet" href="/css/signature.css">
+
+
+    
+<link rel="stylesheet" href="/css/fonts.googleapis.css">
+
+
+    <!-- <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.3.0/css/font-awesome.min.css">-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.min.css">
+    
+    <!-- Google Analytics -->
+    
+      <!-- <script>
+          // dynamic User by Hux
+          var _gaId = 'UA-163346001-1';
+          var _gaDomain = 'auto';
+      
+          // Originial
+          (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+          (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+          })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+      
+          ga('create', _gaId, _gaDomain);
+          ga('send', 'pageview');
+      </script> -->
+      
+      <!-- Global site tag (gtag.js) - Google Analytics -->
+      <script async src="https://www.googletagmanager.com/gtag/js?id=UA-163346001-1"></script>
+      <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+      
+        gtag('config', 'UA-163346001-1');
+      </script>
+      
+    <!-- google ad sense-->
+    <script data-ad-client="ca-pub-9561340457908416" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<meta name="generator" content="Hexo 4.2.1"><link rel="alternate" href="/atom.xml" title="星期五。見面" type="application/atom+xml">
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+	<!-- Modified by Yu-Hsuan Yen -->
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        
+            
+                background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.5)), url('/img/header_img/header-bg.jpg')
+            
+        
+    }
+    
+</style>
+
+<header class="intro-header" >
+    <!-- Signature -->
+    <div id="signature">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                
+                    <div class="post-heading">
+                        <div class="tags">
+                            
+                              <a class="tag" href="/tags/#python" title="python">python</a>
+                            
+                              <a class="tag" href="/tags/#matlab" title="matlab">matlab</a>
+                            
+                        </div>
+                        <h1>[Python]Call matlab function from python(matlab engine)</h1>
+                        <h2 class="subheading"></h2>
+                        <span class="meta">
+                            Posted by John on
+                            2018-11-12
+                        </span>
+
+                        
+                            <div class="blank_box"></div>
+                            <span class="meta">
+                                Words <span class="post-count">947</span> and
+                                Reading Time <span class="post-count">3</span> Minutes
+                            </span>
+                            <div class="blank_box"></div>
+                            <!-- 不蒜子统计 start -->
+                            <span class="meta">
+                                Viewed <span id="busuanzi_value_page_pv"><i class="fa fa-spinner fa-spin"></i></span> Times
+                            </span>
+                            <!-- 不蒜子统计 end -->
+                        
+
+                    </div>
+                
+
+                </div>
+            </div>
+        </div>      
+    </div>
+
+    
+        
+            <div class="waveWrapper">
+                <div class="wave wave_before" style="background-image: url('/img/wave-dark.png')"></div>
+                <div class="wave wave_after" style="background-image: url('/img/wave-dark.png')"></div>
+            </div>
+        
+    
+</header>
+
+	
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">星期五。見面</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archive/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/categories/">Categories</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/reading/">Reading</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+    
+    <!-- Main Content -->
+    <!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+            <!-- Post Container -->
+
+    
+        
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+        
+    
+
+                <p>這幾天我在研究一個matlab的程式碼，原本想看懂內容在用python自己實作一次，因為自己還是對python環境比較熟……但是我看不懂。</p>
+<p>對。不是數學系出生的我怎麼看就是看不懂我需要的那段matlab的code再寫啥，崩潰。</p>
+<p>於是念頭一轉，我有沒有辦法直接在python裡面呼叫matlab的function呢？嘿嘿，還真的有這個東西：<a href="https://www.mathworks.com/help/matlab/matlab-engine-for-python.html" target="_blank" rel="noopener">MATLAB API for Python</a>，所以我今天就來介紹它啦～</p>
+<a id="more"></a>
+<h2 id="matlab-engine安裝"><a href="#matlab-engine安裝" class="headerlink" title="matlab engine安裝"></a>matlab engine安裝</h2><p>首先必須先安裝<a href="http://ww2.mathworks.cn/help/matlab/matlab_external/install-the-matlab-engine-for-python.html?ue" target="_blank" rel="noopener">MATLAB Engine API for python</a>，方法如下：</p>
+<ol>
+<li>使用cmd進到matlab的安裝目錄</li>
+<li>進extern/engines/pythonpython</li>
+<li>setup.py install</li>
+</ol>
+<p>安裝完後，就可以來使用matlab engine了！很簡單吧！</p>
+<p>啊…先說我的matlab是2018b版本…</p>
+<h2 id="matlab-engine-for-python範例"><a href="#matlab-engine-for-python範例" class="headerlink" title="matlab engine for python範例"></a>matlab engine for python範例</h2><p>拿幾個<a href="http://ww2.mathworks.cn/help/matlab/matlab_external/call-user-script-and-function-from-python.html" target="_blank" rel="noopener">官方範例</a>先來一些簡單的介紹：</p>
+<h3 id="單純呼叫matlab檔案內的程式碼（沒有function）"><a href="#單純呼叫matlab檔案內的程式碼（沒有function）" class="headerlink" title="單純呼叫matlab檔案內的程式碼（沒有function）"></a>單純呼叫matlab檔案內的程式碼（沒有function）</h3><p>先用matlab建立一個名稱為demo.m的檔案，輸入以下內容</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">b &#x3D; 5;</span><br><span class="line">h &#x3D; 3;</span><br><span class="line">a &#x3D; 0.5*(b.* h)</span><br></pre></td></tr></table></figure>
+<p>接下來在同一個目錄下建立一個python檔案，輸入以下程式碼</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> matlab.engine</span><br><span class="line">eng = matlab.engine.start_matlab()</span><br><span class="line">eng.demo(nargout=<span class="number">0</span>)</span><br></pre></td></tr></table></figure>
+<p>簡單來說，就是我先import相關的package，然後啟動matlab engine，要怎麼引入寫好的matlab檔案呢？<strong>就是eng.demo，demo為matlab檔案的檔名，所以記得要放在同一個目錄下，而參數nargout=0代表沒有輸出的參數</strong>，這個之後會再講詳細一點。</p>
+<h3 id="呼叫matlab內的function"><a href="#呼叫matlab內的function" class="headerlink" title="呼叫matlab內的function"></a>呼叫matlab內的function</h3><p>如果要呼叫matlab的function該怎麼辦呢？</p>
+<p>首先，<strong>matlab要被呼叫的function名稱必須和檔名相同</strong>（這裡不是很確定，也有可能是matlab本來的規定），所以如果matlab內的程式碼長這樣（檔名為demo_function.m)：</p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">out</span> = <span class="title">demo_function</span><span class="params">()</span></span></span><br><span class="line">    out = <span class="number">10</span>;</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+<p>那在python內呼叫他基本上跟第一個範例相同，不過因為function有一個回傳值，我們就可以用個變數去接住它。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> matlab.engine</span><br><span class="line">eng = matlab.engine.start_matlab()</span><br><span class="line">out = eng.demo_function(nargout=<span class="number">1</span>)</span><br><span class="line">print(out)</span><br></pre></td></tr></table></figure>
+<p>那，如果我說，<del>愛我沒有如果</del>…不是，如果function有多個參數呢？</p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="params">[out1, out2]</span> = <span class="title">demo_function</span><span class="params">()</span></span></span><br><span class="line">    out1 = <span class="number">10</span>;</span><br><span class="line">    out2 = <span class="number">20</span>;</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+<p>python那邊只要改一行就好了，分別是nargout的值跟接收回傳的變數，也就是說，回傳值有幾個變數nargout就要是多少。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[out1,out2] = eng.demo_function(nargout=<span class="number">2</span>)</span><br><span class="line">print(out1, out2)</span><br></pre></td></tr></table></figure>
+<p>換個寫法，<strong>當我有多個輸出的時候我也可以用matlab的struct包起來一起回傳，對應到python就會是dict型態的回傳值</strong>，你問我為什麼知道他是dict？matlab官方文擋（<a href="https://www.mathworks.com/help/matlab/matlab_external/handle-data-returned-from-matlab-to-python.html" target="_blank" rel="noopener">Handle Data Returned from MATLAB to Python</a>）給了一個對照表讓我們可以了解語言之間型態的對應為何。</p>
+<p>[sourcecode language=”matlab”] function out_struct = demo_function() out1 = 10; out2 = 20; out_struct = struct(out1, out2) end [/sourcecode]  </p>
+<h3 id="呼叫matlab內的function，並傳入矩陣進行運算"><a href="#呼叫matlab內的function，並傳入矩陣進行運算" class="headerlink" title="呼叫matlab內的function，並傳入矩陣進行運算"></a>呼叫matlab內的function，並傳入矩陣進行運算</h3><p>我這次要做的事情是希望透過python傳入矩陣給matlab算完後再回傳結果給我就好，問題來了，matlab的矩陣在python是相同的型態嗎？顯然不是，<strong>而且python也沒matrix，傳ndarray也是不行的（我幫各位試過了），那到底要傳什麼進去matlab才會是矩陣呢？</strong></p>
+<p>官方文擋這篇有提到（<a href="https://www.mathworks.com/help/matlab/matlab_external/matlab-arrays-as-python-variables.html" target="_blank" rel="noopener">MATLAB Arrays as Python Variables</a>），<strong>我們可以用list來構構造矩陣結構，當成參數傳到matlab時對應到的就會是matrix，但只用list還是不夠的，還需要先透過他們的api進行轉換</strong>，如下方的python code：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">A = [[<span class="number">1</span>, <span class="number">2</span>], [<span class="number">2</span>, <span class="number">2</span>], [<span class="number">3</span>, <span class="number">2</span>]]</span><br><span class="line">A = matlab.double(A)</span><br><span class="line">engine.matlab_function_name(A)</span><br></pre></td></tr></table></figure>
+<p>上方的code中我將list透過matlab的api轉換成了double的matrix，不過這是對matlab來說，如果在python把他印出來仍然是一個list（型態都變成double了）。</p>
+<p>好啦，今日的教學就到這裡了，如果有講錯的地方還請告訴我，謝謝～</p>
+
+                <hr>
+                <!-- Pager -->
+                <ul class="pager">
+    
+    <li class="previous">
+        <a href="/posts/b4ba3bf5/" data-toggle="tooltip" data-placement="top" title="[課程體驗]區塊鏈與智能合約-以太坊實作入門">&larr; Newer Post</a>
+    </li>
+    
+    
+    <li class="next">
+        <a href="/posts/18a141c2/" data-toggle="tooltip" data-placement="top" title="[DL]淺談CNN在Object Classification上的各種架構">Older Post &rarr;</a>
+    </li>
+    
+</ul>
+
+                <!-- tip start -->
+                
+
+                
+                <!-- tip end -->
+
+                <!-- Sharing -->
+                
+                <!-- Sharing -->
+
+                <!-- gitment start -->
+                
+                <!-- gitment end -->
+
+                <!-- 来必力City版安装代码 -->
+                
+                <!-- City版安装代码已完成 -->
+
+                <!-- disqus comment start -->
+                
+                <div class="comment">
+                    <div id="disqus_thread" class="disqus-thread"></div>
+                </div>
+                
+                <!-- disqus comment end -->
+            </div>
+            
+            <!-- Tabe of Content -->
+            <!-- Table of Contents -->
+
+    
+      
+        <aside id="sidebar">
+          <div id="toc" class="toc-article">
+          <strong class="toc-title">Contents</strong>
+          
+            <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#matlab-engine安裝"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">matlab engine安裝</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#matlab-engine-for-python範例"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">matlab engine for python範例</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#單純呼叫matlab檔案內的程式碼（沒有function）"><span class="toc-nav-number">2.1.</span> <span class="toc-nav-text">單純呼叫matlab檔案內的程式碼（沒有function）</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#呼叫matlab內的function"><span class="toc-nav-number">2.2.</span> <span class="toc-nav-text">呼叫matlab內的function</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#呼叫matlab內的function，並傳入矩陣進行運算"><span class="toc-nav-number">2.3.</span> <span class="toc-nav-text">呼叫matlab內的function，並傳入矩陣進行運算</span></a></li></ol></li></ol>
+          
+          </div>
+        </aside>
+      
+    
+
+        </div>
+    </div>
+</article>
+
+	
+    <!-- disqus embedded js code start (one page only need to embed once) -->	
+    <script type="text/javascript">	
+        /* * * CONFIGURATION VARIABLES * * */	
+        var disqus_shortname = "meetonfriday";	
+        var disqus_identifier = "https://meetonfriday.com/posts/7d0fa0f6/";	
+        var disqus_url = "https://meetonfriday.com/posts/7d0fa0f6/";	
+        (function() {	
+            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;	
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';	
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);	
+        })();	
+    </script>	
+    <!-- disqus embedded js code start end -->	
+    
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/john850512">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://www.linkedin.com/in/john85051232">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                
+                    <li>
+                        <a target="_blank" href="https://www.facebook.com/meetonfridayyy">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+                
+                    <li>
+                        <a target="_blank"  href="https://mail.google.com/mail/?view=cm&fs=1&to=john85051232@gmail.com">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-envelope-o fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+                
+                
+
+                
+
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; John 2025 
+                    <br>
+                    Powered by 
+                    <a href="https://github.com/john850512/hexo-theme-jiji" target="_blank" rel="noopener">
+                        <i>hexo-theme-jiji</i>
+                    </a> | 
+                    <iframe name="star" style="margin-left: 2px; margin-bottom:-5px;" frameborder="0" scrolling="0"
+                        width="100px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=john850512&repo=hexo-theme-jiji&type=star&count=true">
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+
+</footer>
+
+<!-- jQuery -->
+
+<script src="/js/jquery.min.js"></script>
+
+
+<!-- Bootstrap Core JavaScript -->
+
+<script src="/js/bootstrap.min.js"></script>
+
+
+<!-- Custom Theme JavaScript -->
+
+<script src="/js/hux-blog.min.js"></script>
+
+
+<!-- Search -->
+
+<script src="/js/search.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("https://meetonfriday.com/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+<!-- Search -->
+
+    <script type="text/javascript">      
+        var search_path = "search.xml";
+        if (search_path.length == 0) {
+            search_path = "search.xml";
+        }
+    var path = "/" + search_path;
+    searchFunc(path, 'local-search-input', 'local-search-result');
+    </script>
+
+
+<!-- busuanzi -->
+<!--<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>-->
+<script async src="//cdn.jsdelivr.net/npm/busuanzi@2.3.0"></script>
+
+
+
+
+	<a id="rocket" href="#top" class=""></a>
+	<script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script>
+    <script type="text/javascript" src="/js/toc.js?v=1.0.0" async=""></script>
+
+    
+        <!-- background effects line -->
+        
+        <!-- background effects end -->
+    
+    
+    <!-- background animation-->>
+    <!--<script size="50" alpha='0.3' zIndex="-999" src="/js/ribbonStatic.js"></script>-->
+    
+        <script src="/js/ribbonDynamic.js"></script>
+    
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script>
+            window.imageLazyLoadSetting = {
+                isSPA: false,
+                processImages: null,
+            };
+        </script><script>window.addEventListener("load",function(){var t=/\.(gif|jpg|jpeg|tiff|png)$/i,r=/^data:image\/[a-z]+;base64,/;Array.prototype.slice.call(document.querySelectorAll("img[data-original]")).forEach(function(a){var e=a.parentNode;"A"===e.tagName&&(e.href.match(t)||e.href.match(r))&&(e.href=a.dataset.original)})});</script><script>!function(n){n.imageLazyLoadSetting.processImages=o;var i=n.imageLazyLoadSetting.isSPA,r=Array.prototype.slice.call(document.querySelectorAll("img[data-original]"));function o(){i&&(r=Array.prototype.slice.call(document.querySelectorAll("img[data-original]")));for(var t,e,a=0;a<r.length;a++)t=r[a],0<=(e=t.getBoundingClientRect()).bottom&&0<=e.left&&e.top<=(n.innerHeight||document.documentElement.clientHeight)&&function(){var t,e,n,i,o=r[a];t=o,e=function(){r=r.filter(function(t){return o!==t})},n=new Image,i=t.getAttribute("data-original"),n.onload=function(){t.src=i,e&&e()},n.src=i}()}o(),n.addEventListener("scroll",function(){var t,e;t=o,e=n,clearTimeout(t.tId),t.tId=setTimeout(function(){t.call(e)},500)})}(this);</script></body>
+
+</html>

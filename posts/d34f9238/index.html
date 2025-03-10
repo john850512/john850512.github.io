@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<!-- Head tag -->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="baidu-site-verification" content="093lY4ziMu" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="keyword"  content="programming, study, daily, entertainment">
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="星期五。見面">
+    <meta property="og:locale" content="zh-TW" />
+    
+    <meta property="og:title" content="[DL]Deep Learning的Batch Normalization為什麼有用" />
+    
+    
+    <meta property="og:description" content="BN在2015年由Google提出[Batch Normalization: Accelerating Deep Network Training by Reducing Internal Covariate Shift]，主要來解決上面描述的問題，幫助模型加速收斂。先來看一下paper中提到的BN algorithm，再來試著從兩個不同的角度來看待為何要使用BN:其實單看algo的話並不難理解，不過為何要這樣做?下面會試著針對幾個角度來探討" />
+    <meta name="description" content="BN在2015年由Google提出[Batch Normalization: Accelerating Deep Network Training by Reducing Internal Covariate Shift]，主要來解決上面描述的問題，幫助模型加速收斂。先來看一下paper中提到的BN algorithm，再來試著從兩個不同的角度來看待為何要使用BN:其實單看algo的話並不難理解，不過為何要這樣做?下面會試著針對幾個角度來探討">
+    
+    
+    <meta property="og:image" content="/img/avatar.jpg" />
+    
+
+    <link rel="shortcut icon" href="/img/avatar.jpg">
+    <!-- Place this tag in your head or just before your close body tag. -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <!--<link href='http://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>-->
+    <title>
+        
+          [DL]Deep Learning的Batch Normalization為什麼有用 - MeetonFriday
+        
+    </title>
+    <!-- canonical -->
+    
+    
+      <link rel="canonical" href="https://meetonfriday.com/posts/d34f9238/">
+    
+
+    <!-- Bootstrap Core CSS -->
+    
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+
+
+    <!-- Custom CSS --> 
+    
+<link rel="stylesheet" href="/css/dusign-dark.css">
+
+    
+<link rel="stylesheet" href="/css/dusign-common-dark.css">
+
+    <!-- 
+<link rel="stylesheet" href="/css/font-awesome.css">
+ -->
+    
+<link rel="stylesheet" href="/css/toc.css">
+
+
+    
+    <!-- Pygments Highlight CSS -->
+    
+<link rel="stylesheet" href="/css/highlight.css">
+
+
+    
+<link rel="stylesheet" href="/css/widget.css">
+
+
+    
+<link rel="stylesheet" href="/css/rocket.css">
+
+
+    
+<link rel="stylesheet" href="/css/signature.css">
+
+
+    
+<link rel="stylesheet" href="/css/fonts.googleapis.css">
+
+
+    <!-- <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.3.0/css/font-awesome.min.css">-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.min.css">
+    
+    <!-- Google Analytics -->
+    
+      <!-- <script>
+          // dynamic User by Hux
+          var _gaId = 'UA-163346001-1';
+          var _gaDomain = 'auto';
+      
+          // Originial
+          (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+          (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+          })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+      
+          ga('create', _gaId, _gaDomain);
+          ga('send', 'pageview');
+      </script> -->
+      
+      <!-- Global site tag (gtag.js) - Google Analytics -->
+      <script async src="https://www.googletagmanager.com/gtag/js?id=UA-163346001-1"></script>
+      <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+      
+        gtag('config', 'UA-163346001-1');
+      </script>
+      
+    <!-- google ad sense-->
+    <script data-ad-client="ca-pub-9561340457908416" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<meta name="generator" content="Hexo 4.2.1"><link rel="alternate" href="/atom.xml" title="星期五。見面" type="application/atom+xml">
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+	<!-- Modified by Yu-Hsuan Yen -->
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        
+            
+                background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.5)), url('/img/header_img/header-bg.jpg')
+            
+        
+    }
+    
+</style>
+
+<header class="intro-header" >
+    <!-- Signature -->
+    <div id="signature">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                
+                    <div class="post-heading">
+                        <div class="tags">
+                            
+                              <a class="tag" href="/tags/#deep learning" title="deep learning">deep learning</a>
+                            
+                              <a class="tag" href="/tags/#machine learning" title="machine learning">machine learning</a>
+                            
+                        </div>
+                        <h1>[DL]Deep Learning的Batch Normalization為什麼有用</h1>
+                        <h2 class="subheading"></h2>
+                        <span class="meta">
+                            Posted by John on
+                            2019-10-11
+                        </span>
+
+                        
+                            <div class="blank_box"></div>
+                            <span class="meta">
+                                Words <span class="post-count">3.7k</span> and
+                                Reading Time <span class="post-count">14</span> Minutes
+                            </span>
+                            <div class="blank_box"></div>
+                            <!-- 不蒜子统计 start -->
+                            <span class="meta">
+                                Viewed <span id="busuanzi_value_page_pv"><i class="fa fa-spinner fa-spin"></i></span> Times
+                            </span>
+                            <!-- 不蒜子统计 end -->
+                        
+
+                    </div>
+                
+
+                </div>
+            </div>
+        </div>      
+    </div>
+
+    
+        
+            <div class="waveWrapper">
+                <div class="wave wave_before" style="background-image: url('/img/wave-dark.png')"></div>
+                <div class="wave wave_after" style="background-image: url('/img/wave-dark.png')"></div>
+            </div>
+        
+    
+</header>
+
+	
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">星期五。見面</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archive/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/categories/">Categories</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/reading/">Reading</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+    
+    <!-- Main Content -->
+    <!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+            <!-- Post Container -->
+
+    
+        
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+        
+    
+
+                <h2 id="Batch-Normalization"><a href="#Batch-Normalization" class="headerlink" title="Batch Normalization"></a>Batch Normalization</h2><h3 id="簡介"><a href="#簡介" class="headerlink" title="簡介"></a>簡介</h3><p>BN在2015年由Google提出(<a href="https://arxiv.org/abs/1502.03167?context=cs" target="_blank" rel="noopener">Batch Normalization: Accelerating Deep Network Training by Reducing Internal Covariate Shift</a>)，主要來解決上面描述的問題，幫助模型加速收斂。</p>
+<p><img src="https://meetonfriday.com/img/lazy-loading-animation.gif" data-original="https://i.imgur.com/DxbRG5f.jpg" alt=""></p>
+<a id="more"></a>
+<p>先來看一下paper中提到的BN algorithm，再來試著從兩個不同的角度來看待為何要使用BN:</p>
+<p>其實單看algo的話並不難理解，不過為何要這樣做?下面會試著針對幾個角度來探討：</p>
+<ol>
+<li><strong>Internal Covariate Shift</strong></li>
+<li><strong>Gradient Vanishing/Exploding</strong></li>
+<li><strong>Feature Scaling</strong></li>
+</ol>
+<h3 id="從Internal-Covariate-Shift的角度看BN"><a href="#從Internal-Covariate-Shift的角度看BN" class="headerlink" title="從Internal Covariate Shift的角度看BN"></a>從Internal Covariate Shift的角度看BN</h3><h4 id="Internal-Covariate-Shift"><a href="#Internal-Covariate-Shift" class="headerlink" title="Internal Covariate Shift"></a>Internal Covariate Shift</h4><p>在訓練Deep learning model時，每一層的forward propagation都會造成參數分布的變化，進而後面的layer都要重新去適應這個變動，造成<strong>Internal Covariate Shift(ICS)</strong>。</p>
+<ul>
+<li>實際上，BN之所以有用，可能和減少ICS無關，關於細節可參考<a href="./#延伸討論-BN真的跟ICS有關係">延伸討論: BN真的跟ICS有關係?</a>，不過這裡的介紹仍然會先以2015年這篇的觀點來敘述。</li>
+</ul>
+<p>簡單介紹一下什麼是<a href="https://blog.csdn.net/mao_xiao_feng/article/details/54317852" target="_blank" rel="noopener">Covariate Shift</a>：假設$q_1$是testing set中某個樣本點的機率密度，$q_0$是training set中一個樣本點的機率密度。ML/DL的任務就是找到夠小的$loss(\theta)$使得$P(y|x, \theta)$最大。</p>
+<p>當我們在$q_0(x)$上找到一組最好的參數$\theta’$時，是否能夠保證$q_1(x)$上也會是最好呢?</p>
+<ul>
+<li>傳統ML問題會假設訓練集和測試集是$i.i.d$的，不過現實上往往這個假設不成立，這個testing set分布和training set分布不同的現象就稱之Covariate Shift</li>
+<li>而在deep learning task中，由於這個現象會發生在每一層內，所以稱之Internal Covariate Shift(ICS)</li>
+</ul>
+<h4 id="如何解決Internal-Covariate-Shift-ICS"><a href="#如何解決Internal-Covariate-Shift-ICS" class="headerlink" title="如何解決Internal Covariate Shift(ICS)?"></a>如何解決Internal Covariate Shift(ICS)?</h4><p>要減少ICS的問題，就得先理解他產生的原因：<strong>由於weights更新導致模型中每一層的input distribution改變</strong></p>
+<p>既然如此，我們就可以透過固定每一層間的分布來減少ICS的問題。</p>
+<p>傳統上ICS的問題，可以透過<a href="https://blog.csdn.net/hjimce/article/details/50864602" target="_blank" rel="noopener">PCA Whitening</a>(或ZCA weighting)來針對每一層的input進行變換(關於PCA/ZCA whitening的細節這裡就不討論，只是讓大家知道有這種方法)，使得輸入的特徵之間具有相同的mean和variance，並去除特徵之間的相關性，但是PCA whitening有著一些缺點:</p>
+<ul>
+<li>對於DL的task，每個epoch都要對每一層做一次PCA whitening，cost太大</li>
+<li>PCA whitening改變了每一層參數之間的分布，可能改變了layer中數據的表達能力，造成喪失一些資訊</li>
+</ul>
+<p>既然cost太大，那就試著來簡化一下:</p>
+<ul>
+<li>只<strong>單獨對每個feature來進行normalization</strong>，使得每個feature的mean為0，variance為1</li>
+<li><strong>加個線性變換</strong>，讓數據盡可能地恢復本身的表達能力</li>
+<li>深度學習的task通常是以mini-batch為單位，所以做的時候也是<strong>基於mini-batch的基礎上進行計算</strong></li>
+</ul>
+<p>好的，以上三點合起來就是Batch Normalization，對照一下應該不難理解一開始提供的algo。而其中的$\gamma$、$\beta$，就是為了讓分布盡可能地回復本身的表達能力而做的線性變換</p>
+<h4 id="延伸討論-BN真的跟ICS有關係"><a href="#延伸討論-BN真的跟ICS有關係" class="headerlink" title="延伸討論: BN真的跟ICS有關係?"></a>延伸討論: BN真的跟ICS有關係?</h4><p>其實前面講了這麼多，關於BN減少了ICS的看法在2018年的<a href="https://arxiv.org/abs/1805.11604" target="_blank" rel="noopener">How Does Batch Normalization Help Optimization?</a>這篇就被被打臉了，這篇文章的觀點認為<strong>BN之所以有用是因為Normalization而不是減少ICS</strong>。</p>
+<blockquote>
+<p>论文中提到并没有发现BN跟internal covariate shift有半毛钱关系，实验方法是加入了一个“noise batch normalization”的对照实验，在batch normalization中加入噪声，使得z发生协变量偏移，但是这样的noise batch normalization的效果也远优于未经BN的网络，由此反驳了ICS的观点。</p>
+<p>论文中认为BN使得优化问题更加平滑，由此梯度的预测性更强，所以可以允许使用更大学习率，并且加快网络收敛。在使用BN后loss和gradient的Lipschitzness都提升了(也就是更平滑了）。</p>
+</blockquote>
+<h3 id="從Gradient-Vanishing-Exploding的角度看BN"><a href="#從Gradient-Vanishing-Exploding的角度看BN" class="headerlink" title="從Gradient Vanishing/Exploding的角度看BN"></a>從Gradient Vanishing/Exploding的角度看BN</h3><h4 id="Saturating-Non-linearity-amp-Non-Saturating-Nonlinearitiy"><a href="#Saturating-Non-linearity-amp-Non-Saturating-Nonlinearitiy" class="headerlink" title="Saturating Non-linearity &amp; Non-Saturating Nonlinearitiy"></a>Saturating Non-linearity &amp; Non-Saturating Nonlinearitiy</h4><p>根據2012年的一篇paper: <a href="https://papers.nips.cc/paper/4824-imagenet-classification-with-deep-convolutional-neural-networks.pdf" target="_blank" rel="noopener">ImageNet Classification with Deep Convolutional Neural Networks</a>將DL模型內常被使用的activation function分成了<strong>非飽和非線性(non-saturating nonlinearities)</strong> 和 <strong>飽和非線性(saturating nonlinearities)</strong> 兩種，定義如下:</p>
+<ul>
+<li>f is non-staurating iff <script type="math/tex">(|lim_{z\rightarrow-\infty}f(z)|=+\infty)\wedge(|lim_{z\rightarrow+\infty}f(z)|=+\infty)</script></li>
+<li>f is staurating iff f is non-staurating</li>
+</ul>
+<p>簡單來說，飽和函數會壓縮input的value，所以DL常用的activation function裡:</p>
+<ul>
+<li>ReLU是非飽和非線性函數</li>
+<li>Sigmoid、Tanh是飽和非線性函數</li>
+</ul>
+<h4 id="Saturating-Non-linearity如何影響Training"><a href="#Saturating-Non-linearity如何影響Training" class="headerlink" title="Saturating Non-linearity如何影響Training?"></a>Saturating Non-linearity如何影響Training?</h4><p><img src="https://meetonfriday.com/img/lazy-loading-animation.gif" data-original="https://i.imgur.com/tjJDup5.png" alt=""></p>
+<p>這邊參考<a href="https://morvanzhou.github.io/tutorials/machine-learning/torch/5-04-A-batch-normalization/" target="_blank" rel="noopener">莫煩的Normalization介紹</a>，考慮activation function是tanh的情況</p>
+<p>上圖是activation function的圖，中間那張是數值沒有經過normalization的分布，最下面那張則是數值經過normalization後的分布。此時會有什麼影響?</p>
+<ul>
+<li>如果沒有做normalization，大部分的值經過tanh後就會趨近於+1或-1，也就是進入了所謂的<strong>飽和區域</strong>，造成neuron對於輸入的變化不再敏感</li>
+<li>進入飽和區也就代表Gradient Vanishing(因為沒有斜率)，降低訓練速度</li>
+</ul>
+<p><img src="https://meetonfriday.com/img/lazy-loading-animation.gif" data-original="https://i.imgur.com/quLAZHK.png" alt=""></p>
+<p>如果做了Normalization，就可以大幅地避免值都進入飽和區的狀況，如下圖:</p>
+<ul>
+<li>上兩張是進入tanh前有/沒有Normalization的數據分布；而下兩張是進入tanh後有/沒有Normalization的數據分布，可以看到有Normalization的數據能有更好的分布</li>
+</ul>
+<h4 id="從數學公式來看呢"><a href="#從數學公式來看呢" class="headerlink" title="從數學公式來看呢?"></a>從數學公式來看呢?</h4><p>用數學式子來解釋一下Gradient Vanishing/Exploding，實際上，<strong>在back propagation時，該層的gradient是要乘上該層的weights的</strong>，這會造成什麼問題?<br>假設第l層的forward propagation為:</p>
+<script type="math/tex; mode=display">h_l=w_l^Th_{l-1}</script><p>那麼該層的backward將會是</p>
+<script type="math/tex; mode=display">\frac{\delta{l}}{\delta{h_{l-1}}}=\frac{\delta{l}}{\delta{h_l}}\cdot\frac{\delta{h_l}}{\delta{h_{l-1}}}=\frac{\delta{l}}{\delta{h_{l}}}w_t</script><p>延伸一下，考慮從l層到k層的情況，backward propagation就會是</p>
+<script type="math/tex; mode=display">\frac{\delta{l}}{\delta{h_k}}=\frac{\delta{l}}{\delta{h_{l}}}\prod_{i=k+1}^l{w_i}</script><p>針對$\prod_{i=k+1}^l{w_i}$來討論一下:</p>
+<ul>
+<li>如果$w_i$大部分很小，那整體的值就會變成0(Ex: $0.9^{100}$)</li>
+<li>如果$w_i$大部分很大，那整體的值就會爆炸(Ex: $1.1^{100}$)</li>
+</ul>
+<p>那如果加上了BN呢?</p>
+<script type="math/tex; mode=display">h_l=BN(\alpha w_l^Th_{l-1})</script><p>此時backward就會是</p>
+<script type="math/tex; mode=display">\frac{\delta{h_l}}{\delta{h_{l-1}}}=\frac{1}{\alpha}\cdot\frac{\delta{BN(\alpha w_l^Th_{l-1})}}{\delta{w_l}}</script><p>透過BN，各層的輸出和backward的值都會先做了縮放，減少了Gradient Vanishing/Exploding的狀況</p>
+<h3 id="從Feature-Scaling的角度看BN"><a href="#從Feature-Scaling的角度看BN" class="headerlink" title="從Feature Scaling的角度看BN"></a>從Feature Scaling的角度看BN</h3><p><img src="https://meetonfriday.com/img/lazy-loading-animation.gif" data-original="https://i.imgur.com/IwYGCd2.jpg" alt=""></p>
+<p>如果不同的feature之間的值域相差很大時，數值大的feature的參數會對結果的影響更大，導致訓練過程中的結果往往被數值大的feature影響。要解決這個問題就必須在訓練過程中，為不同的方向設置不同的學習率，可是這樣很不方便，此時就會做feature scaling。</p>
+<p>上圖取自<a href="https://www.youtube.com/watch?v=BZh1ltr5Rkg&amp;feature=share" target="_blank" rel="noopener">李宏毅老師的BN介紹</a>，其中w1和w2是兩種不同的feature，如果直接拿來訓練會因為數值本身的range造成loss cruve圖呈現橢圓狀(左圖)。透過BN做feature scaling後，可期望loss curve呈現圓形狀(右圖)，這樣會有助於幫助模型更快收斂。</p>
+<h3 id="延伸討論-BN在實務上的設計"><a href="#延伸討論-BN在實務上的設計" class="headerlink" title="延伸討論: BN在實務上的設計"></a>延伸討論: BN在實務上的設計</h3><p>在實務上，training時會以batch為單位去算平均跟標準差，但在testing時資料是一筆一筆進來的，沒辦法這樣做，所以通常會<strong>採用training時的平均跟變異數</strong>。</p>
+<p>所以，在pytorch中提供了2種mode來區別這件事: <code>train()</code>以及<code>eval()</code></p>
+<ul>
+<li>當有使用BN的模型在training時前面就會加上<code>train()</code></li>
+<li>而在testing時，透過在前面加上<code>eval()</code>告訴模型不要再重新去取平均跟變異數，而是使用training好的值<ul>
+<li>如果沒有加上的話，一旦batch_size過小，可能就會造成data產生大量的誤差</li>
+</ul>
+</li>
+</ul>
+<h3 id="延伸討論-BN到底要加在activation-function前還是後面"><a href="#延伸討論-BN到底要加在activation-function前還是後面" class="headerlink" title="延伸討論: BN到底要加在activation function前還是後面?"></a>延伸討論: BN到底要加在activation function前還是後面?</h3><p><strong>實際上有放在前面效果比較好的，也有放在後面效果比較好的</strong>。<br>這是個萬年不解謎題，大家都在吵吵吵，各自提出各自的看法，到現在我也還不知道正確答案。</p>
+<p>總之，我採用了<a href="https://www.zhihu.com/question/283715823" target="_blank" rel="noopener">知乎</a>上面某位網友的回答並稍微整理了一下內容給大家參考(比較令我信服的回答):</p>
+<blockquote>
+<p>在BN的原始论文中，BN是放在非线性激活层前面的（<a href="https://link.zhihu.com/?target=https%3A//arxiv.org/abs/1502.03167v3">arXiv:1502.03167v3</a>，第5页）</p>
+<p>> We add the BN transform immediately before the nonlinearity（注意：before的黑体是我加的，为了突出重点）</p>
+<p>但是，François Chollet<a href="https://link.zhihu.com/?target=https%3A//github.com/keras-team/keras/issues/1802%23issuecomment-187966878">爆料</a>说BN论文的作者之一Christian把BN放在ReLU后面</p>
+<p>> I can guarantee that recent code written by Christian applies relu before BN.</p>
+<p>另外，Jeremy Howard直接<a href="https://forums.fast.ai/t/questions-about-batch-normalization/230/2" target="_blank" rel="noopener">主张</a>把BN放在非线性激活后面</p>
+<p>> You want the batchnorm after the non-linearity, and before the dropout.</p>
+<p>“应该”放在前面还是后面？这个“应该”其实有两种解释：</p>
+<ol>
+<li>放在前面还是后面比较好？</li>
+<li>为什么要放在前面还是后面？</li>
+</ol>
+<p>对于第一问，目前在实践上，倾向于把BN放在ReLU后面。也有评测表明BN放ReLU后面效果更好。</p>
+<p>对于第二问，实际上，我们目前对BN的机制仍然不是特别清楚，这里只能尝试做些（玄学）解释，不一定正确。</p>
+<p>考虑一些飽和激活函数(tanh、sigmoid)。函数图像的两端，相对于x的变化，y的变化都很小。也就是说，容易出现梯度衰减的问题。那么，如果在tanh或sigmoid之前，进行一些normalization处理，就可以缓解梯度衰减的问题。我想这可能也是最初的BN论文选择把BN层放在非线性激活之前的原因。</p>
+<p>但是ReLU和它们完全不一样啊(因為是非飽和激活函数，比較沒有上述梯度衰减問題)。</p>
+<p>实际上，最初的BN论文虽然也在使用ReLU的Inception上进行了试验，但首先研究的是sigmoid激活。因此，试验ReLU的，我猜想作者可能就顺便延续了之前把BN放前面的配置，而没有单独针对ReLU进行处理。</p>
+<p><strong>总结一下，BN层的作用机制也许是通过平滑隐藏层输入的分布，帮助随机梯度下降的进行，缓解随机梯度下降权重更新对后续层的负面影响。因此，实际上，无论是放非线性激活之前，还是之后，也许都能发挥这个作用。只不过，取决于具体激活函数的不同，效果也许有一点差别（比如，对sigmoid和tanh而言，放非线性激活之前，也许顺便还能缓解sigmoid/tanh的梯度衰减问题，而对ReLU而言，这个平滑作用经ReLU“扭曲”之后也许有所衰弱）。</strong></p>
+</blockquote>
+<h3 id="延伸討論-BN的batch-size應該要多大-多小"><a href="#延伸討論-BN的batch-size應該要多大-多小" class="headerlink" title="延伸討論: BN的batch size應該要多大/多小?"></a>延伸討論: BN的batch size應該要多大/多小?</h3><p>這個問題本質上和<strong>batch size對於training的影響</strong>是一樣的問題，所以直接從探討batch size大小對於訓練的影響這個角度來回答:</p>
+<ul>
+<li>batch size太小，訓練時的震盪會很嚴重，有機會跳出local min，但不利於收斂；而對於BN來說，找到的平均和變異則不能代表全局平均和變異，因此效果會不好</li>
+<li>batch size太大，震盪會比較小，但容易接近全局(這裡的全局是指training set而不是數據母體)的結果，導致不同batch的梯度方向没有任何變化，容易陷入local min</li>
+</ul>
+<p>所以結論就是，只探討batch_size的話，答案是不能太大也不能太小(廢話)。</p>
+<p>但如果一併探討BN的話，過小會造成效果不好，大一點其實不影響BN，但會有local min問題。</p>
+<h3 id="結論"><a href="#結論" class="headerlink" title="結論"></a>結論</h3><p>綜上所述，BN之所以有用是因為:</p>
+<ul>
+<li>減緩了梯度消失/爆炸的問題</li>
+<li>改善了非飽和模型不易訓練的問題</li>
+<li>減少weight initialization的影響(因為假設初始化的不好，可以透過後面的BN來進行改善)</li>
+<li>起到對資料做normalization的作用</li>
+</ul>
+<p>(這裡並沒有提到”減緩ICS”這項特性是因為根據2018年提出的paper提到，實際上BN之所以有用可能和減緩ICS無關)</p>
+<h2 id="Normalization的各種變形"><a href="#Normalization的各種變形" class="headerlink" title="Normalization的各種變形"></a>Normalization的各種變形</h2><p>常用的Normalization方法除了上面講了這麼多的Batch Normalization外，還有</p>
+<ul>
+<li>Layer Normalization（LN，2016年）</li>
+<li>Instance Normalization（IN，2017年）</li>
+<li>Group Normalization（GN，2018年）</li>
+</ul>
+<p><img src="https://meetonfriday.com/img/lazy-loading-animation.gif" data-original="https://i.imgur.com/Bz6hXO7.jpg" alt=""></p>
+<p>簡單用一張圖來理解他們之間的差異:</p>
+<p>現在假設feature map的維度為: $(N, C, H, W)$</p>
+<ul>
+<li>N: batch size</li>
+<li>C: channel</li>
+<li>H, W: height &amp; width</li>
+</ul>
+<ol>
+<li>BN是在batch方向上，对N、H、W做normalization，保留C的维度。<ul>
+<li>對於較小的batch_size效果較差(因為數量不夠代表平均跟變異)</li>
+<li>BN適用於固定深度的Network，Ex:CNN；不適用於RNN</li>
+</ul>
+</li>
+<li>LN在channel方向上，对C、H、W做normalization，主要用在RNN</li>
+<li>IN在image pixel上，对H、W做normalization，用在style transfer</li>
+<li>GN先將channel分组，然後再做normalization。</li>
+</ol>
+<p>打到這邊也累了所以提個大概就好，所以下面只介紹LN，其餘的有興趣的在自己去看xD</p>
+<h3 id="Layer-Normalization"><a href="#Layer-Normalization" class="headerlink" title="Layer Normalization"></a>Layer Normalization</h3><p>根據上面BN介紹了那麼一大坨，可以知道BN的缺點在於: <strong>當batch_size過小時，batch的平均和變異並不能代表全局的平均和變異，此時BN的效果就會很差</strong>。</p>
+<p><img src="https://meetonfriday.com/img/lazy-loading-animation.gif" data-original="https://i.imgur.com/yAVptoY.jpg" alt=""></p>
+<p>這個情形在RNN上尤其明顯，由於RNN是的input長度是動態的，所以考慮以下的情形:</p>
+<ul>
+<li>當N過小的時候，對於T&gt;4的數據只有一筆(淺藍色)，無法代表全局資訊</li>
+<li>當在testing時遇到比training set裡面任何一筆都還要長的input時，此時並沒有任何一個平均和變異可以拿來做BN</li>
+</ul>
+<p>所以，LN的主要想法是<strong>以單一的input為單位，去計算平均和變異</strong>(BN是以batch為單位)，假設$H$是一層中隱藏節點的數量，$l$是Model的layer數，$\alpha$是每一個neuron:</p>
+<script type="math/tex; mode=display">u^l=\frac{1}{H}\sum^H_{i=1}\alpha_i^l, \space\space \sigma^l=\sqrt{\frac{1}{H}\sum^H_{i=1}(\alpha^l_i-u^l)^2}</script><p>然後就可以做Normaluization，注意到這裡的計算和batch_size完全無關，所以避開了BN在batch_size過小時會遇到的問題。<br>此外，LN裡面也提供了類似BN的兩個trainable parameters: gain(g)和bias(b)來盡可能地還原被破壞的訊息。</p>
+<h2 id="總結"><a href="#總結" class="headerlink" title="總結"></a>總結</h2><p>這篇文章主要從不同的角度來探討為何BN對於Training有幫助，以及延伸探討實務上應該如何使用BN，最後也簡介了BN的各種變形及應用。</p>
+<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><ul>
+<li><a href="https://zhuanlan.zhihu.com/p/34879333" target="_blank" rel="noopener">Batch Normalization原理与实战</a></li>
+<li><a href="https://blog.csdn.net/mao_xiao_feng/article/details/54317852" target="_blank" rel="noopener">【机器学习】covariate shift现象的解释</a></li>
+<li><a href="https://blog.csdn.net/hjimce/article/details/50864602" target="_blank" rel="noopener">PCA Whitening</a></li>
+<li><a href="https://zhuanlan.zhihu.com/p/54073204" target="_blank" rel="noopener">Batch Normalization的通俗解释</a></li>
+<li><a href="https://arxiv.org/abs/1805.11604" target="_blank" rel="noopener">How Does Batch Normalization Help Optimization?</a></li>
+<li><a href="https://papers.nips.cc/paper/4824-imagenet-classification-with-deep-convolutional-neural-networks.pdf" target="_blank" rel="noopener">ImageNet Classification with Deep Convolutional Neural Networks</a></li>
+<li><a href="https://www.youtube.com/watch?v=BZh1ltr5Rkg&amp;feature=share" target="_blank" rel="noopener">李宏毅老師的BN介紹</a></li>
+<li><a href="https://morvanzhou.github.io/tutorials/machine-learning/torch/5-04-A-batch-normalization/" target="_blank" rel="noopener">莫煩的Normalization介紹</a></li>
+<li><a href="https://www.zhihu.com/question/283715823" target="_blank" rel="noopener">Batch-normalized 应该放在非线性激活层的前面还是后面？</a></li>
+<li><a href="https://zhuanlan.zhihu.com/p/72589565" target="_blank" rel="noopener">常用的 Normalization 方法：BN、LN、IN、GN</a></li>
+</ul>
+
+                <hr>
+                <!-- Pager -->
+                <ul class="pager">
+    
+    <li class="previous">
+        <a href="/posts/8ce0687/" data-toggle="tooltip" data-placement="top" title="軟體面試問題(一)">&larr; Newer Post</a>
+    </li>
+    
+    
+    <li class="next">
+        <a href="/posts/882f9d11/" data-toggle="tooltip" data-placement="top" title="[ML]Sklearn的scoring parameters">Older Post &rarr;</a>
+    </li>
+    
+</ul>
+
+                <!-- tip start -->
+                
+
+                
+                <!-- tip end -->
+
+                <!-- Sharing -->
+                
+                <!-- Sharing -->
+
+                <!-- gitment start -->
+                
+                <!-- gitment end -->
+
+                <!-- 来必力City版安装代码 -->
+                
+                <!-- City版安装代码已完成 -->
+
+                <!-- disqus comment start -->
+                
+                <div class="comment">
+                    <div id="disqus_thread" class="disqus-thread"></div>
+                </div>
+                
+                <!-- disqus comment end -->
+            </div>
+            
+            <!-- Tabe of Content -->
+            <!-- Table of Contents -->
+
+    
+      
+        <aside id="sidebar">
+          <div id="toc" class="toc-article">
+          <strong class="toc-title">Contents</strong>
+          
+            <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Batch-Normalization"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">Batch Normalization</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#簡介"><span class="toc-nav-number">1.1.</span> <span class="toc-nav-text">簡介</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#從Internal-Covariate-Shift的角度看BN"><span class="toc-nav-number">1.2.</span> <span class="toc-nav-text">從Internal Covariate Shift的角度看BN</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#Internal-Covariate-Shift"><span class="toc-nav-number">1.2.1.</span> <span class="toc-nav-text">Internal Covariate Shift</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#如何解決Internal-Covariate-Shift-ICS"><span class="toc-nav-number">1.2.2.</span> <span class="toc-nav-text">如何解決Internal Covariate Shift(ICS)?</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#延伸討論-BN真的跟ICS有關係"><span class="toc-nav-number">1.2.3.</span> <span class="toc-nav-text">延伸討論: BN真的跟ICS有關係?</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#從Gradient-Vanishing-Exploding的角度看BN"><span class="toc-nav-number">1.3.</span> <span class="toc-nav-text">從Gradient Vanishing&#x2F;Exploding的角度看BN</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#Saturating-Non-linearity-amp-Non-Saturating-Nonlinearitiy"><span class="toc-nav-number">1.3.1.</span> <span class="toc-nav-text">Saturating Non-linearity &amp; Non-Saturating Nonlinearitiy</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#Saturating-Non-linearity如何影響Training"><span class="toc-nav-number">1.3.2.</span> <span class="toc-nav-text">Saturating Non-linearity如何影響Training?</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#從數學公式來看呢"><span class="toc-nav-number">1.3.3.</span> <span class="toc-nav-text">從數學公式來看呢?</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#從Feature-Scaling的角度看BN"><span class="toc-nav-number">1.4.</span> <span class="toc-nav-text">從Feature Scaling的角度看BN</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#延伸討論-BN在實務上的設計"><span class="toc-nav-number">1.5.</span> <span class="toc-nav-text">延伸討論: BN在實務上的設計</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#延伸討論-BN到底要加在activation-function前還是後面"><span class="toc-nav-number">1.6.</span> <span class="toc-nav-text">延伸討論: BN到底要加在activation function前還是後面?</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#延伸討論-BN的batch-size應該要多大-多小"><span class="toc-nav-number">1.7.</span> <span class="toc-nav-text">延伸討論: BN的batch size應該要多大&#x2F;多小?</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#結論"><span class="toc-nav-number">1.8.</span> <span class="toc-nav-text">結論</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Normalization的各種變形"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">Normalization的各種變形</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Layer-Normalization"><span class="toc-nav-number">2.1.</span> <span class="toc-nav-text">Layer Normalization</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#總結"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">總結</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Reference"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">Reference</span></a></li></ol>
+          
+          </div>
+        </aside>
+      
+    
+
+        </div>
+    </div>
+</article>
+
+	
+    <!-- disqus embedded js code start (one page only need to embed once) -->	
+    <script type="text/javascript">	
+        /* * * CONFIGURATION VARIABLES * * */	
+        var disqus_shortname = "meetonfriday";	
+        var disqus_identifier = "https://meetonfriday.com/posts/d34f9238/";	
+        var disqus_url = "https://meetonfriday.com/posts/d34f9238/";	
+        (function() {	
+            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;	
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';	
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);	
+        })();	
+    </script>	
+    <!-- disqus embedded js code start end -->	
+    
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/john850512">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://www.linkedin.com/in/john85051232">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                
+                    <li>
+                        <a target="_blank" href="https://www.facebook.com/meetonfridayyy">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+                
+                    <li>
+                        <a target="_blank"  href="https://mail.google.com/mail/?view=cm&fs=1&to=john85051232@gmail.com">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-envelope-o fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+                
+                
+
+                
+
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; John 2025 
+                    <br>
+                    Powered by 
+                    <a href="https://github.com/john850512/hexo-theme-jiji" target="_blank" rel="noopener">
+                        <i>hexo-theme-jiji</i>
+                    </a> | 
+                    <iframe name="star" style="margin-left: 2px; margin-bottom:-5px;" frameborder="0" scrolling="0"
+                        width="100px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=john850512&repo=hexo-theme-jiji&type=star&count=true">
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+
+</footer>
+
+<!-- jQuery -->
+
+<script src="/js/jquery.min.js"></script>
+
+
+<!-- Bootstrap Core JavaScript -->
+
+<script src="/js/bootstrap.min.js"></script>
+
+
+<!-- Custom Theme JavaScript -->
+
+<script src="/js/hux-blog.min.js"></script>
+
+
+<!-- Search -->
+
+<script src="/js/search.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("https://meetonfriday.com/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+<!-- Search -->
+
+    <script type="text/javascript">      
+        var search_path = "search.xml";
+        if (search_path.length == 0) {
+            search_path = "search.xml";
+        }
+    var path = "/" + search_path;
+    searchFunc(path, 'local-search-input', 'local-search-result');
+    </script>
+
+
+<!-- busuanzi -->
+<!--<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>-->
+<script async src="//cdn.jsdelivr.net/npm/busuanzi@2.3.0"></script>
+
+
+
+
+	<a id="rocket" href="#top" class=""></a>
+	<script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script>
+    <script type="text/javascript" src="/js/toc.js?v=1.0.0" async=""></script>
+
+    
+        <!-- background effects line -->
+        
+        <!-- background effects end -->
+    
+    
+    <!-- background animation-->>
+    <!--<script size="50" alpha='0.3' zIndex="-999" src="/js/ribbonStatic.js"></script>-->
+    
+        <script src="/js/ribbonDynamic.js"></script>
+    
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script>
+            window.imageLazyLoadSetting = {
+                isSPA: false,
+                processImages: null,
+            };
+        </script><script>window.addEventListener("load",function(){var t=/\.(gif|jpg|jpeg|tiff|png)$/i,r=/^data:image\/[a-z]+;base64,/;Array.prototype.slice.call(document.querySelectorAll("img[data-original]")).forEach(function(a){var e=a.parentNode;"A"===e.tagName&&(e.href.match(t)||e.href.match(r))&&(e.href=a.dataset.original)})});</script><script>!function(n){n.imageLazyLoadSetting.processImages=o;var i=n.imageLazyLoadSetting.isSPA,r=Array.prototype.slice.call(document.querySelectorAll("img[data-original]"));function o(){i&&(r=Array.prototype.slice.call(document.querySelectorAll("img[data-original]")));for(var t,e,a=0;a<r.length;a++)t=r[a],0<=(e=t.getBoundingClientRect()).bottom&&0<=e.left&&e.top<=(n.innerHeight||document.documentElement.clientHeight)&&function(){var t,e,n,i,o=r[a];t=o,e=function(){r=r.filter(function(t){return o!==t})},n=new Image,i=t.getAttribute("data-original"),n.onload=function(){t.src=i,e&&e()},n.src=i}()}o(),n.addEventListener("scroll",function(){var t,e;t=o,e=n,clearTimeout(t.tId),t.tId=setTimeout(function(){t.call(e)},500)})}(this);</script></body>
+
+</html>

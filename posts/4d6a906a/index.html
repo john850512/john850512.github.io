@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<!-- Head tag -->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="baidu-site-verification" content="093lY4ziMu" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="keyword"  content="programming, study, daily, entertainment">
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="星期五。見面">
+    <meta property="og:locale" content="zh-TW" />
+    
+    <meta property="og:title" content="[Pytorch]Pack the data to train variable length sequences" />
+    
+    
+    <meta property="og:description" content="在NLP task中常常會遇到input data長度不固定的問題，一般來說此時有兩種方法處理: 對資料padding補齊到相同長度，或是截斷超過某個長度的data。不過其實還有一種更有效率的方法，就是PackSequence，這篇文章將會針對Pytorch的PackSequence做一系列的介紹，包含概念和使用技巧。" />
+    <meta name="description" content="在NLP task中常常會遇到input data長度不固定的問題，一般來說此時有兩種方法處理: 對資料padding補齊到相同長度，或是截斷超過某個長度的data。不過其實還有一種更有效率的方法，就是PackSequence，這篇文章將會針對Pytorch的PackSequence做一系列的介紹，包含概念和使用技巧。">
+    
+    
+    <meta property="og:image" content="/img/avatar.jpg" />
+    
+
+    <link rel="shortcut icon" href="/img/avatar.jpg">
+    <!-- Place this tag in your head or just before your close body tag. -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <!--<link href='http://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>-->
+    <title>
+        
+          [Pytorch]Pack the data to train variable length sequences - MeetonFriday
+        
+    </title>
+    <!-- canonical -->
+    
+    
+      <link rel="canonical" href="https://meetonfriday.com/posts/4d6a906a/">
+    
+
+    <!-- Bootstrap Core CSS -->
+    
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+
+
+    <!-- Custom CSS --> 
+    
+<link rel="stylesheet" href="/css/dusign-dark.css">
+
+    
+<link rel="stylesheet" href="/css/dusign-common-dark.css">
+
+    <!-- 
+<link rel="stylesheet" href="/css/font-awesome.css">
+ -->
+    
+<link rel="stylesheet" href="/css/toc.css">
+
+
+    
+    <!-- Pygments Highlight CSS -->
+    
+<link rel="stylesheet" href="/css/highlight.css">
+
+
+    
+<link rel="stylesheet" href="/css/widget.css">
+
+
+    
+<link rel="stylesheet" href="/css/rocket.css">
+
+
+    
+<link rel="stylesheet" href="/css/signature.css">
+
+
+    
+<link rel="stylesheet" href="/css/fonts.googleapis.css">
+
+
+    <!-- <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.3.0/css/font-awesome.min.css">-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.min.css">
+    
+    <!-- Google Analytics -->
+    
+      <!-- <script>
+          // dynamic User by Hux
+          var _gaId = 'UA-163346001-1';
+          var _gaDomain = 'auto';
+      
+          // Originial
+          (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+          (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+          })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+      
+          ga('create', _gaId, _gaDomain);
+          ga('send', 'pageview');
+      </script> -->
+      
+      <!-- Global site tag (gtag.js) - Google Analytics -->
+      <script async src="https://www.googletagmanager.com/gtag/js?id=UA-163346001-1"></script>
+      <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+      
+        gtag('config', 'UA-163346001-1');
+      </script>
+      
+    <!-- google ad sense-->
+    <script data-ad-client="ca-pub-9561340457908416" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<meta name="generator" content="Hexo 4.2.1"><link rel="alternate" href="/atom.xml" title="星期五。見面" type="application/atom+xml">
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+	<!-- Modified by Yu-Hsuan Yen -->
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        
+            
+                background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.5)), url('/img/header_img/header-bg.jpg')
+            
+        
+    }
+    
+</style>
+
+<header class="intro-header" >
+    <!-- Signature -->
+    <div id="signature">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                
+                    <div class="post-heading">
+                        <div class="tags">
+                            
+                              <a class="tag" href="/tags/#deep learning" title="deep learning">deep learning</a>
+                            
+                              <a class="tag" href="/tags/#python" title="python">python</a>
+                            
+                              <a class="tag" href="/tags/#pytorch" title="pytorch">pytorch</a>
+                            
+                        </div>
+                        <h1>[Pytorch]Pack the data to train variable length sequences</h1>
+                        <h2 class="subheading"></h2>
+                        <span class="meta">
+                            Posted by John on
+                            2020-07-29
+                        </span>
+
+                        
+                            <div class="blank_box"></div>
+                            <span class="meta">
+                                Words <span class="post-count">3.8k</span> and
+                                Reading Time <span class="post-count">16</span> Minutes
+                            </span>
+                            <div class="blank_box"></div>
+                            <!-- 不蒜子统计 start -->
+                            <span class="meta">
+                                Viewed <span id="busuanzi_value_page_pv"><i class="fa fa-spinner fa-spin"></i></span> Times
+                            </span>
+                            <!-- 不蒜子统计 end -->
+                        
+
+                    </div>
+                
+
+                </div>
+            </div>
+        </div>      
+    </div>
+
+    
+        
+            <div class="waveWrapper">
+                <div class="wave wave_before" style="background-image: url('/img/wave-dark.png')"></div>
+                <div class="wave wave_after" style="background-image: url('/img/wave-dark.png')"></div>
+            </div>
+        
+    
+</header>
+
+	
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">星期五。見面</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archive/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/categories/">Categories</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/reading/">Reading</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+    
+    <!-- Main Content -->
+    <!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+            <!-- Post Container -->
+
+    
+        
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+        
+    
+
+                <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>在NLP task中常常會遇到input data長度不固定的問題，一般來說此時有兩種方法處理: <strong>對資料padding補齊到相同長度，或是截斷超過某個長度的data</strong>。不過其實還有一種更有效率的方法，就是PackSequence，這篇文章將會針對Pytorch的PackSequence做一系列的介紹，包含概念和使用技巧。</p>
+<p>關於PackSequence，在<a href="https://pytorch.org/docs/master/nn.html#utilities" target="_blank" rel="noopener">Pytorch的document</a>中<code>torch.nn.utils.rnn</code>定義了以下的object / function:</p>
+<ul>
+<li>nn.utils.rnn.PackedSequence</li>
+<li><code>nn.utils.rnn.pad_sequence()</code>: Pad a list of variable length Tensors with padding_value</li>
+<li><code>nn.utils.rnn.pack_padded_sequence()</code>: Packs a Tensor containing padded sequences of variable length.</li>
+<li><code>nn.utils.rnn.pad_packed_sequence()</code>: Pads a packed batch of variable length sequences.</li>
+<li><code>nn.utils.rnn.pack_sequence()</code>: Packs a list of variable length Tensors</li>
+</ul>
+<p>主要重點在於<code>pad_sequence()</code>, <code>pack_padded_sequence()</code>, <code>pad_packed_sequence()</code>，而<code>pack_sequence()</code>其實就是<code>pad_sequence()</code>+<code>pack_padded_sequence()</code>，最後再來談。</p>
+<a id="more"></a>
+<p>首先，讓我們先把該import的都先寫好：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">0</span><br><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">from</span> torch <span class="keyword">import</span> nn</span><br><span class="line"><span class="keyword">import</span> torch.utils.data <span class="keyword">as</span> data</span><br><span class="line"><span class="keyword">from</span> torch.utils.data <span class="keyword">import</span> DataLoader</span><br><span class="line"><span class="keyword">from</span> torch.utils.data <span class="keyword">import</span> Dataset</span><br><span class="line"><span class="keyword">import</span> torch.nn.utils.rnn <span class="keyword">as</span> rnn_utils</span><br><span class="line"><span class="keyword">from</span> pprint <span class="keyword">import</span> pprint</span><br></pre></td></tr></table></figure></p>
+<h2 id="pad-sequence"><a href="#pad-sequence" class="headerlink" title="pad_sequence"></a>pad_sequence</h2><p><code>pad_sequence</code>用來將list of tensor用0補齊，這用在你的資料輸入長度不一致的時候，由於模型輸入要求長度固定所以必須要將長度變成一樣長。</p>
+<p>在NLP相關的task最常看到這種現象，舉例來說: <strong>當你的輸入是句子，而每句長度都不同的時候</strong></p>
+<p>假設我們的資料沒有做embedding，也就是說句子裡每一個字都只是一個數字</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">0</span><br><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">train_x = [torch.tensor([<span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>]),</span><br><span class="line">           torch.tensor([<span class="number">2</span>, <span class="number">2</span>, <span class="number">2</span>, <span class="number">2</span>]),</span><br><span class="line">           torch.tensor([<span class="number">3</span>, <span class="number">3</span>, <span class="number">3</span>, <span class="number">3</span>]),</span><br><span class="line">           torch.tensor([<span class="number">4</span>, <span class="number">4</span>, <span class="number">4</span>]),</span><br><span class="line">           torch.tensor([<span class="number">5</span>])]</span><br><span class="line">pprint(train_x)</span><br><span class="line"></span><br><span class="line"><span class="comment"># pad the list of sequences</span></span><br><span class="line">pad_train_x = rnn_utils.pad_sequence(train_x, batch_first=<span class="literal">True</span>)</span><br><span class="line">pprint(pad_train_x)</span><br></pre></td></tr></table></figure>
+<p>進行padding後，pad_train_x如下，將長度小於最大長度的都用0補齊了:<br><figure class="highlight python"><table><tr><td class="code"><pre><span class="line">tensor([[<span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>],</span><br><span class="line">        [<span class="number">2</span>, <span class="number">2</span>, <span class="number">2</span>, <span class="number">2</span>, <span class="number">0</span>, <span class="number">0</span>],</span><br><span class="line">        [<span class="number">3</span>, <span class="number">3</span>, <span class="number">3</span>, <span class="number">3</span>, <span class="number">0</span>, <span class="number">0</span>],</span><br><span class="line">        [<span class="number">4</span>, <span class="number">4</span>, <span class="number">4</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>],</span><br><span class="line">        [<span class="number">5</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>]])</span><br></pre></td></tr></table></figure></p>
+<p>如果句子中的每個字都經過embedding了? 比方說現在句子中的每個字都是一個4維的向量時: </p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">0</span><br><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">train_x1 = [torch.ones(<span class="number">3</span>, <span class="number">4</span>),</span><br><span class="line">            torch.ones(<span class="number">1</span>, <span class="number">4</span>),</span><br><span class="line">            torch.ones(<span class="number">5</span>, <span class="number">4</span>)]</span><br><span class="line">pprint(train_x1)</span><br><span class="line"></span><br><span class="line"><span class="comment"># pad the list of sequences</span></span><br><span class="line">pad_train_x1 = rnn_utils.pad_sequence(train_x1, batch_first=<span class="literal">True</span>)</span><br><span class="line">pprint(pad_train_x1)</span><br></pre></td></tr></table></figure>
+<p>padding後得到的pad_train_x1會是:<br><figure class="highlight python"><table><tr><td class="code"><pre><span class="line">tensor([[[<span class="number">1.</span>, <span class="number">1.</span>, <span class="number">1.</span>, <span class="number">1.</span>],</span><br><span class="line">         [<span class="number">1.</span>, <span class="number">1.</span>, <span class="number">1.</span>, <span class="number">1.</span>],</span><br><span class="line">         [<span class="number">1.</span>, <span class="number">1.</span>, <span class="number">1.</span>, <span class="number">1.</span>],</span><br><span class="line">         [<span class="number">0.</span>, <span class="number">0.</span>, <span class="number">0.</span>, <span class="number">0.</span>],</span><br><span class="line">         [<span class="number">0.</span>, <span class="number">0.</span>, <span class="number">0.</span>, <span class="number">0.</span>]],</span><br><span class="line"></span><br><span class="line">        [[<span class="number">1.</span>, <span class="number">1.</span>, <span class="number">1.</span>, <span class="number">1.</span>],</span><br><span class="line">         [<span class="number">0.</span>, <span class="number">0.</span>, <span class="number">0.</span>, <span class="number">0.</span>],</span><br><span class="line">         [<span class="number">0.</span>, <span class="number">0.</span>, <span class="number">0.</span>, <span class="number">0.</span>],</span><br><span class="line">         [<span class="number">0.</span>, <span class="number">0.</span>, <span class="number">0.</span>, <span class="number">0.</span>],</span><br><span class="line">         [<span class="number">0.</span>, <span class="number">0.</span>, <span class="number">0.</span>, <span class="number">0.</span>]],</span><br><span class="line"></span><br><span class="line">        [[<span class="number">1.</span>, <span class="number">1.</span>, <span class="number">1.</span>, <span class="number">1.</span>],</span><br><span class="line">         [<span class="number">1.</span>, <span class="number">1.</span>, <span class="number">1.</span>, <span class="number">1.</span>],</span><br><span class="line">         [<span class="number">1.</span>, <span class="number">1.</span>, <span class="number">1.</span>, <span class="number">1.</span>],</span><br><span class="line">         [<span class="number">1.</span>, <span class="number">1.</span>, <span class="number">1.</span>, <span class="number">1.</span>],</span><br><span class="line">         [<span class="number">1.</span>, <span class="number">1.</span>, <span class="number">1.</span>, <span class="number">1.</span>]]])</span><br></pre></td></tr></table></figure></p>
+<p>關於<code>pad_sequence()</code>內的參數batch_first會造成什麼影響:</p>
+<ul>
+<li>batch_first=True時，return的維度是: [Batch, Sequence, Features] </li>
+<li>batch_first=False時，return的維度是: [Sequence, Batch, Features]</li>
+</ul>
+<p>通常我們會設置batch_first=True，因為比較符合一般我們在思考的格式</p>
+<ul>
+<li>不過這個格式餵入RNN相關模型時其實並不利於平行化計算(<strong>但其實Pytorch內部又會把他轉回batch_first=False，所以用我們比較好理解的表達形式就好</strong>)，在最後面的時候再來補充說明</li>
+</ul>
+<p>對於DataLoader，DataLoader無法處理不定長度的輸入，來看一下長度不相同的時候DataLoader會花生什麼4: </p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">0</span><br><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">train_x = [torch.tensor([<span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>]),</span><br><span class="line">           torch.tensor([<span class="number">2</span>, <span class="number">2</span>]),</span><br><span class="line">           torch.tensor([<span class="number">3</span>, <span class="number">3</span>, <span class="number">3</span>, <span class="number">3</span>]),</span><br><span class="line">           torch.tensor([<span class="number">4</span>, <span class="number">4</span>, <span class="number">4</span>]),</span><br><span class="line">           torch.tensor([<span class="number">5</span>])]</span><br><span class="line">pprint(train_x)</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Mydataset</span><span class="params">(Dataset)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, data)</span>:</span></span><br><span class="line">        self.data = data</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__len__</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="keyword">return</span> len(self.data)</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__getitem__</span><span class="params">(self, idx)</span>:</span></span><br><span class="line">        <span class="keyword">return</span> self.data[idx]</span><br><span class="line"></span><br><span class="line">train_loader = DataLoader(Mydataset(train_x), batch_size=<span class="number">2</span>)</span><br><span class="line">batch_x = iter(train_loader).next()</span><br><span class="line">pprint(batch_x)</span><br></pre></td></tr></table></figure>
+<p>恭喜！ 你會得到下面的Error msg:<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">RuntimeError: invalid argument 0: Sizes of tensors must match except in dimension 0. Got 6 and 2 in dimension 1 at &#x2F;tmp&#x2F;pip-req-build-4baxydiv&#x2F;aten&#x2F;src&#x2F;TH&#x2F;generic&#x2F;THTensor.cpp:689</span><br></pre></td></tr></table></figure></p>
+<p>所以要嘛在前處理就先padding好，不然就是透過DataLoader的collate_fn參數來處理從Dataset return的data:</p>
+<ul>
+<li>在這邊的collate_fn中對資料先做了降序排列，原因後面會說到</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">0</span><br><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">collate_fn</span><span class="params">(data)</span>:</span></span><br><span class="line">    <span class="comment"># sort data with descending order</span></span><br><span class="line">    data.sort(key=<span class="keyword">lambda</span> x: len(x), reverse=<span class="literal">True</span>)</span><br><span class="line">    data = rnn_utils.pad_sequence(data, batch_first=<span class="literal">True</span>)</span><br><span class="line">    <span class="keyword">return</span> data</span><br><span class="line"></span><br><span class="line">train_loader = DataLoader(Mydataset(train_x), batch_size=<span class="number">2</span>, collate_fn=collate_fn)</span><br><span class="line">batch_x = iter(train_loader).next()</span><br><span class="line">pprint(batch_x)</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">tensor([[<span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>],</span><br><span class="line">        [<span class="number">2</span>, <span class="number">2</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>]])</span><br></pre></td></tr></table></figure>
+<h2 id="pack-padded-sequence"><a href="#pack-padded-sequence" class="headerlink" title="pack_padded_sequence"></a>pack_padded_sequence</h2><h3 id="為何需要pack"><a href="#為何需要pack" class="headerlink" title="為何需要pack?"></a>為何需要pack?</h3><p>在上一節，使用了<code>pad_sequence()</code>將長度變成一致後，其實就可以餵入RNN系列的model了。</p>
+<p>但我們來考慮一下一組有padding的句子在RNN model中是怎麼樣訓練的，假設input sequence如下:<br><figure class="highlight python"><table><tr><td class="code"><pre><span class="line">[<span class="string">'a'</span>, <span class="string">'b'</span>, &lt;PAD&gt;, &lt;PAD&gt;, &lt;PAD&gt;]</span><br></pre></td></tr></table></figure><br>由於要與其他sequence長度一致，假設我們將這個句子補齊到長度為5，並用<code>&lt;PAD&gt;</code>代表padding</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">RNN(h1) -&gt; RNN(h2) -&gt; RNN(h3) -&gt; RNN(h4) -&gt; ...</span><br><span class="line"> ^          ^           ^          ^  </span><br><span class="line"><span class="string">'a'</span>        <span class="string">'b'</span>        &lt;PAD&gt;      &lt;PAD&gt;</span><br></pre></td></tr></table></figure>
+<p>我們通常都拿最後一個hidden state作為模型輸出，而此時的輸出是經過了許多padding sybmol的，理想上我們要拿的hidden state應該是輸入’b’當下的output(也就是h2)。</p>
+<ul>
+<li>當然你可以想辦法拿出h2作為模型的output</li>
+<li>或是說可以預期模型學得好的時候，應該學到padding symbol是無意義的，也就是說理論上h4應該要跟h2差不多才對</li>
+</ul>
+<p>另外，一個很重要的議題是: 在雙向的RNN系列模型中，如果不用pack則會很麻煩(因為你需要handle兩個padding sequence: 一個往前padding + 一個往後padding)，所以雙向的RNN模型都會使用pack sequence來實作。</p>
+<p>現在，對於上述的Issue，我們有更好的一個方式來處理: <strong>透過pack sequence來避免訓練多餘的padding symbol</strong></p>
+<h3 id="pack-a-sequence"><a href="#pack-a-sequence" class="headerlink" title="pack a sequence"></a>pack a sequence</h3><p>應該怎麼做呢，這又扯到了model在餵入資料的時候是怎麼吃data的，用上面的example data來說明(這裡先不考慮batch_first的影響，單純先假設每一列都是一筆sequence)</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">tensor([[<span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>],</span><br><span class="line">        [<span class="number">2</span>, <span class="number">2</span>, <span class="number">2</span>, <span class="number">2</span>, <span class="number">0</span>, <span class="number">0</span>],</span><br><span class="line">        [<span class="number">3</span>, <span class="number">3</span>, <span class="number">3</span>, <span class="number">3</span>, <span class="number">0</span>, <span class="number">0</span>],</span><br><span class="line">        [<span class="number">4</span>, <span class="number">4</span>, <span class="number">4</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>],</span><br><span class="line">        [<span class="number">5</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>]])</span><br></pre></td></tr></table></figure>
+<p>RNN系列的model每一次的循環是先餵每一個sequence內第一個timestamp的data，也就是<br><figure class="highlight python"><table><tr><td class="code"><pre><span class="line">[[<span class="number">1</span>],</span><br><span class="line"> [<span class="number">2</span>],</span><br><span class="line"> [<span class="number">3</span>],</span><br><span class="line"> [<span class="number">4</span>],</span><br><span class="line"> [<span class="number">5</span>]]</span><br></pre></td></tr></table></figure><br>然後產生下一個時間的hidden state，再計算每一個sequence內下一個timestamp的hidden state<br><figure class="highlight c"><table><tr><td class="code"><pre><span class="line">[[<span class="number">1</span>],</span><br><span class="line"> [<span class="number">2</span>],</span><br><span class="line"> [<span class="number">3</span>],</span><br><span class="line"> [<span class="number">4</span>],</span><br><span class="line"> [<span class="number">0</span>]]</span><br></pre></td></tr></table></figure><br>依此類推，你會發現<strong>每個循環都是餵入相同筆數的data，然後產生下一個hidden state。但以第二個timestamp來看，最後一筆的[0]明明只是個padding，根本不用計算的，因此造成了額外的計算資源浪費</strong>。</p>
+<p>所以pack在做的事情就是讓每一次的筆數省掉計算多餘的padding，你可以想像成<strong>在原本batch下我們又透過一個mini-batch來紀錄沒有padding symbol下要餵的長度</strong>，為此透過一個Class(PackedSequence)來封裝我們所需要的資訊:<br><figure class="highlight python"><table><tr><td class="code"><pre><span class="line">PackedSequence(</span><br><span class="line">  data=tensor([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">1</span>, <span class="number">1</span>]),</span><br><span class="line">  batch_sizes=tensor([<span class="number">5</span>, <span class="number">4</span>, <span class="number">4</span>, <span class="number">3</span>, <span class="number">1</span>, <span class="number">1</span>])</span><br><span class="line">)</span><br></pre></td></tr></table></figure></p>
+<p><strong>PackedSequence的data是原始的資料去除掉padding後串接起來的一維data，而batch_sizes是說在原本batch下的資料透過pack轉換後，每一次的mini-batch長度</strong>(下面除非特地提到參數，不然統一mini-batch代替pack裡面的batch_sizes以免搞混)</p>
+<ol>
+<li>第一個batch_sizes參數是5，代表第一個mini-batch應該從data中取出5筆data([1, 2, 3, 4, 5])來作為第一個timestamp的input</li>
+<li>第二個batch_sizes參數的值是4，代表第二個mini-batch應該從data中取出4筆data([1, 2, 3, 4])來作為第二個timestamp的input</li>
+</ol>
+<p>如此，我們的model就可以接受長度不同的input了，並且還不用考慮padding。並且這邊的mini-batch是指在同一個batch下的所有sequence去進行pack的結果，並不會影響其他batch，所以仍然可以用GPU平行計算</p>
+<ul>
+<li>舉個例子，batch size=5，那可以想像成訓練的時候每張顯卡都拿不同的5筆sequences資料</li>
+<li>然後每個GPU在各自對自己的這5比去做pack sequence取得不包含padding下的mini-batch</li>
+</ul>
+<p>最後，我們仔細看一下PackedSequence這一個Class，在Pytorch doc中提到:</p>
+<blockquote>
+<p>Holds the data and list of batch_sizes of a packed sequence.</p>
+<p>All RNN modules accept packed sequences as inputs.</p>
+</blockquote>
+<ul>
+<li>也就是說這一個類別他同時紀錄了資料和packed sequence的batch size</li>
+<li>對於所有的RNN model，input都是可以接受packed seq的</li>
+<li>文件中也提到，這一個Class不應該被手動產生，而應該透過對應的function來生成(pack_padded_sequence)</li>
+</ul>
+<h3 id="write-a-code-for-packing-sequence"><a href="#write-a-code-for-packing-sequence" class="headerlink" title="write a code for packing sequence"></a>write a code for packing sequence</h3><p>懂了pack的概念後，來看一下怎麼寫，<code>pack_padded_sequence()</code>顧名思義，是對有padding的sequence來進行pack這個操作，所以要先做<code>pad_sequence()</code></p>
+<ul>
+<li>並且要注意<strong>sequence必須是降序排列</strong>，為了避免在串接中有padding被夾在中間的原因<ul>
+<li>所以前面在寫<code>collate_fn()</code>的時候才會先對sequences做排序 </li>
+</ul>
+</li>
+<li><code>pack_padded_sequence()</code>同樣具有batch_first的參數，所以也要跟<code>pad_sequence()</code>的設置相同</li>
+<li>還有一個參數lengths，用來告訴每一個sequence下真正的長度(不包含padding)是多少<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">0</span><br><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">train_x = [torch.tensor([<span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>]),</span><br><span class="line">           torch.tensor([<span class="number">2</span>, <span class="number">2</span>, <span class="number">2</span>, <span class="number">2</span>]),</span><br><span class="line">           torch.tensor([<span class="number">3</span>, <span class="number">3</span>, <span class="number">3</span>, <span class="number">3</span>]),</span><br><span class="line">           torch.tensor([<span class="number">4</span>, <span class="number">4</span>, <span class="number">4</span>]),</span><br><span class="line">           torch.tensor([<span class="number">5</span>])]</span><br><span class="line">pprint(train_x)</span><br><span class="line"><span class="comment"># [tensor([1, 1, 1, 1, 1, 1]),</span></span><br><span class="line"><span class="comment">#  tensor([2, 2, 2, 2]),</span></span><br><span class="line"><span class="comment">#  tensor([3, 3, 3, 3]),</span></span><br><span class="line"><span class="comment">#  tensor([4, 4, 4]),</span></span><br><span class="line"><span class="comment">#  tensor([5])]</span></span><br><span class="line"></span><br><span class="line">rnn_utils.pack_padded_sequence(rnn_utils.pad_sequence(train_x, batch_first=<span class="literal">True</span>), lengths=[<span class="number">6</span>, <span class="number">4</span>, <span class="number">4</span>, <span class="number">3</span>, <span class="number">1</span>], batch_first=<span class="literal">True</span>)</span><br><span class="line"><span class="comment"># PackedSequence(</span></span><br><span class="line"><span class="comment">#   data=tensor([1, 2, 3, 4, 5, 1, 2, 3, 4, 1, 2, 3, 4, 1, 2, 3, 1, 1]), </span></span><br><span class="line"><span class="comment">#   batch_sizes=tensor([5, 4, 4, 3, 1, 1]), sorted_indices=None, unsorted_indices=None)</span></span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>對於data loader，由於長度仍然要是相同的，所以一樣會先padding，等到load進來之後才做pack，但這樣就無法得知seq的真正長度了，所以<code>collate_fn()</code>必須也要回傳長度的部分:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">0</span><br><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line">train_x = [torch.tensor([<span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>]),</span><br><span class="line">           torch.tensor([<span class="number">2</span>, <span class="number">2</span>]),</span><br><span class="line">           torch.tensor([<span class="number">3</span>, <span class="number">3</span>, <span class="number">3</span>, <span class="number">3</span>]),</span><br><span class="line">           torch.tensor([<span class="number">4</span>, <span class="number">4</span>, <span class="number">4</span>]),</span><br><span class="line">           torch.tensor([<span class="number">5</span>])]</span><br><span class="line"><span class="comment"># pprint(train_x)</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Mydataset</span><span class="params">(Dataset)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, data)</span>:</span></span><br><span class="line">        self.data = data</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__len__</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="keyword">return</span> len(self.data)</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__getitem__</span><span class="params">(self, idx)</span>:</span></span><br><span class="line">        <span class="keyword">return</span> self.data[idx]</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">collate_fn</span><span class="params">(data)</span>:</span></span><br><span class="line">    data.sort(key=<span class="keyword">lambda</span> x: len(x), reverse=<span class="literal">True</span>)</span><br><span class="line">    seq_lens = [len(seq) <span class="keyword">for</span> seq <span class="keyword">in</span> data]</span><br><span class="line">    data = rnn_utils.pad_sequence(data, batch_first=<span class="literal">True</span>)</span><br><span class="line">    <span class="keyword">return</span> data, seq_lens</span><br><span class="line"></span><br><span class="line">train_loader = DataLoader(Mydataset(train_x), batch_size=<span class="number">2</span>, collate_fn=collate_fn)</span><br><span class="line">batch_x, seq_lens = iter(train_loader).next()</span><br><span class="line">pprint(batch_x)</span><br><span class="line"><span class="comment"># tensor([[1, 1, 1, 1, 1, 1],</span></span><br><span class="line"><span class="comment">#         [2, 2, 0, 0, 0, 0]])</span></span><br><span class="line"></span><br><span class="line">pprint(seq_lens)</span><br><span class="line"><span class="comment"># [6, 2]</span></span><br><span class="line"></span><br><span class="line">packed_batch_x = rnn_utils.pack_padded_sequence(batch_x, lengths=seq_lens, batch_first=<span class="literal">True</span>)</span><br><span class="line">pprint(packed_batch_x)</span><br><span class="line"><span class="comment"># PackedSequence(</span></span><br><span class="line"><span class="comment">#   data=tensor([1, 2, 1, 2, 1, 1, 1, 1]), </span></span><br><span class="line"><span class="comment">#   batch_sizes=tensor([2, 2, 1, 1, 1, 1]), sorted_indices=None, unsorted_indices=None)</span></span><br></pre></td></tr></table></figure>
+<h2 id="pad-packed-sequence"><a href="#pad-packed-sequence" class="headerlink" title="pad_packed_sequence"></a>pad_packed_sequence</h2><p><code>pad_packed_sequence()</code>就是<code>pack_padded_sequence()</code>的逆操作，返回原本padding的形式以及對應的length</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">0</span><br><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">rnn_utils.pad_packed_sequence(packed_batch_x)</span><br><span class="line"><span class="comment"># (tensor([[1, 2],</span></span><br><span class="line"><span class="comment">#          [1, 2],</span></span><br><span class="line"><span class="comment">#          [1, 0],</span></span><br><span class="line"><span class="comment">#          [1, 0],</span></span><br><span class="line"><span class="comment">#          [1, 0],</span></span><br><span class="line"><span class="comment">#          [1, 0]]),</span></span><br><span class="line"><span class="comment">#  tensor([6, 2]))</span></span><br></pre></td></tr></table></figure>
+<h2 id="用PackedSequence寫一個RNN訓練的流程"><a href="#用PackedSequence寫一個RNN訓練的流程" class="headerlink" title="用PackedSequence寫一個RNN訓練的流程"></a>用PackedSequence寫一個RNN訓練的流程</h2><p>寫一個RNN model來實際跑跑看。</p>
+<p>首先，還記得我們說過batch_first=True時，return的維度是: [Batch, Sequence, Features]，上面最後的程式碼維度其實只是[Batch, Sequence]，因為這樣的輸出比較容易理解，不過實際上在餵入模型的時候要改一下data loader的<code>__getitem__()</code>:<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">0</span><br><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Mydataset</span><span class="params">(Dataset)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, data)</span>:</span></span><br><span class="line">        self.data = data</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__len__</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="keyword">return</span> len(self.data)</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__getitem__</span><span class="params">(self, idx)</span>:</span></span><br><span class="line">        <span class="keyword">return</span> self.data[idx].unsqueeze(<span class="number">-1</span>) <span class="comment"># return dimension [Batch, Sequence, Features]</span></span><br></pre></td></tr></table></figure><br>改成這樣得到的pad packed sequence會變成:<br><figure class="highlight python"><table><tr><td class="code"><pre><span class="line">tensor([[[<span class="number">1</span>],</span><br><span class="line">         [<span class="number">1</span>],</span><br><span class="line">         [<span class="number">1</span>],</span><br><span class="line">         [<span class="number">1</span>],</span><br><span class="line">         [<span class="number">1</span>],</span><br><span class="line">         [<span class="number">1</span>]],</span><br><span class="line"></span><br><span class="line">        [[<span class="number">2</span>],</span><br><span class="line">         [<span class="number">2</span>],</span><br><span class="line">         [<span class="number">0</span>],</span><br><span class="line">         [<span class="number">0</span>],</span><br><span class="line">         [<span class="number">0</span>],</span><br><span class="line">         [<span class="number">0</span>]]])</span><br><span class="line">[<span class="number">6</span>, <span class="number">2</span>]</span><br><span class="line">PackedSequence(data=tensor([[<span class="number">1</span>],</span><br><span class="line">        [<span class="number">2</span>],</span><br><span class="line">        [<span class="number">1</span>],</span><br><span class="line">        [<span class="number">2</span>],</span><br><span class="line">        [<span class="number">1</span>],</span><br><span class="line">        [<span class="number">1</span>],</span><br><span class="line">        [<span class="number">1</span>],</span><br><span class="line">        [<span class="number">1</span>]]), batch_sizes=tensor([<span class="number">2</span>, <span class="number">2</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>]), sorted_indices=<span class="literal">None</span>, unsorted_indices=<span class="literal">None</span>)</span><br></pre></td></tr></table></figure></p>
+<p>然後放個LSTM model，記得也要設置batch_first。並將我們的tensor轉成float<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">0</span><br><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># LSTM model</span></span><br><span class="line">net = nn.LSTM(<span class="number">1</span>, <span class="number">4</span>, <span class="number">2</span>, batch_first=<span class="literal">True</span>) </span><br><span class="line">out, (h, c) = net(packed_batch_x.float())</span><br><span class="line"></span><br><span class="line">pprint(out)</span><br><span class="line"><span class="comment"># PackedSequence(</span></span><br><span class="line"><span class="comment">#   data=tensor([[-0.0417, -0.1202,  0.0748,  0.0658],</span></span><br><span class="line"><span class="comment">#         [-0.0434, -0.1283,  0.0659,  0.0617],</span></span><br><span class="line"><span class="comment">#         [-0.0873, -0.1682,  0.1064,  0.0991],</span></span><br><span class="line"><span class="comment">#         [-0.0899, -0.1807,  0.0927,  0.0926],</span></span><br><span class="line"><span class="comment">#         [-0.1233, -0.1861,  0.1222,  0.1136],</span></span><br><span class="line"><span class="comment">#         [-0.1483, -0.1918,  0.1307,  0.1192],</span></span><br><span class="line"><span class="comment">#         [-0.1647, -0.1926,  0.1354,  0.1211],</span></span><br><span class="line"><span class="comment">#         [-0.1752, -0.1915,  0.1380,  0.1214]], grad_fn=&lt;CatBackward&gt;), </span></span><br><span class="line"><span class="comment">#   batch_sizes=tensor([2, 2, 1, 1, 1, 1]), sorted_indices=None, unsorted_indices=None)</span></span><br></pre></td></tr></table></figure></p>
+<p>可以看到output也是一個PackedSequence</p>
+<ul>
+<li>batch_sizes和packed_batch_x的相同(這也很合理，想想看就知道了)</li>
+<li>out的shape是(8, 4)<ul>
+<li>packed_batch_x總共有8個非0的data</li>
+<li>LSTM的hidden size為4</li>
+</ul>
+</li>
+</ul>
+<p>如果把out透過<code>pad_packed_sequence()</code>還原的話<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">0</span><br><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">pad_out, out_len = rnn_utils.pad_packed_sequence(out, batch_first=<span class="literal">True</span>)</span><br><span class="line">pprint(pad_out)</span><br><span class="line"><span class="comment"># tensor([[[0.0872, 0.0783, 0.1465, 0.1197],</span></span><br><span class="line"><span class="comment">#          [0.1331, 0.1032, 0.2627, 0.1835],</span></span><br><span class="line"><span class="comment">#          [0.1564, 0.1090, 0.3387, 0.2184],</span></span><br><span class="line"><span class="comment">#          [0.1685, 0.1088, 0.3853, 0.2377],</span></span><br><span class="line"><span class="comment">#          [0.1750, 0.1073, 0.4137, 0.2484],</span></span><br><span class="line"><span class="comment">#          [0.1787, 0.1058, 0.4312, 0.2543]],</span></span><br><span class="line"><span class="comment"># </span></span><br><span class="line"><span class="comment">#         [[0.0753, 0.0784, 0.1402, 0.1334],</span></span><br><span class="line"><span class="comment">#          [0.1139, 0.1052, 0.2527, 0.2110],</span></span><br><span class="line"><span class="comment">#          [0.0000, 0.0000, 0.0000, 0.0000],</span></span><br><span class="line"><span class="comment">#          [0.0000, 0.0000, 0.0000, 0.0000],</span></span><br><span class="line"><span class="comment">#          [0.0000, 0.0000, 0.0000, 0.0000],</span></span><br><span class="line"><span class="comment">#          [0.0000, 0.0000, 0.0000, 0.0000]]], grad_fn=&lt;TransposeBackward0&gt;)</span></span><br><span class="line"></span><br><span class="line">pprint(out_len)</span><br><span class="line"><span class="comment"># tensor([6, 2])</span></span><br></pre></td></tr></table></figure></p>
+<ul>
+<li>pad_out的shape為(2, 6, 4)<ul>
+<li>2是batch size </li>
+<li>6是sequence長度，因為變回有padding版本所以每個sequence都一樣長</li>
+<li>4是LSTM的hidden size</li>
+</ul>
+</li>
+<li>out_len的輸出則是原始padding版本下data的shape</li>
+</ul>
+<p>好，完畢！</p>
+<h2 id="所以我說…那個pack-sequence勒"><a href="#所以我說…那個pack-sequence勒" class="headerlink" title="所以我說…那個pack_sequence勒?"></a>所以我說…那個pack_sequence勒?</h2><p>如果你去看<a href="https://pytorch.org/docs/master/_modules/torch/nn/utils/rnn.html#pack_sequence" target="_blank" rel="noopener">source code</a>，你會發現<code>pack_sequence()</code>其實就是padding + pack一起用而已<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">0</span><br><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">pack_sequence</span><span class="params">(sequences, enforce_sorted=True)</span>:</span></span><br><span class="line">    lengths = torch.as_tensor([v.size(<span class="number">0</span>) <span class="keyword">for</span> v <span class="keyword">in</span> sequences])</span><br><span class="line">    <span class="keyword">return</span> pack_padded_sequence(pad_sequence(sequences), lengths, enforce_sorted=enforce_sorted)</span><br></pre></td></tr></table></figure></p>
+<p>pack_sequence我目前看到比較少在使用(如果有看到也歡迎提供，我會再補上)，大部分都是<code>pad_sequence</code>, <code>pack_padded_sequence</code>, <code>pad_packed_sequence</code>的搭配</p>
+<ul>
+<li>然後注意source code都沒寫到batch_first，所以default都是False</li>
+</ul>
+<h2 id="延伸討論-batch-size-True到底在幹嘛"><a href="#延伸討論-batch-size-True到底在幹嘛" class="headerlink" title="延伸討論: batch_size=True到底在幹嘛?"></a>延伸討論: batch_size=True到底在幹嘛?</h2><p>前面提到過:</p>
+<ul>
+<li>batch_first=True時，return的維度是: [Batch, Sequence, Features] </li>
+<li>batch_first=False時，return的維度是: [Sequence, Batch, Features]</li>
+</ul>
+<p>阿這兩個到底差在哪裡，都幾?</p>
+<p>我們先放上一張Pytorch doc的圖來幫助理解:<br><img src="https://meetonfriday.com/img/lazy-loading-animation.gif" data-original="https://res.cloudinary.com/meet-on-friday/image/upload/v1596016176/blog_posts/20190820164135998_as9ikt.png" alt=""></p>
+<p>通常第一個維度會被稱之循環維度，也就是機器單次是怎麼抓取和處理數據的</p>
+<ul>
+<li>當資料格式是[Batch, Sequence, Features]，代表每次都是抓取同一個sequence內不同timestamp的data</li>
+<li>當資料格式是[Sequence, Batch, Features]，代表每次都是抓取同不同sequences下，同一個timestamp的data</li>
+</ul>
+<p><strong>而對於後者，很直觀地想到這樣的格式是可以平行化計算的，因為RNN model必須先計算完第t個timestamp的數據後才能計算t+1個數據，所以後者這種cross-batch的方式更加適合。</strong></p>
+<p>咦既然batch_first=False比較好，那為啥前面都設置成True呢?</p>
+<p><strong>因為Pytorch內做了設置，不管設置True或False他內部都會以[Sequence, Batch, Features]的方式來處理數據</strong>(<a href="https://zhuanlan.zhihu.com/p/32103001" target="_blank" rel="noopener">读PyTorch源码学习RNN(1)</a>)，看到有些資料說，該參數的設置只是提醒有這個trick</p>
+<p>所以在撰寫程式的時候還是以我們平常思考的模式來寫就好。</p>
+<h2 id="延伸討論-PackedSequence搭配DataParallel的問題"><a href="#延伸討論-PackedSequence搭配DataParallel的問題" class="headerlink" title="延伸討論: PackedSequence搭配DataParallel的問題"></a>延伸討論: PackedSequence搭配DataParallel的問題</h2><p>這是之前實作上遇到的問題，當初有記錄下來，這個問題主要是說:</p>
+<p>將data放到不同的gpu上跑時，由於使用了PackedSequence，每個batch的長度都是不固定的，<strong>在每張gpu上執行pad_packed_sequence()時，會取它當下batch的最大長度來對其他句子進行padding，這時因為每個gpu上data不同導致當下的最大長度都會不同，在gather的時候就會產生維度不匹配的問題。</strong></p>
+<p>關於詳細內容可以看這篇文章: <a href="https://meetonfriday.com/posts/d9cbeda0/#%E5%9D%91-2">[Pytorch]當DataParallel碰上RNN的那些坑</a></p>
+<h2 id="總結"><a href="#總結" class="headerlink" title="總結"></a>總結</h2><p>這篇文章提及了下列幾個問題，可以一邊思考下面的問題來幫助自己確認觀念熟悉了沒:</p>
+<ol>
+<li>NLP資料在訓練時長度不同應該怎麼處理?</li>
+<li>PackedSequence的概念是什麼? 為何這樣可以增加計算效率?</li>
+<li>為什麼<code>pack_padded_sequence()</code>要先對sequences排序?</li>
+<li>RNN系列模型常常會有一個參數batch_first，這個參數的作用是什麼?</li>
+</ol>
+<h2 id="References"><a href="#References" class="headerlink" title="References"></a>References</h2><ul>
+<li><a href="https://pytorch.org/docs/master/nn.html#utilities" target="_blank" rel="noopener">TORCH.NN</a></li>
+<li><a href="https://zhuanlan.zhihu.com/p/59772104" target="_blank" rel="noopener">PyTorch 训练 RNN 时，序列长度不固定怎么办？</a></li>
+<li><a href="https://stackoverflow.com/questions/51030782/why-do-we-pack-the-sequences-in-pytorch" target="_blank" rel="noopener">why do we “pack” the sequences in pytorch?</a></li>
+<li><a href="http://news.migage.com/articles/%E3%80%90Pytorch%E3%80%91%E8%AF%A6%E8%A7%A3RNN%E7%BD%91%E7%BB%9C%E4%B8%AD%E6%96%87%E6%9C%AC%E7%9A%84pack%E5%92%8Cpad%E6%93%8D%E4%BD%9C_3529246_csdn.html" target="_blank" rel="noopener">【Pytorch】详解RNN网络中文本的pack和pad操作</a></li>
+<li><a href="https://www.zhihu.com/question/41949741/answer/318771336" target="_blank" rel="noopener">LSTM神经网络输入输出究竟是怎样的？</a></li>
+<li><a href="https://zhuanlan.zhihu.com/p/32103001" target="_blank" rel="noopener">读PyTorch源码学习RNN（1）</a></li>
+<li><a href="https://meetonfriday.com/posts/d9cbeda0/#%E5%9D%91-2">[Pytorch]當DataParallel碰上RNN的那些坑</a></li>
+</ul>
+
+                <hr>
+                <!-- Pager -->
+                <ul class="pager">
+    
+    <li class="previous">
+        <a href="/posts/e2795e5a/" data-toggle="tooltip" data-placement="top" title="[OpenCV]Optical Flow介紹">&larr; Newer Post</a>
+    </li>
+    
+    
+    <li class="next">
+        <a href="/posts/263e065d/" data-toggle="tooltip" data-placement="top" title="[論文速速讀]Going deeper with convolutions">Older Post &rarr;</a>
+    </li>
+    
+</ul>
+
+                <!-- tip start -->
+                
+
+                
+                <!-- tip end -->
+
+                <!-- Sharing -->
+                
+                <!-- Sharing -->
+
+                <!-- gitment start -->
+                
+                <!-- gitment end -->
+
+                <!-- 来必力City版安装代码 -->
+                
+                <!-- City版安装代码已完成 -->
+
+                <!-- disqus comment start -->
+                
+                <div class="comment">
+                    <div id="disqus_thread" class="disqus-thread"></div>
+                </div>
+                
+                <!-- disqus comment end -->
+            </div>
+            
+            <!-- Tabe of Content -->
+            <!-- Table of Contents -->
+
+    
+      
+        <aside id="sidebar">
+          <div id="toc" class="toc-article">
+          <strong class="toc-title">Contents</strong>
+          
+            <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#前言"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">前言</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#pad-sequence"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">pad_sequence</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#pack-padded-sequence"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">pack_padded_sequence</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#為何需要pack"><span class="toc-nav-number">3.1.</span> <span class="toc-nav-text">為何需要pack?</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#pack-a-sequence"><span class="toc-nav-number">3.2.</span> <span class="toc-nav-text">pack a sequence</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#write-a-code-for-packing-sequence"><span class="toc-nav-number">3.3.</span> <span class="toc-nav-text">write a code for packing sequence</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#pad-packed-sequence"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">pad_packed_sequence</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#用PackedSequence寫一個RNN訓練的流程"><span class="toc-nav-number">5.</span> <span class="toc-nav-text">用PackedSequence寫一個RNN訓練的流程</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#所以我說…那個pack-sequence勒"><span class="toc-nav-number">6.</span> <span class="toc-nav-text">所以我說…那個pack_sequence勒?</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#延伸討論-batch-size-True到底在幹嘛"><span class="toc-nav-number">7.</span> <span class="toc-nav-text">延伸討論: batch_size&#x3D;True到底在幹嘛?</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#延伸討論-PackedSequence搭配DataParallel的問題"><span class="toc-nav-number">8.</span> <span class="toc-nav-text">延伸討論: PackedSequence搭配DataParallel的問題</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#總結"><span class="toc-nav-number">9.</span> <span class="toc-nav-text">總結</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#References"><span class="toc-nav-number">10.</span> <span class="toc-nav-text">References</span></a></li></ol>
+          
+          </div>
+        </aside>
+      
+    
+
+        </div>
+    </div>
+</article>
+
+	
+    <!-- disqus embedded js code start (one page only need to embed once) -->	
+    <script type="text/javascript">	
+        /* * * CONFIGURATION VARIABLES * * */	
+        var disqus_shortname = "meetonfriday";	
+        var disqus_identifier = "https://meetonfriday.com/posts/4d6a906a/";	
+        var disqus_url = "https://meetonfriday.com/posts/4d6a906a/";	
+        (function() {	
+            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;	
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';	
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);	
+        })();	
+    </script>	
+    <!-- disqus embedded js code start end -->	
+    
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/john850512">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://www.linkedin.com/in/john85051232">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                
+                    <li>
+                        <a target="_blank" href="https://www.facebook.com/meetonfridayyy">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+                
+                    <li>
+                        <a target="_blank"  href="https://mail.google.com/mail/?view=cm&fs=1&to=john85051232@gmail.com">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-envelope-o fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+                
+                
+
+                
+
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; John 2025 
+                    <br>
+                    Powered by 
+                    <a href="https://github.com/john850512/hexo-theme-jiji" target="_blank" rel="noopener">
+                        <i>hexo-theme-jiji</i>
+                    </a> | 
+                    <iframe name="star" style="margin-left: 2px; margin-bottom:-5px;" frameborder="0" scrolling="0"
+                        width="100px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=john850512&repo=hexo-theme-jiji&type=star&count=true">
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+
+</footer>
+
+<!-- jQuery -->
+
+<script src="/js/jquery.min.js"></script>
+
+
+<!-- Bootstrap Core JavaScript -->
+
+<script src="/js/bootstrap.min.js"></script>
+
+
+<!-- Custom Theme JavaScript -->
+
+<script src="/js/hux-blog.min.js"></script>
+
+
+<!-- Search -->
+
+<script src="/js/search.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("https://meetonfriday.com/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+<!-- Search -->
+
+    <script type="text/javascript">      
+        var search_path = "search.xml";
+        if (search_path.length == 0) {
+            search_path = "search.xml";
+        }
+    var path = "/" + search_path;
+    searchFunc(path, 'local-search-input', 'local-search-result');
+    </script>
+
+
+<!-- busuanzi -->
+<!--<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>-->
+<script async src="//cdn.jsdelivr.net/npm/busuanzi@2.3.0"></script>
+
+
+
+
+	<a id="rocket" href="#top" class=""></a>
+	<script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script>
+    <script type="text/javascript" src="/js/toc.js?v=1.0.0" async=""></script>
+
+    
+        <!-- background effects line -->
+        
+        <!-- background effects end -->
+    
+    
+    <!-- background animation-->>
+    <!--<script size="50" alpha='0.3' zIndex="-999" src="/js/ribbonStatic.js"></script>-->
+    
+        <script src="/js/ribbonDynamic.js"></script>
+    
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script>
+            window.imageLazyLoadSetting = {
+                isSPA: false,
+                processImages: null,
+            };
+        </script><script>window.addEventListener("load",function(){var t=/\.(gif|jpg|jpeg|tiff|png)$/i,r=/^data:image\/[a-z]+;base64,/;Array.prototype.slice.call(document.querySelectorAll("img[data-original]")).forEach(function(a){var e=a.parentNode;"A"===e.tagName&&(e.href.match(t)||e.href.match(r))&&(e.href=a.dataset.original)})});</script><script>!function(n){n.imageLazyLoadSetting.processImages=o;var i=n.imageLazyLoadSetting.isSPA,r=Array.prototype.slice.call(document.querySelectorAll("img[data-original]"));function o(){i&&(r=Array.prototype.slice.call(document.querySelectorAll("img[data-original]")));for(var t,e,a=0;a<r.length;a++)t=r[a],0<=(e=t.getBoundingClientRect()).bottom&&0<=e.left&&e.top<=(n.innerHeight||document.documentElement.clientHeight)&&function(){var t,e,n,i,o=r[a];t=o,e=function(){r=r.filter(function(t){return o!==t})},n=new Image,i=t.getAttribute("data-original"),n.onload=function(){t.src=i,e&&e()},n.src=i}()}o(),n.addEventListener("scroll",function(){var t,e;t=o,e=n,clearTimeout(t.tId),t.tId=setTimeout(function(){t.call(e)},500)})}(this);</script></body>
+
+</html>

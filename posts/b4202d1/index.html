@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<!-- Head tag -->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="baidu-site-verification" content="093lY4ziMu" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="keyword"  content="programming, study, daily, entertainment">
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="星期五。見面">
+    <meta property="og:locale" content="zh-TW" />
+    
+    <meta property="og:title" content="[論文速速讀]CutMix: Regularization Strategy to Train Strong Classifiers with Localizable Features" />
+    
+    
+    <meta property="og:description" content="以往的regional dropout技術是在圖片上加上黑色的補釘(patch)或是雜訊來使得model更robust 這樣的方式會造成information loss或是訓練效率降低..." />
+    <meta name="description" content="以往的regional dropout技術是在圖片上加上黑色的補釘(patch)或是雜訊來使得model更robust 這樣的方式會造成information loss或是訓練效率降低...">
+    
+    
+    <meta property="og:image" content="https://i.imgur.com/ur2eRMe.png" />
+    
+
+    <link rel="shortcut icon" href="/img/avatar.jpg">
+    <!-- Place this tag in your head or just before your close body tag. -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <!--<link href='http://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>-->
+    <title>
+        
+          [論文速速讀]CutMix: Regularization Strategy to Train Strong Classifiers with Localizable Features - MeetonFriday
+        
+    </title>
+    <!-- canonical -->
+    
+    
+      <link rel="canonical" href="https://meetonfriday.com/posts/b4202d1/">
+    
+
+    <!-- Bootstrap Core CSS -->
+    
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+
+
+    <!-- Custom CSS --> 
+    
+<link rel="stylesheet" href="/css/dusign-dark.css">
+
+    
+<link rel="stylesheet" href="/css/dusign-common-dark.css">
+
+    <!-- 
+<link rel="stylesheet" href="/css/font-awesome.css">
+ -->
+    
+<link rel="stylesheet" href="/css/toc.css">
+
+
+    
+    <!-- Pygments Highlight CSS -->
+    
+<link rel="stylesheet" href="/css/highlight.css">
+
+
+    
+<link rel="stylesheet" href="/css/widget.css">
+
+
+    
+<link rel="stylesheet" href="/css/rocket.css">
+
+
+    
+<link rel="stylesheet" href="/css/signature.css">
+
+
+    
+<link rel="stylesheet" href="/css/fonts.googleapis.css">
+
+
+    <!-- <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.3.0/css/font-awesome.min.css">-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.min.css">
+    
+    <!-- Google Analytics -->
+    
+      <!-- <script>
+          // dynamic User by Hux
+          var _gaId = 'UA-163346001-1';
+          var _gaDomain = 'auto';
+      
+          // Originial
+          (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+          (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+          })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+      
+          ga('create', _gaId, _gaDomain);
+          ga('send', 'pageview');
+      </script> -->
+      
+      <!-- Global site tag (gtag.js) - Google Analytics -->
+      <script async src="https://www.googletagmanager.com/gtag/js?id=UA-163346001-1"></script>
+      <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+      
+        gtag('config', 'UA-163346001-1');
+      </script>
+      
+    <!-- google ad sense-->
+    <script data-ad-client="ca-pub-9561340457908416" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<meta name="generator" content="Hexo 4.2.1"><link rel="alternate" href="/atom.xml" title="星期五。見面" type="application/atom+xml">
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+	<!-- Modified by Yu-Hsuan Yen -->
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        
+            
+                background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.5)), url('/img/header_img/header-bg.jpg')
+            
+        
+    }
+    
+</style>
+
+<header class="intro-header" >
+    <!-- Signature -->
+    <div id="signature">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                
+                    <div class="post-heading">
+                        <div class="tags">
+                            
+                              <a class="tag" href="/tags/#deep learning" title="deep learning">deep learning</a>
+                            
+                              <a class="tag" href="/tags/#paper" title="paper">paper</a>
+                            
+                        </div>
+                        <h1>[論文速速讀]CutMix: Regularization Strategy to Train Strong Classifiers with Localizable Features</h1>
+                        <h2 class="subheading"></h2>
+                        <span class="meta">
+                            Posted by John on
+                            2020-04-25
+                        </span>
+
+                        
+                            <div class="blank_box"></div>
+                            <span class="meta">
+                                Words <span class="post-count">1.2k</span> and
+                                Reading Time <span class="post-count">5</span> Minutes
+                            </span>
+                            <div class="blank_box"></div>
+                            <!-- 不蒜子统计 start -->
+                            <span class="meta">
+                                Viewed <span id="busuanzi_value_page_pv"><i class="fa fa-spinner fa-spin"></i></span> Times
+                            </span>
+                            <!-- 不蒜子统计 end -->
+                        
+
+                    </div>
+                
+
+                </div>
+            </div>
+        </div>      
+    </div>
+
+    
+        
+            <div class="waveWrapper">
+                <div class="wave wave_before" style="background-image: url('/img/wave-dark.png')"></div>
+                <div class="wave wave_after" style="background-image: url('/img/wave-dark.png')"></div>
+            </div>
+        
+    
+</header>
+
+	
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">星期五。見面</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archive/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/categories/">Categories</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/reading/">Reading</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+    
+    <!-- Main Content -->
+    <!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+            <!-- Post Container -->
+
+    
+        
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+        
+    
+
+                <p>〖想觀看更多中文論文導讀，至<a href="https://meetonfriday.com/posts/aa55d3f9/">[論文速速讀]系列文章介紹</a>可以看到目前已發布的所有文章！〗</p>
+<p>論文網址: <a href="https://arxiv.org/pdf/1905.04899.pdf" target="_blank" rel="noopener">https://arxiv.org/pdf/1905.04899.pdf</a></p>
+<h2 id="Abstract"><a href="#Abstract" class="headerlink" title="Abstract"></a>Abstract</h2><blockquote>
+<p>…current methods for regional dropout removes informative pixels on training images by overlaying a patch of either black pixels or random noise.<br>Such removal is not desirable because it leads to information loss and inefficiency during training.</p>
+</blockquote>
+<ul>
+<li>以往的regional dropout技術是在圖片上加上黑色的補釘(patch)或是雜訊來使得model更robust</li>
+<li>這樣的方式會造成information loss或是訓練效率降低</li>
+</ul>
+<blockquote>
+<p>We therefore propose the CutMix augmentation strategy: patches are cut and pasted among training images where the ground truth labels are also mixed proportionally to the area of the patches.</p>
+</blockquote>
+<ul>
+<li>切割patch然後把其他張圖片拿來補</li>
+</ul>
+<a id="more"></a>
+<h2 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h2><blockquote>
+<p>In particular, to prevent a CNN from focusing too much on a small set of intermediate activations or on a small region on input images, random feature removal regularizations have been proposed. Examples include dropout [33] for randomly dropping hidden activations and regional dropout [2, 49, 32, 7] for erasing random regions on the input. Researchers have shown that the feature removal strategies improve generalization and localization by letting a model attend not only to the most discriminative parts of objects, but rather to the entire object region [32, 7].</p>
+</blockquote>
+<p>為了避免CNN關注到某些特定小區域，一些random feature removal regularizations的技術被提出，向是dropout或是feature removal strategies</p>
+<p>研究發現feature removal strategies可以使得模型關注整體的資訊而不是只關注最重要的部分，因此提升了generalization和localization</p>
+<blockquote>
+<p>While regional dropout strategies have shown improvements of classification and localization performances to a certain degree, deleted regions are usually zeroed-out [2, 32] or filled with random noise [49], greatly reducing the proportion of informative pixels on training images</p>
+</blockquote>
+<p>但作者認為regional dropout strategies造成了被dropout的區域值全部都是zero或是noise，導致了過多的information loss</p>
+<ul>
+<li>既然如此，把要dropout的區域用其他張圖片來補就好了，這樣既有資訊可以學又可以robust</li>
+</ul>
+<h3 id="與其它的方法比較"><a href="#與其它的方法比較" class="headerlink" title="與其它的方法比較"></a>與其它的方法比較</h3><p><img src="https://meetonfriday.com/img/lazy-loading-animation.gif" data-original="https://i.imgur.com/ur2eRMe.png" alt=""></p>
+<ul>
+<li>CutOut就是單純的黑色補丁，但是會有多餘的information loss</li>
+<li>Mixup是透過把兩張圖片作線性插值來混合，但這樣會造成混合後的圖片很不自然</li>
+<li>CutMix是只針對patch region來補其它圖片，解決了上述兩個缺點</li>
+</ul>
+<h2 id="Related-Works"><a href="#Related-Works" class="headerlink" title="Related Works"></a>Related Works</h2><p>以往的CNN優化技巧有:</p>
+<ul>
+<li>regional dropout</li>
+<li>data augmentation</li>
+</ul>
+<p>剩下的就是介紹CutMix有多棒，然後因為他是在data level進行操作，所以不會影響原本的模型架構</p>
+<h2 id="CutMix"><a href="#CutMix" class="headerlink" title="CutMix"></a>CutMix</h2><h3 id="Algorithm"><a href="#Algorithm" class="headerlink" title="Algorithm"></a>Algorithm</h3><p>$x\in R^{W\times H\times C}$是圖片, $y$是label，CutMix做的是合成兩張圖片$(x_A, y_A)$和$(x_B, y_B)$然後產生新圖片$(\tilde{x}, \tilde{y})$，透過以下公式:</p>
+<script type="math/tex; mode=display">\begin{aligned}\tilde{x}&=M\odot x_A+(1-M)\odot{x_B}\\\tilde{y}&=\lambda y_A+(1-\lambda)y_B\end{aligned}</script><ul>
+<li>$M\in {0,1}^{W\times H}$是一個binary mask，在bounding box內的值是0；否則是1</li>
+<li>$\odot$是element-wise multiplication</li>
+<li>combination ratio$\lambda$來自beta distribution $Beta(\alpha, \alpha)$<ul>
+<li>$\lambda$來自Mixup的原始paper</li>
+</ul>
+</li>
+</ul>
+<p>接下來定義bounding box $B=(r_x, r_y, r_w, r_h)$</p>
+<ul>
+<li>該區域會將B的內容crop下來蓋到A上面</li>
+</ul>
+<p>論文的實驗中使用的是rectangular masks(aspect ratio和原圖一樣)，box coordinates來自uniformly distribution: </p>
+<script type="math/tex; mode=display">\begin{aligned}r_x&\sim Uniform(0, W), r_w=W\sqrt{1-\lambda} \\ r_y&\sim Uniform(0, H), r_y=H\sqrt{1-\lambda}\end{aligned}</script><p>實作細節簡單易懂，取一個minibatch，之後shuffle再取一次minibatch，然後根據上面公式產生新的label:<br><img src="https://meetonfriday.com/img/lazy-loading-animation.gif" data-original="https://i.imgur.com/GlLQ3k2.png" alt=""></p>
+<p>source code: <a href="https://github.com/clovaai/CutMix-PyTorch" target="_blank" rel="noopener">clovaai/CutMix-PyTorch</a></p>
+<ul>
+<li><p>決定bounding box:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">279</span><br><span class="line">280</span><br><span class="line">281</span><br><span class="line">282</span><br><span class="line">283</span><br><span class="line">284</span><br><span class="line">285</span><br><span class="line">286</span><br><span class="line">287</span><br><span class="line">288</span><br><span class="line">289</span><br><span class="line">290</span><br><span class="line">291</span><br><span class="line">292</span><br><span class="line">293</span><br><span class="line">294</span><br><span class="line">295</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">rand_bbox</span><span class="params">(size, lam)</span>:</span></span><br><span class="line">    W = size[<span class="number">2</span>]</span><br><span class="line">    H = size[<span class="number">3</span>]</span><br><span class="line">    cut_rat = np.sqrt(<span class="number">1.</span> - lam)</span><br><span class="line">    cut_w = np.int(W * cut_rat)</span><br><span class="line">    cut_h = np.int(H * cut_rat)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># uniform</span></span><br><span class="line">    cx = np.random.randint(W)</span><br><span class="line">    cy = np.random.randint(H)</span><br><span class="line"></span><br><span class="line">    bbx1 = np.clip(cx - cut_w // <span class="number">2</span>, <span class="number">0</span>, W)</span><br><span class="line">    bby1 = np.clip(cy - cut_h // <span class="number">2</span>, <span class="number">0</span>, H)</span><br><span class="line">    bbx2 = np.clip(cx + cut_w // <span class="number">2</span>, <span class="number">0</span>, W)</span><br><span class="line">    bby2 = np.clip(cy + cut_h // <span class="number">2</span>, <span class="number">0</span>, H)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> bbx1, bby1, bbx2, bby2</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>取一個minibatch，將該batch的所有圖片都用同一張B來合成</p>
+</li>
+<li>注意到實際上這張合成圖混和label的意思，是指在實作上算loss時<strong>使用不同的label來算cross entropy並加權平均</strong></li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">220</span><br><span class="line">221</span><br><span class="line">222</span><br><span class="line">223</span><br><span class="line">224</span><br><span class="line">225</span><br><span class="line">226</span><br><span class="line">227</span><br><span class="line">228</span><br><span class="line">229</span><br><span class="line">230</span><br><span class="line">231</span><br><span class="line">232</span><br><span class="line">233</span><br><span class="line">234</span><br><span class="line">235</span><br><span class="line">236</span><br><span class="line">237</span><br><span class="line">238</span><br><span class="line">239</span><br><span class="line">240</span><br><span class="line">241</span><br><span class="line">242</span><br><span class="line">243</span><br><span class="line">244</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> i, (input, target) <span class="keyword">in</span> enumerate(train_loader):</span><br><span class="line">    <span class="comment"># measure data loading time</span></span><br><span class="line">    data_time.update(time.time() - end)</span><br><span class="line"></span><br><span class="line">    input = input.cuda()</span><br><span class="line">    target = target.cuda()</span><br><span class="line"></span><br><span class="line">    r = np.random.rand(<span class="number">1</span>)</span><br><span class="line">    <span class="keyword">if</span> args.beta &gt; <span class="number">0</span> <span class="keyword">and</span> r &lt; args.cutmix_prob:</span><br><span class="line">        <span class="comment"># generate mixed sample</span></span><br><span class="line">        lam = np.random.beta(args.beta, args.beta)</span><br><span class="line">        rand_index = torch.randperm(input.size()[<span class="number">0</span>]).cuda()</span><br><span class="line">        target_a = target</span><br><span class="line">        target_b = target[rand_index]</span><br><span class="line">        bbx1, bby1, bbx2, bby2 = rand_bbox(input.size(), lam)</span><br><span class="line">        input[:, :, bbx1:bbx2, bby1:bby2] = input[rand_index, :, bbx1:bbx2, bby1:bby2]</span><br><span class="line">        <span class="comment"># adjust lambda to exactly match pixel ratio</span></span><br><span class="line">        lam = <span class="number">1</span> - ((bbx2 - bbx1) * (bby2 - bby1) / (input.size()[<span class="number">-1</span>] * input.size()[<span class="number">-2</span>]))</span><br><span class="line">        <span class="comment"># compute output</span></span><br><span class="line">        output = model(input)</span><br><span class="line">        loss = criterion(output, target_a) * lam + criterion(output, target_b) * (<span class="number">1.</span> - lam)</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="comment"># compute output</span></span><br><span class="line">        output = model(input)</span><br><span class="line">        loss = criterion(output, target)</span><br></pre></td></tr></table></figure>
+<h2 id="Discussion"><a href="#Discussion" class="headerlink" title="Discussion"></a>Discussion</h2><p><img src="https://meetonfriday.com/img/lazy-loading-animation.gif" data-original="https://i.imgur.com/N4LRiba.png" alt=""></p>
+<ul>
+<li>Mixup混和了兩張圖片，造成模型無法正確知道要關注什麼部分</li>
+<li>Cutout再只有兩個類別的時候效果不錯，因為遮掉另一個類別所以可以區分剩下的類別；不過這樣就無法有效的關注另一個類別了</li>
+<li>CutMix棒棒哒，上面的兩個問題都解決了</li>
+</ul>
+<h2 id="Refeneces"><a href="#Refeneces" class="headerlink" title="Refeneces"></a>Refeneces</h2><ul>
+<li><a href="https://blog.csdn.net/weixin_38715903/article/details/103999227" target="_blank" rel="noopener">【论文阅读笔记】CutMix：数据增强</a></li>
+<li><a href="https://github.com/clovaai/CutMix-PyTorch" target="_blank" rel="noopener">CutMix-PyTorch</a></li>
+</ul>
+
+                <hr>
+                <!-- Pager -->
+                <ul class="pager">
+    
+    <li class="previous">
+        <a href="/posts/d978825d/" data-toggle="tooltip" data-placement="top" title="[論文速速讀]Attentive CutMix: An Enhanced Data Augmentation Approach for Deep Learning Based Image Classification">&larr; Newer Post</a>
+    </li>
+    
+    
+    <li class="next">
+        <a href="/posts/5839a8bf/" data-toggle="tooltip" data-placement="top" title="[論文速速讀]Attention Is All You Need">Older Post &rarr;</a>
+    </li>
+    
+</ul>
+
+                <!-- tip start -->
+                
+
+                
+                <!-- tip end -->
+
+                <!-- Sharing -->
+                
+                <!-- Sharing -->
+
+                <!-- gitment start -->
+                
+                <!-- gitment end -->
+
+                <!-- 来必力City版安装代码 -->
+                
+                <!-- City版安装代码已完成 -->
+
+                <!-- disqus comment start -->
+                
+                <div class="comment">
+                    <div id="disqus_thread" class="disqus-thread"></div>
+                </div>
+                
+                <!-- disqus comment end -->
+            </div>
+            
+            <!-- Tabe of Content -->
+            <!-- Table of Contents -->
+
+    
+      
+        <aside id="sidebar">
+          <div id="toc" class="toc-article">
+          <strong class="toc-title">Contents</strong>
+          
+            <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Abstract"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">Abstract</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Introduction"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">Introduction</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#與其它的方法比較"><span class="toc-nav-number">2.1.</span> <span class="toc-nav-text">與其它的方法比較</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Related-Works"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">Related Works</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#CutMix"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">CutMix</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Algorithm"><span class="toc-nav-number">4.1.</span> <span class="toc-nav-text">Algorithm</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Discussion"><span class="toc-nav-number">5.</span> <span class="toc-nav-text">Discussion</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Refeneces"><span class="toc-nav-number">6.</span> <span class="toc-nav-text">Refeneces</span></a></li></ol>
+          
+          </div>
+        </aside>
+      
+    
+
+        </div>
+    </div>
+</article>
+
+	
+    <!-- disqus embedded js code start (one page only need to embed once) -->	
+    <script type="text/javascript">	
+        /* * * CONFIGURATION VARIABLES * * */	
+        var disqus_shortname = "meetonfriday";	
+        var disqus_identifier = "https://meetonfriday.com/posts/b4202d1/";	
+        var disqus_url = "https://meetonfriday.com/posts/b4202d1/";	
+        (function() {	
+            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;	
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';	
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);	
+        })();	
+    </script>	
+    <!-- disqus embedded js code start end -->	
+    
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/john850512">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://www.linkedin.com/in/john85051232">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                
+                    <li>
+                        <a target="_blank" href="https://www.facebook.com/meetonfridayyy">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+                
+                    <li>
+                        <a target="_blank"  href="https://mail.google.com/mail/?view=cm&fs=1&to=john85051232@gmail.com">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-envelope-o fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+                
+                
+
+                
+
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; John 2025 
+                    <br>
+                    Powered by 
+                    <a href="https://github.com/john850512/hexo-theme-jiji" target="_blank" rel="noopener">
+                        <i>hexo-theme-jiji</i>
+                    </a> | 
+                    <iframe name="star" style="margin-left: 2px; margin-bottom:-5px;" frameborder="0" scrolling="0"
+                        width="100px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=john850512&repo=hexo-theme-jiji&type=star&count=true">
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+
+</footer>
+
+<!-- jQuery -->
+
+<script src="/js/jquery.min.js"></script>
+
+
+<!-- Bootstrap Core JavaScript -->
+
+<script src="/js/bootstrap.min.js"></script>
+
+
+<!-- Custom Theme JavaScript -->
+
+<script src="/js/hux-blog.min.js"></script>
+
+
+<!-- Search -->
+
+<script src="/js/search.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("https://meetonfriday.com/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+<!-- Search -->
+
+    <script type="text/javascript">      
+        var search_path = "search.xml";
+        if (search_path.length == 0) {
+            search_path = "search.xml";
+        }
+    var path = "/" + search_path;
+    searchFunc(path, 'local-search-input', 'local-search-result');
+    </script>
+
+
+<!-- busuanzi -->
+<!--<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>-->
+<script async src="//cdn.jsdelivr.net/npm/busuanzi@2.3.0"></script>
+
+
+
+
+	<a id="rocket" href="#top" class=""></a>
+	<script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script>
+    <script type="text/javascript" src="/js/toc.js?v=1.0.0" async=""></script>
+
+    
+        <!-- background effects line -->
+        
+        <!-- background effects end -->
+    
+    
+    <!-- background animation-->>
+    <!--<script size="50" alpha='0.3' zIndex="-999" src="/js/ribbonStatic.js"></script>-->
+    
+        <script src="/js/ribbonDynamic.js"></script>
+    
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script>
+            window.imageLazyLoadSetting = {
+                isSPA: false,
+                processImages: null,
+            };
+        </script><script>window.addEventListener("load",function(){var t=/\.(gif|jpg|jpeg|tiff|png)$/i,r=/^data:image\/[a-z]+;base64,/;Array.prototype.slice.call(document.querySelectorAll("img[data-original]")).forEach(function(a){var e=a.parentNode;"A"===e.tagName&&(e.href.match(t)||e.href.match(r))&&(e.href=a.dataset.original)})});</script><script>!function(n){n.imageLazyLoadSetting.processImages=o;var i=n.imageLazyLoadSetting.isSPA,r=Array.prototype.slice.call(document.querySelectorAll("img[data-original]"));function o(){i&&(r=Array.prototype.slice.call(document.querySelectorAll("img[data-original]")));for(var t,e,a=0;a<r.length;a++)t=r[a],0<=(e=t.getBoundingClientRect()).bottom&&0<=e.left&&e.top<=(n.innerHeight||document.documentElement.clientHeight)&&function(){var t,e,n,i,o=r[a];t=o,e=function(){r=r.filter(function(t){return o!==t})},n=new Image,i=t.getAttribute("data-original"),n.onload=function(){t.src=i,e&&e()},n.src=i}()}o(),n.addEventListener("scroll",function(){var t,e;t=o,e=n,clearTimeout(t.tId),t.tId=setTimeout(function(){t.call(e)},500)})}(this);</script></body>
+
+</html>

@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<!-- Head tag -->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="baidu-site-verification" content="093lY4ziMu" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="keyword"  content="programming, study, daily, entertainment">
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="星期五。見面">
+    <meta property="og:locale" content="zh-TW" />
+    
+    <meta property="og:title" content="[論文速速讀]PEGASUS: Pre-training with Extracted Gap-sentences for Abstractive Summarization" />
+    
+    
+    <meta property="og:description" content="Google ICML 2020的paper。基於transformers的self-supervised模型(bert以及相關變形)已經橫掃一遍了NLP的應用，透過bert的pretrained model來fine tune後續的task已經被證實可以達到很好的結果，包含文本摘要。不過在抽象式文本摘要(abstractive text summarization)的部分還做得不夠好。所以這篇就是提出一個NLP的pre-trained model來做這件事。" />
+    <meta name="description" content="Google ICML 2020的paper。基於transformers的self-supervised模型(bert以及相關變形)已經橫掃一遍了NLP的應用，透過bert的pretrained model來fine tune後續的task已經被證實可以達到很好的結果，包含文本摘要。不過在抽象式文本摘要(abstractive text summarization)的部分還做得不夠好。所以這篇就是提出一個NLP的pre-trained model來做這件事。">
+    
+    
+    <meta property="og:image" content="https://res.cloudinary.com/meet-on-friday/image/upload/v1592503091/blog_posts/%E6%93%B7%E5%8F%96_s1b2qc.png" />
+    
+
+    <link rel="shortcut icon" href="/img/avatar.jpg">
+    <!-- Place this tag in your head or just before your close body tag. -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <!--<link href='http://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>-->
+    <title>
+        
+          [論文速速讀]PEGASUS: Pre-training with Extracted Gap-sentences for Abstractive Summarization - MeetonFriday
+        
+    </title>
+    <!-- canonical -->
+    
+    
+      <link rel="canonical" href="https://meetonfriday.com/posts/aa73b0a2/">
+    
+
+    <!-- Bootstrap Core CSS -->
+    
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+
+
+    <!-- Custom CSS --> 
+    
+<link rel="stylesheet" href="/css/dusign-dark.css">
+
+    
+<link rel="stylesheet" href="/css/dusign-common-dark.css">
+
+    <!-- 
+<link rel="stylesheet" href="/css/font-awesome.css">
+ -->
+    
+<link rel="stylesheet" href="/css/toc.css">
+
+
+    
+    <!-- Pygments Highlight CSS -->
+    
+<link rel="stylesheet" href="/css/highlight.css">
+
+
+    
+<link rel="stylesheet" href="/css/widget.css">
+
+
+    
+<link rel="stylesheet" href="/css/rocket.css">
+
+
+    
+<link rel="stylesheet" href="/css/signature.css">
+
+
+    
+<link rel="stylesheet" href="/css/fonts.googleapis.css">
+
+
+    <!-- <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.3.0/css/font-awesome.min.css">-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.min.css">
+    
+    <!-- Google Analytics -->
+    
+      <!-- <script>
+          // dynamic User by Hux
+          var _gaId = 'UA-163346001-1';
+          var _gaDomain = 'auto';
+      
+          // Originial
+          (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+          (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+          })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+      
+          ga('create', _gaId, _gaDomain);
+          ga('send', 'pageview');
+      </script> -->
+      
+      <!-- Global site tag (gtag.js) - Google Analytics -->
+      <script async src="https://www.googletagmanager.com/gtag/js?id=UA-163346001-1"></script>
+      <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+      
+        gtag('config', 'UA-163346001-1');
+      </script>
+      
+    <!-- google ad sense-->
+    <script data-ad-client="ca-pub-9561340457908416" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<meta name="generator" content="Hexo 4.2.1"><link rel="alternate" href="/atom.xml" title="星期五。見面" type="application/atom+xml">
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+	<!-- Modified by Yu-Hsuan Yen -->
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        
+            
+                background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.5)), url('/img/header_img/header-bg.jpg')
+            
+        
+    }
+    
+</style>
+
+<header class="intro-header" >
+    <!-- Signature -->
+    <div id="signature">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                
+                    <div class="post-heading">
+                        <div class="tags">
+                            
+                              <a class="tag" href="/tags/#deep learning" title="deep learning">deep learning</a>
+                            
+                              <a class="tag" href="/tags/#paper" title="paper">paper</a>
+                            
+                        </div>
+                        <h1>[論文速速讀]PEGASUS: Pre-training with Extracted Gap-sentences for Abstractive Summarization</h1>
+                        <h2 class="subheading"></h2>
+                        <span class="meta">
+                            Posted by John on
+                            2020-06-24
+                        </span>
+
+                        
+                            <div class="blank_box"></div>
+                            <span class="meta">
+                                Words <span class="post-count">2.1k</span> and
+                                Reading Time <span class="post-count">8</span> Minutes
+                            </span>
+                            <div class="blank_box"></div>
+                            <!-- 不蒜子统计 start -->
+                            <span class="meta">
+                                Viewed <span id="busuanzi_value_page_pv"><i class="fa fa-spinner fa-spin"></i></span> Times
+                            </span>
+                            <!-- 不蒜子统计 end -->
+                        
+
+                    </div>
+                
+
+                </div>
+            </div>
+        </div>      
+    </div>
+
+    
+        
+            <div class="waveWrapper">
+                <div class="wave wave_before" style="background-image: url('/img/wave-dark.png')"></div>
+                <div class="wave wave_after" style="background-image: url('/img/wave-dark.png')"></div>
+            </div>
+        
+    
+</header>
+
+	
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">星期五。見面</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archive/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/categories/">Categories</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/reading/">Reading</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+    
+    <!-- Main Content -->
+    <!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+            <!-- Post Container -->
+
+    
+        
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+        
+    
+
+                <p>〖想觀看更多中文論文導讀，至<a href="https://meetonfriday.com/posts/aa55d3f9/">[論文速速讀]系列文章介紹</a>可以看到目前已發布的所有文章！〗</p>
+<p>paper: <a href="https://arxiv.org/pdf/1912.08777.pdf" target="_blank" rel="noopener">https://arxiv.org/pdf/1912.08777.pdf</a></p>
+<p>Google ICML 2020的paper，一打開發現有54頁…哎呀我的媽</p>
+<p>好險後面都是附錄，實際上只有8頁而已。</p>
+<h2 id="Abstract"><a href="#Abstract" class="headerlink" title="Abstract"></a>Abstract</h2><blockquote>
+<p>　Recent work pre-training Transformers with self-supervised objectives on large text corpora has shown great success when fine-tuned on downstream NLP tasks including text summarization. However, pre-training objectives tailored for abstractive text summarization have not been explored. Furthermore there is a lack of systematic evaluation across diverse domains.</p>
+</blockquote>
+<p>基於transformers的self-supervised模型(bert以及相關變形)已經橫掃一遍了NLP的應用，透過bert的pretrained model來fine tune後續的task已經被證實可以達到很好的結果，包含文本摘要。不過在抽象式文本摘要(abstractive text summarization)的部分還做得不夠好。所以這篇就是提出一個NLP的pre-trained model來做這件事。</p>
+<p>抽象式文本摘要是啥，跟一般文本摘要又差在哪裡? 可以看下面Introduction一開始的介紹。</p>
+<a id="more"></a>
+<h2 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h2><blockquote>
+<p>Text summarization aims at generating accurate and concise summaries from input document(s). In contrast to extractive summarization which merely copies informative fragments from the input, abstractive summarization may generate novel words. A good abstractive summary covers principal information in the input and is linguistically fluent.</p>
+</blockquote>
+<p>文本摘要有兩種類型:</p>
+<ul>
+<li><strong>extraction-based summarization</strong>: 僅從文章中擷取重要的詞來組成摘要</li>
+<li><strong>abstractive summarization</strong>: 產生的摘要可能包含文章沒出現過的詞，這種方法產生的摘要往往更加流暢以及能夠表達得更加清晰</li>
+</ul>
+<p>重點來了:</p>
+<blockquote>
+<p>We find ument and generating these gap-sentences from the rest of the document works well as a pre-training objective for downstream summarization tasks. In particular, choosing putatively important sentences outperforms lead or randomly selected ones. We hypothesize this objective is suitable for abstractive summarization as it closely resembles the downstream task, encouraging whole-document understanding and summary-like generation. We call this self-supervised objective Gap Sentences Generation (GSG).</p>
+</blockquote>
+<p>他們發現，<strong>透過遮住部分的句子來進行pre-training，這樣的方式有助於文本摘要的task</strong>。</p>
+<ul>
+<li>也就是說，mask幾個句子，然後goal是要還原這些句子，透過這種方式來pre-train。 </li>
+<li>並且如果遮住的句子是重要的效果會更好。<ul>
+<li>哪些句子是重要的呢? paper中提到他們是透過importance來選</li>
+</ul>
+</li>
+</ul>
+<p>好結束，本篇論文就讀到這裡，大家再會。</p>
+<p>…開個玩笑，不過重點就真的是這裡，概念懂了就通了，我們再透過google ai blog的一張gif來搭配理解:</p>
+<p><img src="https://meetonfriday.com/img/lazy-loading-animation.gif" data-original="https://res.cloudinary.com/meet-on-friday/image/upload/v1592500770/blog_posts/image1_iaq3w0.gif" alt=""></p>
+<p>遮住部分句子，然後透過transformer還原那些句子(注意並不是還原整句input)。</p>
+<p>題外話，<strong>這種self-supervised(自監督學習)的方法優勢在於，不需要人工標註label(因為label就來自你的dataset，你只要想辦法去前處理他)，所以你可以產生跟dataset一樣多的資料來train你的model</strong>，而這也是其他supervised方法的缺點。</p>
+<p>他們<strong>假設會比較好是因為這樣的pre-training很接近他們的downstream task</strong>(也就是抽象文章摘要)想要做的事情。</p>
+<p>他們稱這種方法為Gap Sentences Generation (GSG)，然後透過這個pre-trained方法產生的抽象文版摘要seq2seq模型稱之天馬，<strong>PEGASUS</strong>(Pre-training with Extracted Gap-sentences for Abstractive SUmmarization Sequence-to-sequence models)</p>
+<p><img src="https://meetonfriday.com/img/lazy-loading-animation.gif" data-original="https://n.sinaimg.cn/sinacn10122/217/w640h377/20191012/82b3-ifvwftk1510380.png" alt=""></p>
+<p>…好，上面那張是亂入的，看不懂不要理我沒關係。</p>
+<p>不過只細看全名的話會發現根本不是每個word的第一個字，很棒，延續了芝麻街時代之後，NLP取名字的傳統xD</p>
+<h2 id="Pre-training-Objectives"><a href="#Pre-training-Objectives" class="headerlink" title="Pre-training Objectives"></a>Pre-training Objectives</h2><h3 id="Gap-Sentences-Generation-GSG"><a href="#Gap-Sentences-Generation-GSG" class="headerlink" title="Gap Sentences Generation (GSG)"></a>Gap Sentences Generation (GSG)</h3><p>這邊在講如何找出之後要mask的gap sentence。</p>
+<p>首先，對於大量的文本dataset我們並不具有文本摘要的ground truth，按照這篇的想法我們可以用gap sentence來替代摘要當作ground truth，但要如何找到適合的gap sentence呢?</p>
+<p>他們做了三種不同的方法:</p>
+<ol>
+<li>Random: 隨機選m句子</li>
+<li>Lead: 開頭的前m個句子</li>
+<li>Principal: 透過importance來找出前m個重要的句子，透過算ROUGE1-F1來實現，細節可以去看paper。<ul>
+<li>在Principal的方法上總共有4種不同的策略，分別是Ind-Orig, Ind-Uniq, Seq-Orig, Seq-Uniq，細節請參閱paper</li>
+</ul>
+</li>
+</ol>
+<p>之後把gap sentence都用<code>[MASK1]</code>替換掉來做pre-training</p>
+<h3 id="Masked-Language-Model-MLM"><a href="#Masked-Language-Model-MLM" class="headerlink" title="Masked Language Model (MLM)"></a>Masked Language Model (MLM)</h3><p>MLM透過隨機mask句子的token來學習token的上下文關係。這邊的用法跟Bert差不多，然後他們也附了一張圖幫助讀者瞭解如果要同時用GSG跟MLM的架構長怎樣。<br><img src="https://meetonfriday.com/img/lazy-loading-animation.gif" data-original="https://res.cloudinary.com/meet-on-friday/image/upload/v1592503091/blog_posts/%E6%93%B7%E5%8F%96_s1b2qc.png" alt=""></p>
+<p>不過他們也說，在後面的實驗發像MLM的mask效果其實並不好(下方實驗有提到)，所以最終的模型版本$PEGASUS_{LARGE}$其實沒有採用MLM</p>
+<h2 id="Pre-training-Corpus"><a href="#Pre-training-Corpus" class="headerlink" title="Pre-training Corpus"></a>Pre-training Corpus</h2><p>使用兩個dataset來做pre-training</p>
+<ul>
+<li>C4</li>
+<li>HugeNews</li>
+</ul>
+<h2 id="Downstream-Tasks-Datasets"><a href="#Downstream-Tasks-Datasets" class="headerlink" title="Downstream Tasks/Datasets"></a>Downstream Tasks/Datasets</h2><p>接下來在12個dataset上實驗，細節去看paper啦!</p>
+<h2 id="Experiments"><a href="#Experiments" class="headerlink" title="Experiments"></a>Experiments</h2><p>要繼續加速了喔，請繫好安全帶…</p>
+<blockquote>
+<p>We refer to $PEGASUS_{BASE}$ without pre-training as $Transformer_{BASE}$</p>
+</blockquote>
+<p>首先他們採用了一個簡單的$PEGASUS_{BASE}$模型，然後來進行不同的實驗驗證不同策略下的好壞，最後再用最好的策略來進行$PEGASUS_{LARGE}$的建模。</p>
+<h3 id="Ablations-on-PEGASUS-BASE"><a href="#Ablations-on-PEGASUS-BASE" class="headerlink" title="Ablations on $PEGASUS_{BASE}$"></a>Ablations on $PEGASUS_{BASE}$</h3><p><img src="https://meetonfriday.com/img/lazy-loading-animation.gif" data-original="https://res.cloudinary.com/meet-on-friday/image/upload/v1592503982/blog_posts/%E6%93%B7%E5%8F%96_bmgj2j.png" alt=""></p>
+<p>在兩個dataset上pre-trained後，在4個downstream dataset上進行實驗的結果，發現HugeNews的pre-train在一些新聞相關的downstream dataset效果比較好，反之則是C4的效果較好</p>
+<ul>
+<li>所以他們<strong>建議downstream task的類型是啥，pre-trained就最好用相同類型的dataset</strong></li>
+</ul>
+<h3 id="EFFECT-OF-PRE-TRAINING-OBJECTIVES"><a href="#EFFECT-OF-PRE-TRAINING-OBJECTIVES" class="headerlink" title="EFFECT OF PRE-TRAINING OBJECTIVES"></a>EFFECT OF PRE-TRAINING OBJECTIVES</h3><h4 id="GSG"><a href="#GSG" class="headerlink" title="GSG"></a>GSG</h4><p>選擇了30%的句子來做GSG，然後用了六種GSG策略來做實驗(Random, Lead, Ind-Orig, Ind-Uniq, Seq-Orig, Seq-Uniq)，發現Ind-Orig的效果最好。</p>
+<p><img src="https://meetonfriday.com/img/lazy-loading-animation.gif" data-original="https://res.cloudinary.com/meet-on-friday/image/upload/v1593006021/blog_posts/%E6%93%B7%E5%8F%96_oar8un.png" alt=""></p>
+<p>並且他們也觀察到了Lead在新聞的數據集上其實表現得不錯，不過在非新聞的數據集就差的很多，這可能是由於在新聞數據集上的lead bias現象導致的(lead bias in news datasets (See et al., 2017; Zhong et al., 2019))。</p>
+<p>總之，最後在$PEGASUS_{LARGE}$中採用了Ind-Orig的GSG策略。</p>
+<p>接下來他們看說在不同GSR(Gap Sentences Ratio)下效果如何，GSR過低會使得訓練沒有效率，GSR過高則會喪失過多的上下文資訊。最後$PEGASUS_{LARGE}$模型中採用了30%的GSR。</p>
+<p><img src="https://meetonfriday.com/img/lazy-loading-animation.gif" data-original="https://res.cloudinary.com/meet-on-friday/image/upload/v1593006785/blog_posts/%E6%93%B7%E5%8F%96_jda8ji.png" alt=""></p>
+<h4 id="MLM"><a href="#MLM" class="headerlink" title="MLM"></a>MLM</h4><p>一樣可以從上面(a)圖中來觀察，他們發現使用MLM在早期的step可以加速收斂，但在後期卻限制了收斂的效果。所以他們在$PEGASUS_{LARGE}$中決定不採用MLM。</p>
+<h3 id="EFFECT-OF-VOCABULARY"><a href="#EFFECT-OF-VOCABULARY" class="headerlink" title="EFFECT OF VOCABULARY"></a>EFFECT OF VOCABULARY</h3><p>比較不同tokenization和size的方法差異，最後採用Unigram 96k。</p>
+<h3 id="Larger-Model-Results"><a href="#Larger-Model-Results" class="headerlink" title="Larger Model Results"></a>Larger Model Results</h3><p>這邊就是講說$PEGASUS_{LARGE}$的detail</p>
+<h3 id="Zero-and-Low-Resource-Summarization"><a href="#Zero-and-Low-Resource-Summarization" class="headerlink" title="Zero and Low-Resource Summarization"></a>Zero and Low-Resource Summarization</h3><p>這裡在測試說當有label的資料很少的時候，PEGASUS的表現如何。他們發現，大約在1000個example來pre-trained時就能夠比使用$Transformer_{BASE}$，在full supervised datasets但沒有pre-trained的方法還好。</p>
+<h3 id="Qualitative-Observations-and-Human-Evaluation"><a href="#Qualitative-Observations-and-Human-Evaluation" class="headerlink" title="Qualitative Observations and Human Evaluation"></a>Qualitative Observations and Human Evaluation</h3><p>這個部分是在測試，在不同dataset上用PEGASUS和人類產生的摘要，給其他人去判斷的話是否能夠分得出來(圖靈測試?)。</p>
+<p>然後其實效果跟人類產生的摘要還不差呢! 棒棒哒~<br><img src="https://meetonfriday.com/img/lazy-loading-animation.gif" data-original="https://res.cloudinary.com/meet-on-friday/image/upload/v1593008225/blog_posts/%E6%93%B7%E5%8F%96_db8rhj.png" alt=""></p>
+<h3 id="A-Test-of-Comprehension-Counting-Ships"><a href="#A-Test-of-Comprehension-Counting-Ships" class="headerlink" title="A Test of Comprehension: Counting Ships"></a>A Test of Comprehension: Counting Ships</h3><p>這裡的內容是出自於google ai blog的(<a href="https://ai.googleblog.com/2020/06/pegasus-state-of-art-model-for.html?m=1&amp;fbclid=IwAR2kcs5k3BysvuG4JIixX6iq2nkio_DkMIjQ7yWbmQrHbs6GjNSkVDiRT8E" target="_blank" rel="noopener">PEGASUS: A State-of-the-Art Model for Abstractive Text Summarization</a>)，透過一篇船的文章來舉例，他們發現: </p>
+<ol>
+<li>儘管文章內沒提到船的數量，但在文章內出現兩艘船、三艘船、四艘船的時候，模型仍然可以正確的摘要出船的數量(太神奇了傑克!)</li>
+<li>但是在這方面(邏輯推理)的能力還有待加強，比方說在文章出現了六艘船時，文章摘要出來卻出現了七艘。</li>
+</ol>
+<p>細節內容可以從blog去看~</p>
+<h2 id="總結"><a href="#總結" class="headerlink" title="總結"></a>總結</h2><p>其實做了很多實驗，但方法不難理解，下面簡短的講一下我認為的重點:</p>
+<ul>
+<li><strong>google認為現階段的transformer-based(Ex: bert)的模型在訓練pre-trained上都是訓練一個通用的pre-trained model，但是針對downstream task去客製化預訓練的方式能夠有更好的結果。</strong></li>
+<li>這篇的PEGASUS就是抽象文章摘要的一個客製化預訓練模型。</li>
+<li>而預訓練的方法是屬於<strong>self-supervisied的一種，所以不用人工去產生大量的label</strong>，讚讚。</li>
+<li>在少量的pre-trained下也可以達到不錯的效果。</li>
+</ul>
+<h2 id="References"><a href="#References" class="headerlink" title="References"></a>References</h2><ul>
+<li><a href="https://ai.googleblog.com/2020/06/pegasus-state-of-art-model-for.html?m=1&amp;fbclid=IwAR2kcs5k3BysvuG4JIixX6iq2nkio_DkMIjQ7yWbmQrHbs6GjNSkVDiRT8E" target="_blank" rel="noopener">PEGASUS: A State-of-the-Art Model for Abstractive Text Summarization</a></li>
+<li><a href="https://github.com/google-research/pegasus" target="_blank" rel="noopener">google-research/pegasus</a></li>
+<li><a href="https://zhuanlan.zhihu.com/p/148225554" target="_blank" rel="noopener">谷歌开源“穷人版”摘要生成NLP模型：1000个样本就能打败人类</a></li>
+<li><a href="https://www.linkresearcher.com/theses/7054cdb3-b934-4fd8-9e5b-b4a320f5c6c7" target="_blank" rel="noopener">PEGASUS : 新的自监督目的的大型 Transformer 预训练编码器-解码器模型</a></li>
+</ul>
+
+                <hr>
+                <!-- Pager -->
+                <ul class="pager">
+    
+    <li class="previous">
+        <a href="/posts/abd81088/" data-toggle="tooltip" data-placement="top" title="[論文速速讀]Efficient Estimation of Word Representation in Vector Space">&larr; Newer Post</a>
+    </li>
+    
+    
+    <li class="next">
+        <a href="/posts/c41c815d/" data-toggle="tooltip" data-placement="top" title="[DL]深入了解gradient descent">Older Post &rarr;</a>
+    </li>
+    
+</ul>
+
+                <!-- tip start -->
+                
+
+                
+                <!-- tip end -->
+
+                <!-- Sharing -->
+                
+                <!-- Sharing -->
+
+                <!-- gitment start -->
+                
+                <!-- gitment end -->
+
+                <!-- 来必力City版安装代码 -->
+                
+                <!-- City版安装代码已完成 -->
+
+                <!-- disqus comment start -->
+                
+                <div class="comment">
+                    <div id="disqus_thread" class="disqus-thread"></div>
+                </div>
+                
+                <!-- disqus comment end -->
+            </div>
+            
+            <!-- Tabe of Content -->
+            <!-- Table of Contents -->
+
+    
+      
+        <aside id="sidebar">
+          <div id="toc" class="toc-article">
+          <strong class="toc-title">Contents</strong>
+          
+            <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Abstract"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">Abstract</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Introduction"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">Introduction</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Pre-training-Objectives"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">Pre-training Objectives</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Gap-Sentences-Generation-GSG"><span class="toc-nav-number">3.1.</span> <span class="toc-nav-text">Gap Sentences Generation (GSG)</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Masked-Language-Model-MLM"><span class="toc-nav-number">3.2.</span> <span class="toc-nav-text">Masked Language Model (MLM)</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Pre-training-Corpus"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">Pre-training Corpus</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Downstream-Tasks-Datasets"><span class="toc-nav-number">5.</span> <span class="toc-nav-text">Downstream Tasks&#x2F;Datasets</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Experiments"><span class="toc-nav-number">6.</span> <span class="toc-nav-text">Experiments</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Ablations-on-PEGASUS-BASE"><span class="toc-nav-number">6.1.</span> <span class="toc-nav-text">Ablations on $PEGASUS_{BASE}$</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#EFFECT-OF-PRE-TRAINING-OBJECTIVES"><span class="toc-nav-number">6.2.</span> <span class="toc-nav-text">EFFECT OF PRE-TRAINING OBJECTIVES</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#GSG"><span class="toc-nav-number">6.2.1.</span> <span class="toc-nav-text">GSG</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#MLM"><span class="toc-nav-number">6.2.2.</span> <span class="toc-nav-text">MLM</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#EFFECT-OF-VOCABULARY"><span class="toc-nav-number">6.3.</span> <span class="toc-nav-text">EFFECT OF VOCABULARY</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Larger-Model-Results"><span class="toc-nav-number">6.4.</span> <span class="toc-nav-text">Larger Model Results</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Zero-and-Low-Resource-Summarization"><span class="toc-nav-number">6.5.</span> <span class="toc-nav-text">Zero and Low-Resource Summarization</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Qualitative-Observations-and-Human-Evaluation"><span class="toc-nav-number">6.6.</span> <span class="toc-nav-text">Qualitative Observations and Human Evaluation</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#A-Test-of-Comprehension-Counting-Ships"><span class="toc-nav-number">6.7.</span> <span class="toc-nav-text">A Test of Comprehension: Counting Ships</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#總結"><span class="toc-nav-number">7.</span> <span class="toc-nav-text">總結</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#References"><span class="toc-nav-number">8.</span> <span class="toc-nav-text">References</span></a></li></ol>
+          
+          </div>
+        </aside>
+      
+    
+
+        </div>
+    </div>
+</article>
+
+	
+    <!-- disqus embedded js code start (one page only need to embed once) -->	
+    <script type="text/javascript">	
+        /* * * CONFIGURATION VARIABLES * * */	
+        var disqus_shortname = "meetonfriday";	
+        var disqus_identifier = "https://meetonfriday.com/posts/aa73b0a2/";	
+        var disqus_url = "https://meetonfriday.com/posts/aa73b0a2/";	
+        (function() {	
+            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;	
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';	
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);	
+        })();	
+    </script>	
+    <!-- disqus embedded js code start end -->	
+    
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/john850512">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://www.linkedin.com/in/john85051232">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                
+                    <li>
+                        <a target="_blank" href="https://www.facebook.com/meetonfridayyy">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+                
+                    <li>
+                        <a target="_blank"  href="https://mail.google.com/mail/?view=cm&fs=1&to=john85051232@gmail.com">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-envelope-o fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+                
+                
+
+                
+
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; John 2025 
+                    <br>
+                    Powered by 
+                    <a href="https://github.com/john850512/hexo-theme-jiji" target="_blank" rel="noopener">
+                        <i>hexo-theme-jiji</i>
+                    </a> | 
+                    <iframe name="star" style="margin-left: 2px; margin-bottom:-5px;" frameborder="0" scrolling="0"
+                        width="100px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=john850512&repo=hexo-theme-jiji&type=star&count=true">
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+
+</footer>
+
+<!-- jQuery -->
+
+<script src="/js/jquery.min.js"></script>
+
+
+<!-- Bootstrap Core JavaScript -->
+
+<script src="/js/bootstrap.min.js"></script>
+
+
+<!-- Custom Theme JavaScript -->
+
+<script src="/js/hux-blog.min.js"></script>
+
+
+<!-- Search -->
+
+<script src="/js/search.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("https://meetonfriday.com/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+<!-- Search -->
+
+    <script type="text/javascript">      
+        var search_path = "search.xml";
+        if (search_path.length == 0) {
+            search_path = "search.xml";
+        }
+    var path = "/" + search_path;
+    searchFunc(path, 'local-search-input', 'local-search-result');
+    </script>
+
+
+<!-- busuanzi -->
+<!--<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>-->
+<script async src="//cdn.jsdelivr.net/npm/busuanzi@2.3.0"></script>
+
+
+
+
+	<a id="rocket" href="#top" class=""></a>
+	<script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script>
+    <script type="text/javascript" src="/js/toc.js?v=1.0.0" async=""></script>
+
+    
+        <!-- background effects line -->
+        
+        <!-- background effects end -->
+    
+    
+    <!-- background animation-->>
+    <!--<script size="50" alpha='0.3' zIndex="-999" src="/js/ribbonStatic.js"></script>-->
+    
+        <script src="/js/ribbonDynamic.js"></script>
+    
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script>
+            window.imageLazyLoadSetting = {
+                isSPA: false,
+                processImages: null,
+            };
+        </script><script>window.addEventListener("load",function(){var t=/\.(gif|jpg|jpeg|tiff|png)$/i,r=/^data:image\/[a-z]+;base64,/;Array.prototype.slice.call(document.querySelectorAll("img[data-original]")).forEach(function(a){var e=a.parentNode;"A"===e.tagName&&(e.href.match(t)||e.href.match(r))&&(e.href=a.dataset.original)})});</script><script>!function(n){n.imageLazyLoadSetting.processImages=o;var i=n.imageLazyLoadSetting.isSPA,r=Array.prototype.slice.call(document.querySelectorAll("img[data-original]"));function o(){i&&(r=Array.prototype.slice.call(document.querySelectorAll("img[data-original]")));for(var t,e,a=0;a<r.length;a++)t=r[a],0<=(e=t.getBoundingClientRect()).bottom&&0<=e.left&&e.top<=(n.innerHeight||document.documentElement.clientHeight)&&function(){var t,e,n,i,o=r[a];t=o,e=function(){r=r.filter(function(t){return o!==t})},n=new Image,i=t.getAttribute("data-original"),n.onload=function(){t.src=i,e&&e()},n.src=i}()}o(),n.addEventListener("scroll",function(){var t,e;t=o,e=n,clearTimeout(t.tId),t.tId=setTimeout(function(){t.call(e)},500)})}(this);</script></body>
+
+</html>

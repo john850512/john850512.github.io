@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<!-- Head tag -->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="baidu-site-verification" content="093lY4ziMu" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="keyword"  content="programming, study, daily, entertainment">
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="星期五。見面">
+    <meta property="og:locale" content="zh-TW" />
+    
+    <meta property="og:title" content="[DL]深入了解gradient descent" />
+    
+    
+    <meta property="og:description" content="「在深度學習中，你(設計)的(損失)函數是怎麼更新的，他可微嗎?』最近有聽到有人提了這個問題，一開始聽到這個問題也沒太放在心上，由於deep learning framework(Tensorflow, Pytorch)的便利性，大家可以不用管求導這件事，開開心心寫code。不過後來想了想這的確是個可以來認真思考的事情，畢竟是走這行的，總不能一直都只依靠工具而不去了解背後的原理。於是努力上網東找西找拼湊了一套我覺得還算合理的說法，不過畢竟我不是數學系背景出生，如果有講錯的地方歡迎提出指教~" />
+    <meta name="description" content="「在深度學習中，你(設計)的(損失)函數是怎麼更新的，他可微嗎?』最近有聽到有人提了這個問題，一開始聽到這個問題也沒太放在心上，由於deep learning framework(Tensorflow, Pytorch)的便利性，大家可以不用管求導這件事，開開心心寫code。不過後來想了想這的確是個可以來認真思考的事情，畢竟是走這行的，總不能一直都只依靠工具而不去了解背後的原理。於是努力上網東找西找拼湊了一套我覺得還算合理的說法，不過畢竟我不是數學系背景出生，如果有講錯的地方歡迎提出指教~">
+    
+    
+    <meta property="og:image" content="https://res.cloudinary.com/meet-on-friday/image/upload/v1592150590/blog_posts/v2-bd640ea05ec20fe2db5eb1ae7a3a6f5f_r_ctry9f.jpg" />
+    
+
+    <link rel="shortcut icon" href="/img/avatar.jpg">
+    <!-- Place this tag in your head or just before your close body tag. -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <!--<link href='http://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>-->
+    <title>
+        
+          [DL]深入了解gradient descent - MeetonFriday
+        
+    </title>
+    <!-- canonical -->
+    
+    
+      <link rel="canonical" href="https://meetonfriday.com/posts/c41c815d/">
+    
+
+    <!-- Bootstrap Core CSS -->
+    
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+
+
+    <!-- Custom CSS --> 
+    
+<link rel="stylesheet" href="/css/dusign-dark.css">
+
+    
+<link rel="stylesheet" href="/css/dusign-common-dark.css">
+
+    <!-- 
+<link rel="stylesheet" href="/css/font-awesome.css">
+ -->
+    
+<link rel="stylesheet" href="/css/toc.css">
+
+
+    
+    <!-- Pygments Highlight CSS -->
+    
+<link rel="stylesheet" href="/css/highlight.css">
+
+
+    
+<link rel="stylesheet" href="/css/widget.css">
+
+
+    
+<link rel="stylesheet" href="/css/rocket.css">
+
+
+    
+<link rel="stylesheet" href="/css/signature.css">
+
+
+    
+<link rel="stylesheet" href="/css/fonts.googleapis.css">
+
+
+    <!-- <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.3.0/css/font-awesome.min.css">-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.min.css">
+    
+    <!-- Google Analytics -->
+    
+      <!-- <script>
+          // dynamic User by Hux
+          var _gaId = 'UA-163346001-1';
+          var _gaDomain = 'auto';
+      
+          // Originial
+          (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+          (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+          })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+      
+          ga('create', _gaId, _gaDomain);
+          ga('send', 'pageview');
+      </script> -->
+      
+      <!-- Global site tag (gtag.js) - Google Analytics -->
+      <script async src="https://www.googletagmanager.com/gtag/js?id=UA-163346001-1"></script>
+      <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+      
+        gtag('config', 'UA-163346001-1');
+      </script>
+      
+    <!-- google ad sense-->
+    <script data-ad-client="ca-pub-9561340457908416" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<meta name="generator" content="Hexo 4.2.1"><link rel="alternate" href="/atom.xml" title="星期五。見面" type="application/atom+xml">
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+	<!-- Modified by Yu-Hsuan Yen -->
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        
+            
+                background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.5)), url('/img/header_img/header-bg.jpg')
+            
+        
+    }
+    
+</style>
+
+<header class="intro-header" >
+    <!-- Signature -->
+    <div id="signature">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                
+                    <div class="post-heading">
+                        <div class="tags">
+                            
+                              <a class="tag" href="/tags/#deep learning" title="deep learning">deep learning</a>
+                            
+                        </div>
+                        <h1>[DL]深入了解gradient descent</h1>
+                        <h2 class="subheading"></h2>
+                        <span class="meta">
+                            Posted by John on
+                            2020-06-15
+                        </span>
+
+                        
+                            <div class="blank_box"></div>
+                            <span class="meta">
+                                Words <span class="post-count">2.6k</span> and
+                                Reading Time <span class="post-count">10</span> Minutes
+                            </span>
+                            <div class="blank_box"></div>
+                            <!-- 不蒜子统计 start -->
+                            <span class="meta">
+                                Viewed <span id="busuanzi_value_page_pv"><i class="fa fa-spinner fa-spin"></i></span> Times
+                            </span>
+                            <!-- 不蒜子统计 end -->
+                        
+
+                    </div>
+                
+
+                </div>
+            </div>
+        </div>      
+    </div>
+
+    
+        
+            <div class="waveWrapper">
+                <div class="wave wave_before" style="background-image: url('/img/wave-dark.png')"></div>
+                <div class="wave wave_after" style="background-image: url('/img/wave-dark.png')"></div>
+            </div>
+        
+    
+</header>
+
+	
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">星期五。見面</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archive/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/categories/">Categories</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/reading/">Reading</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+    
+    <!-- Main Content -->
+    <!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+            <!-- Post Container -->
+
+    
+        
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+        
+    
+
+                <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>“在深度學習中，你(設計)的(損失)函數是怎麼更新的，他可微嗎?”</p>
+<p>最近有聽到有人提了這個問題，一開始聽到這個問題也沒太放在心上，由於deep learning framework(Tensorflow, Pytorch)的便利性，大家可以不用管求導這件事，開開心心寫code。</p>
+<p>不過後來想了想這的確是個可以來認真思考的事情，畢竟是走這行的，總不能一直都只依靠工具而不去了解背後的原理。於是努力上網東找西找拼湊了一套我覺得還算合理的說法，不過畢竟我不是數學系背景出生，如果有講錯的地方歡迎提出指教~</p>
+<h2 id="How-Deep-Learning-Update"><a href="#How-Deep-Learning-Update" class="headerlink" title="How Deep Learning Update?"></a>How Deep Learning Update?</h2><p>我們知道，一個Deep learning model的參數量往往很大，在更新過程中是透過我們定義好的loss function(可能是cross-entropy或mse)來做gradient descent，gradient descent會去算每個參數的gradient，搭配learning rate來更新這些參數，使得讓模型越來越好。</p>
+<p>不過算gradient這個動作在tensorflow/pytorch都自動幫我們算好了，以pytorch為例，我們可以從他的code來看到他更新的步驟(可以參考我寫的另一篇:<a href="https://meetonfriday.com/posts/18392404/">Pytorch的zero_grad()和backward()使用技巧</a>)</p>
+<h2 id="Why-Gradient-Descent"><a href="#Why-Gradient-Descent" class="headerlink" title="Why Gradient Descent?"></a>Why Gradient Descent?</h2><p><strong>我們知道沿著gradient的方向走可以讓模型越來越好</strong>，但為什麼?</p>
+<p>首先先來快速了解gradient是什麼，以下介紹引用自<a href="https://zh.wikipedia.org/wiki/%E6%A2%AF%E5%BA%A6" target="_blank" rel="noopener">wiki</a>: </p>
+<blockquote>
+<p>考慮一座高度在$(x, y)$點是$H(x, y)$的山。$H$這一點的梯度是在該點坡度（或者說斜度）最陡的方向。梯度的大小告訴我們坡度到底有多陡。</p>
+</blockquote>
+<p>也就是說對於一個函數我們可以想像他有個對應的的分布圖(如果函數是高維空間你就畫不出來，可以用個三維空間的例子來想像，如下圖)，在圖上某個點我們可以透過計算梯度來找到在該點最陡的方向，然後沿著該方向繼續往下找最小值。</p>
+<p><img src="https://meetonfriday.com/img/lazy-loading-animation.gif" data-original="https://res.cloudinary.com/meet-on-friday/image/upload/v1592150590/blog_posts/v2-bd640ea05ec20fe2db5eb1ae7a3a6f5f_r_ctry9f.jpg" alt=""></p>
+<p>那接下來思考一個問題，考慮一個損失函數:</p>
+<script type="math/tex; mode=display">L_{n}(a, W)=\frac{1}{n} \sum_{i=1}^{n} l\left(y_{i}, a^{T} \sigma\left(W^{T} x_{i}\right)\right)</script><p>假設actuvation function是relu，loss function是L2，那請問這個函數是凸函數(convex)還是非凸函數(non-convex)?</p>
+<p>先給答案，如果單看每個unit都是凸的</p>
+<ul>
+<li>relu是convex</li>
+<li>L2是convex</li>
+</ul>
+<p>不過當他們混合起來後就不一定了，以這個例子為例其實他就變成了Non-convex。</p>
+<h2 id="Convex-or-Non-convex"><a href="#Convex-or-Non-convex" class="headerlink" title="Convex or Non-convex"></a>Convex or Non-convex</h2><p>“蛤?我知道gradient可以找到最小值就好了，理他凸不凸幹嘛。”</p>
+<p><strong>這很重要，因為這會牽涉到你找到的是區域最小值或是全域最小值。</strong></p>
+<p>在講這件事情前，聽說中國那邊有些凹凸的定義跟國外相反，所以我們先來定義一下什麼是凸函數好了:</p>
+<p>凸函數長的跟下面這個人的眼睛一樣，開口朝上然後有個最小值(眼珠的部分)<br><img src="https://meetonfriday.com/img/lazy-loading-animation.gif" data-original="https://res.cloudinary.com/meet-on-friday/image/upload/a_270/v1592150882/blog_posts/unnamed_itqfgh.jpg" alt=""></p>
+<p>好啦不鬧，也可以看一下他的數學定義:<br><img src="https://meetonfriday.com/img/lazy-loading-animation.gif" data-original="https://res.cloudinary.com/meet-on-friday/image/upload/v1592151186/blog_posts/30493664687a62703072_gdd09t.jpg" alt=""></p>
+<p>反正就是畫一條線去看就可以判斷了。再來我們看一下非凸函數跟凸函數的圖長怎樣:<br><img src="https://meetonfriday.com/img/lazy-loading-animation.gif" data-original="https://res.cloudinary.com/meet-on-friday/image/upload/v1592151774/blog_posts/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvZGV2Y2xvdWQvYXJ0aWNsZS9kZXRhaWxzLzEwMTEwNjE2Ng__aHR0cHM6Ly9pbWctYmxvZy5jc2RuaW1nLmNuLzIwMTkwOTIxMTQwOTU3Njc1LnBuZw_bqzowi.png" alt=""></p>
+<p>可以知道:</p>
+<ul>
+<li>如果函數是凸函數，那我們可以很快的找到全域最小值<ul>
+<li>傳統機器學習方法問題大多是凸函數</li>
+</ul>
+</li>
+<li>但如果函數是非凸函數，模型學習到的就很容易是區域最小值而非全域最佳解，這也是我們必須透過training set/ validation set來判斷模型好不好的原因，因為你不知道你現在的位置到底在哪裡。<ul>
+<li>深度學習方法大多是非凸函數(注意這裡用的是大多，而不是全部)</li>
+</ul>
+</li>
+</ul>
+<p>要如何知道一個function是不是non-convex，引用Ian Goodfellow的回答:</p>
+<blockquote>
+<p>There are various ways to test for convexity.</p>
+<p>One is to just plot a cross-section of the function and look at it. If it has a non-convex shape, you don’t need to write a proof; you have disproven convexity by counter-example.</p>
+<p>If you want to do this with algebra, one way is just to take the second derivatives of a function. If the second derivative of a function in 1-D space is ever negative, the function isn’t convex.</p>
+<p>For neural nets, you have millions of parameters, so you need a test that works in high-dimensional space. In high-dimensional space, it turns out we can take the second derivative along one specific direction in space. For a unit vector $d$ giving the direction and a Hessian matrix $H$ of second derivatives, this is given by $d^{T}Hd$.</p>
+<p>For most neural nets and most loss functions, it’s very easy to find a point in parameter space and a direction where $d^{T}Hd$ is negative.</p>
+</blockquote>
+<p>也就是說如果能找到一維空間中函數的二階導數始終為負，則該函數不是凸函數。而最後兩段講到，<strong>在非常高維度的神經網路中，我們很容易就可以找到一個點他的二階導數是負的，所以大部分的loss function是non-convex</strong>。</p>
+<p>所以阿，深度學習很容易學到一半模型就學歪了，因為他可能一不小心就在廣大的沙漠中找到了一小片綠洲而停下來，儘管他不是真正的最佳解。</p>
+<p>到這裡我們知道函數是否convexity在最佳化時的差異。不過再來考慮另一個問題，deep learning都說用gradient descent來做更新，我們假設單一的函數都是convex(如Affine transformations, relu, max…)，那這些function一定可微嗎?</p>
+<h2 id="Is-convex-function-differentiable"><a href="#Is-convex-function-differentiable" class="headerlink" title="Is convex function differentiable?"></a>Is convex function differentiable?</h2><p>答案是<strong>convex function不一定要可微</strong>，你可以去回顧上面對於凸函數的定義，可不可微並不影響他的性質。</p>
+<p>那問題來了，不可微的東西你Pytorch是要怎麼backward算gradient啦!!</p>
+<p>我們來舉個例子，大家都用到爛掉的relu:<br><img src="https://meetonfriday.com/img/lazy-loading-animation.gif" data-original="https://res.cloudinary.com/meet-on-friday/image/upload/v1592153681/blog_posts/1_oePAhrm74RNnNEolprmTaQ_do4nzc.png" alt=""></p>
+<p>你知道，我知道，獨眼龍也知道，在0那個點是不可微的(不過relu確實是個convex function唷)，那在0這個點到底該怎麼辦呢?</p>
+<p>這時候<strong>sub-gradient</strong>就跳出來了，先說結論:</p>
+<ol>
+<li>由於backward並不是真的去算一遍微分公式，而是會先定義好他的gradient是多少然後去propagation(可參閱autumatic differentiation技術)，所以就不會有計算錯誤的run-time error。</li>
+<li>對於relu在0這個點的微分通常會設成0，不過實際上在[0, 1]之間選一個值也可以(我也看過有人用1/2的)</li>
+</ol>
+<h3 id="Subgradient"><a href="#Subgradient" class="headerlink" title="Subgradient???"></a>Subgradient???</h3><p>先上簡單版結論: <strong>Subgradient method是可以在非光滑的function(也就是有些地方不可微時)訓練更新的方法</strong>，接下來會必較詳細的介紹subgradient</p>
+<p>有幾篇文章我覺得講得非常好，所以下面內容我會節錄部分內容來做個簡單的介紹，你可以在reference看到引用的網站:</p>
+<blockquote>
+<p>对于光滑的凸函数而言，我们可以直接采用梯度下降算法求解函数的极值，但是当函数不处处光滑、处处可微的时候，梯度下降就不适合应用了。因此，我们需要计算函数的次梯度。对于次梯度而言，其没有要求函数是否光滑，是否是凸函数，限定条件很少，所以适用范围更广。。官方定义就不抄了，大致就是：<br>$g$ is a subgradient of $f$ (convex or not) at $x$ if</p>
+<script type="math/tex; mode=display">f(y) \geq f(x)+g^{T}(y-x), \forall y</script><p>这里主要包含两层意思：</p>
+<ol>
+<li>用次梯度对原函数做出的一阶展开估计总是比真实值要小；</li>
+<li>次梯度可能不唯一。</li>
+</ol>
+</blockquote>
+<p>也就是說，<strong>在函數不可微的地方我們仍然可以透過求subgradient，然後進行更新。</strong></p>
+<blockquote>
+<p>实际上，函数$f(x)$在$x$处的次梯度可以构成一个集合，通常用符号$∂f(x)$表示，这个集合是一个凸集，元素个数可能等于0或者大于0。<br>對於一個凸函數，一定可以找到一個全域最小值，那也可以想成是說他不存在subgradient:</p>
+<script type="math/tex; mode=display">f\left(x^{*}\right)=\min _{x} f(x) \leftrightarrow 0 \in \partial f\left(x^{*}\right)</script></blockquote>
+<p>然後來看gradient descent和subgradient method的差異:</p>
+<ul>
+<li>gradient descent是沿著最陡方向去迭代更新，直到收斂<ul>
+<li>更新公式: $x^{(k)}=x^{(k-1)}-\alpha_{k} \nabla f\left(x^{(k-1)}\right)$ </li>
+</ul>
+</li>
+<li>Subgradient method並不是下降算法，因為subgradient不一定是最陡的方向，從上面介紹就可以看的出來<ul>
+<li>更新方式跟gradient descent類似，只是換成了subgradient</li>
+</ul>
+</li>
+</ul>
+<p>注意subgradient不一定是最陡的方向，那他真的會收斂嗎? 答案是會的(太神奇了傑克!)，細節可以看<a href="https://blog.csdn.net/qq_32742009/article/details/81704139?utm_medium=distribute.pc_relevant.none-task-blog-baidujs-3" target="_blank" rel="noopener">文章內的證明</a>。</p>
+<blockquote>
+<p>另外，因为次梯度通常不唯一，而上面并没有提到任何次梯度的选取，因此理论上，任选一个都是可以使坐标不断向最小值点靠近，只是收敛的速率会不一样</p>
+</blockquote>
+<p>了解subgradient是什麼，以及他可以更新不可微的函數後，我們回頭看relu的case: </p>
+<p>在x=0時我們可以找到很多條切線通過這個點，這些線的斜率組成了subgradient的集合，所以我們可以任意取一個subgradient來作為relu在x=0該點的微分值。</p>
+<p>懂了這個概念後，所有有尖點的函數都可以用subgradient來算了，像是L1, relu…blabla</p>
+<ul>
+<li>題外話，L1也是convex，參考<a href="https://www.quora.com/According-to-shape-an-l1-norm-is-not-convex-Why-do-people-say-it-is-a-convex-function" target="_blank" rel="noopener">According to shape, an l1 norm is not convex. Why do people say it is a convex function?</a></li>
+</ul>
+<h2 id="總結"><a href="#總結" class="headerlink" title="總結"></a>總結</h2><p>這篇文章重新回顧了深度學習是如何學習的概念，然後探討了一些問題:</p>
+<ol>
+<li>deep learning怎麼使用gradient descent來學習 </li>
+<li>函數是不是convex對於找最佳解的影響</li>
+<li>convex不一定可微</li>
+<li>使用gradient descent時如果遇上函數不可微該怎麼辦</li>
+</ol>
+<p>所以雖然大家都說deep learning的更新是用gradient descent，不過更仔細來說的話我感覺應該是:</p>
+<ul>
+<li>對於函數可微的部分的確是用gradient descent</li>
+<li>在函數不可微的地方使用了subgradient method</li>
+</ul>
+<p>然後在來迭代更新，值到某個停止條件達成。</p>
+<p>所以…下次再被問到”你的這個loss function可微嗎?”，就可以更精確的用比較裝B的方式回答對方:</p>
+<p>“就算有不可微的地方依舊可以透過subgradient來autumatic differentiate，所以不影響updating”</p>
+<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><ul>
+<li><a href="https://www.zhihu.com/question/265516791" target="_blank" rel="noopener">神经网络的损失函数为什么是非凸的?</a></li>
+<li><a href="https://www.quora.com/How-can-you-prove-that-the-loss-functions-in-Deep-Neural-nets-are-non-convex" target="_blank" rel="noopener">How can you prove that the loss functions in Deep Neural nets are non-convex?
+</a></li>
+<li><a href="https://www.zhihu.com/question/51344481" target="_blank" rel="noopener">凹凸性定义需要函数可导吗？</a></li>
+<li><a href="https://closure11.com/subgradient/" target="_blank" rel="noopener">次梯度(Subgradient)</a></li>
+<li><a href="https://blog.csdn.net/qq_32742009/article/details/81704139?utm_medium=distribute.pc_relevant.none-task-blog-baidujs-3" target="_blank" rel="noopener">【机器学习】次梯度（subgradient）方法</a></li>
+<li><a href="https://www.zhihu.com/question/275630890" target="_blank" rel="noopener">L1正则和max函数的可导性？</a></li>
+</ul>
+
+                <hr>
+                <!-- Pager -->
+                <ul class="pager">
+    
+    <li class="previous">
+        <a href="/posts/aa73b0a2/" data-toggle="tooltip" data-placement="top" title="[論文速速讀]PEGASUS: Pre-training with Extracted Gap-sentences for Abstractive Summarization">&larr; Newer Post</a>
+    </li>
+    
+    
+    <li class="next">
+        <a href="/posts/b70f16d0/" data-toggle="tooltip" data-placement="top" title="[論文速速讀]Attention is not Explanation">Older Post &rarr;</a>
+    </li>
+    
+</ul>
+
+                <!-- tip start -->
+                
+
+                
+                <!-- tip end -->
+
+                <!-- Sharing -->
+                
+                <!-- Sharing -->
+
+                <!-- gitment start -->
+                
+                <!-- gitment end -->
+
+                <!-- 来必力City版安装代码 -->
+                
+                <!-- City版安装代码已完成 -->
+
+                <!-- disqus comment start -->
+                
+                <div class="comment">
+                    <div id="disqus_thread" class="disqus-thread"></div>
+                </div>
+                
+                <!-- disqus comment end -->
+            </div>
+            
+            <!-- Tabe of Content -->
+            <!-- Table of Contents -->
+
+    
+      
+        <aside id="sidebar">
+          <div id="toc" class="toc-article">
+          <strong class="toc-title">Contents</strong>
+          
+            <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#前言"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">前言</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#How-Deep-Learning-Update"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">How Deep Learning Update?</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Why-Gradient-Descent"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">Why Gradient Descent?</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Convex-or-Non-convex"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">Convex or Non-convex</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Is-convex-function-differentiable"><span class="toc-nav-number">5.</span> <span class="toc-nav-text">Is convex function differentiable?</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Subgradient"><span class="toc-nav-number">5.1.</span> <span class="toc-nav-text">Subgradient???</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#總結"><span class="toc-nav-number">6.</span> <span class="toc-nav-text">總結</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Reference"><span class="toc-nav-number">7.</span> <span class="toc-nav-text">Reference</span></a></li></ol>
+          
+          </div>
+        </aside>
+      
+    
+
+        </div>
+    </div>
+</article>
+
+	
+    <!-- disqus embedded js code start (one page only need to embed once) -->	
+    <script type="text/javascript">	
+        /* * * CONFIGURATION VARIABLES * * */	
+        var disqus_shortname = "meetonfriday";	
+        var disqus_identifier = "https://meetonfriday.com/posts/c41c815d/";	
+        var disqus_url = "https://meetonfriday.com/posts/c41c815d/";	
+        (function() {	
+            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;	
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';	
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);	
+        })();	
+    </script>	
+    <!-- disqus embedded js code start end -->	
+    
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/john850512">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://www.linkedin.com/in/john85051232">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                
+                    <li>
+                        <a target="_blank" href="https://www.facebook.com/meetonfridayyy">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+                
+                    <li>
+                        <a target="_blank"  href="https://mail.google.com/mail/?view=cm&fs=1&to=john85051232@gmail.com">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-envelope-o fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+                
+                
+
+                
+
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; John 2025 
+                    <br>
+                    Powered by 
+                    <a href="https://github.com/john850512/hexo-theme-jiji" target="_blank" rel="noopener">
+                        <i>hexo-theme-jiji</i>
+                    </a> | 
+                    <iframe name="star" style="margin-left: 2px; margin-bottom:-5px;" frameborder="0" scrolling="0"
+                        width="100px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=john850512&repo=hexo-theme-jiji&type=star&count=true">
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+
+</footer>
+
+<!-- jQuery -->
+
+<script src="/js/jquery.min.js"></script>
+
+
+<!-- Bootstrap Core JavaScript -->
+
+<script src="/js/bootstrap.min.js"></script>
+
+
+<!-- Custom Theme JavaScript -->
+
+<script src="/js/hux-blog.min.js"></script>
+
+
+<!-- Search -->
+
+<script src="/js/search.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("https://meetonfriday.com/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+<!-- Search -->
+
+    <script type="text/javascript">      
+        var search_path = "search.xml";
+        if (search_path.length == 0) {
+            search_path = "search.xml";
+        }
+    var path = "/" + search_path;
+    searchFunc(path, 'local-search-input', 'local-search-result');
+    </script>
+
+
+<!-- busuanzi -->
+<!--<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>-->
+<script async src="//cdn.jsdelivr.net/npm/busuanzi@2.3.0"></script>
+
+
+
+
+	<a id="rocket" href="#top" class=""></a>
+	<script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script>
+    <script type="text/javascript" src="/js/toc.js?v=1.0.0" async=""></script>
+
+    
+        <!-- background effects line -->
+        
+        <!-- background effects end -->
+    
+    
+    <!-- background animation-->>
+    <!--<script size="50" alpha='0.3' zIndex="-999" src="/js/ribbonStatic.js"></script>-->
+    
+        <script src="/js/ribbonDynamic.js"></script>
+    
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script>
+            window.imageLazyLoadSetting = {
+                isSPA: false,
+                processImages: null,
+            };
+        </script><script>window.addEventListener("load",function(){var t=/\.(gif|jpg|jpeg|tiff|png)$/i,r=/^data:image\/[a-z]+;base64,/;Array.prototype.slice.call(document.querySelectorAll("img[data-original]")).forEach(function(a){var e=a.parentNode;"A"===e.tagName&&(e.href.match(t)||e.href.match(r))&&(e.href=a.dataset.original)})});</script><script>!function(n){n.imageLazyLoadSetting.processImages=o;var i=n.imageLazyLoadSetting.isSPA,r=Array.prototype.slice.call(document.querySelectorAll("img[data-original]"));function o(){i&&(r=Array.prototype.slice.call(document.querySelectorAll("img[data-original]")));for(var t,e,a=0;a<r.length;a++)t=r[a],0<=(e=t.getBoundingClientRect()).bottom&&0<=e.left&&e.top<=(n.innerHeight||document.documentElement.clientHeight)&&function(){var t,e,n,i,o=r[a];t=o,e=function(){r=r.filter(function(t){return o!==t})},n=new Image,i=t.getAttribute("data-original"),n.onload=function(){t.src=i,e&&e()},n.src=i}()}o(),n.addEventListener("scroll",function(){var t,e;t=o,e=n,clearTimeout(t.tId),t.tId=setTimeout(function(){t.call(e)},500)})}(this);</script></body>
+
+</html>

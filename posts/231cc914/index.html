@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<!-- Head tag -->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="baidu-site-verification" content="093lY4ziMu" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="keyword"  content="programming, study, daily, entertainment">
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="星期五。見面">
+    <meta property="og:locale" content="zh-TW" />
+    
+    <meta property="og:title" content="2016波克城市數位遊戲設計-參賽心得" />
+    
+    
+    <meta property="og:description" content="寫這篇文章其實已經比賽結束好一陣子了，因為我一直在等照片，後來等不到怕忘記就先寫了，順便把手上的照片放上來。 
+大學以來參加的第一個較大規模專題競賽竟然不是自己系上的。會有這個比賽是因為高大資管與波克城市的合作計畫，由波克城市提供豐厚的獎品(前三名總共:4台Mac+4台筆電+4台PS4)以及講師來分享經驗，每組花一個學期製作一個單機休閒App，雖然最後都沒得到獎，但對我來說仍然是一個很寶貴的經驗，於是想將這些記錄下來。 " />
+    <meta name="description" content="寫這篇文章其實已經比賽結束好一陣子了，因為我一直在等照片，後來等不到怕忘記就先寫了，順便把手上的照片放上來。 
+大學以來參加的第一個較大規模專題競賽竟然不是自己系上的。會有這個比賽是因為高大資管與波克城市的合作計畫，由波克城市提供豐厚的獎品(前三名總共:4台Mac+4台筆電+4台PS4)以及講師來分享經驗，每組花一個學期製作一個單機休閒App，雖然最後都沒得到獎，但對我來說仍然是一個很寶貴的經驗，於是想將這些記錄下來。 ">
+    
+    
+    <meta property="og:image" content="/img/avatar.jpg" />
+    
+
+    <link rel="shortcut icon" href="/img/avatar.jpg">
+    <!-- Place this tag in your head or just before your close body tag. -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <!--<link href='http://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>-->
+    <title>
+        
+          2016波克城市數位遊戲設計-參賽心得 - MeetonFriday
+        
+    </title>
+    <!-- canonical -->
+    
+    
+      <link rel="canonical" href="https://meetonfriday.com/posts/231cc914/">
+    
+
+    <!-- Bootstrap Core CSS -->
+    
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+
+
+    <!-- Custom CSS --> 
+    
+<link rel="stylesheet" href="/css/dusign-dark.css">
+
+    
+<link rel="stylesheet" href="/css/dusign-common-dark.css">
+
+    <!-- 
+<link rel="stylesheet" href="/css/font-awesome.css">
+ -->
+    
+<link rel="stylesheet" href="/css/toc.css">
+
+
+    
+    <!-- Pygments Highlight CSS -->
+    
+<link rel="stylesheet" href="/css/highlight.css">
+
+
+    
+<link rel="stylesheet" href="/css/widget.css">
+
+
+    
+<link rel="stylesheet" href="/css/rocket.css">
+
+
+    
+<link rel="stylesheet" href="/css/signature.css">
+
+
+    
+<link rel="stylesheet" href="/css/fonts.googleapis.css">
+
+
+    <!-- <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.3.0/css/font-awesome.min.css">-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.min.css">
+    
+    <!-- Google Analytics -->
+    
+      <!-- <script>
+          // dynamic User by Hux
+          var _gaId = 'UA-163346001-1';
+          var _gaDomain = 'auto';
+      
+          // Originial
+          (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+          (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+          })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+      
+          ga('create', _gaId, _gaDomain);
+          ga('send', 'pageview');
+      </script> -->
+      
+      <!-- Global site tag (gtag.js) - Google Analytics -->
+      <script async src="https://www.googletagmanager.com/gtag/js?id=UA-163346001-1"></script>
+      <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+      
+        gtag('config', 'UA-163346001-1');
+      </script>
+      
+    <!-- google ad sense-->
+    <script data-ad-client="ca-pub-9561340457908416" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<meta name="generator" content="Hexo 4.2.1"><link rel="alternate" href="/atom.xml" title="星期五。見面" type="application/atom+xml">
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+	<!-- Modified by Yu-Hsuan Yen -->
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        
+            
+                background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.5)), url('/img/header_img/header-bg.jpg')
+            
+        
+    }
+    
+</style>
+
+<header class="intro-header" >
+    <!-- Signature -->
+    <div id="signature">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                
+                    <div class="post-heading">
+                        <div class="tags">
+                            
+                              <a class="tag" href="/tags/#competition" title="competition">competition</a>
+                            
+                              <a class="tag" href="/tags/#unity" title="unity">unity</a>
+                            
+                        </div>
+                        <h1>2016波克城市數位遊戲設計-參賽心得</h1>
+                        <h2 class="subheading"></h2>
+                        <span class="meta">
+                            Posted by John on
+                            2016-06-11
+                        </span>
+
+                        
+                            <div class="blank_box"></div>
+                            <span class="meta">
+                                Words <span class="post-count">1.7k</span> and
+                                Reading Time <span class="post-count">5</span> Minutes
+                            </span>
+                            <div class="blank_box"></div>
+                            <!-- 不蒜子统计 start -->
+                            <span class="meta">
+                                Viewed <span id="busuanzi_value_page_pv"><i class="fa fa-spinner fa-spin"></i></span> Times
+                            </span>
+                            <!-- 不蒜子统计 end -->
+                        
+
+                    </div>
+                
+
+                </div>
+            </div>
+        </div>      
+    </div>
+
+    
+        
+            <div class="waveWrapper">
+                <div class="wave wave_before" style="background-image: url('/img/wave-dark.png')"></div>
+                <div class="wave wave_after" style="background-image: url('/img/wave-dark.png')"></div>
+            </div>
+        
+    
+</header>
+
+	
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">星期五。見面</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archive/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/categories/">Categories</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/reading/">Reading</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+    
+    <!-- Main Content -->
+    <!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+            <!-- Post Container -->
+
+    
+        
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+        
+    
+
+                <p>寫這篇文章其實已經比賽結束好一陣子了，因為我一直在等照片，後來等不到怕忘記就先寫了，順便把手上的照片放上來。 </p>
+<p>大學以來參加的第一個較大規模專題競賽竟然不是自己系上的。會有這個比賽是因為高大資管與波克城市的合作計畫，由波克城市提供豐厚的獎品(前三名總共:4台Mac+4台筆電+4台PS4)以及講師來分享經驗，每組花一個學期製作一個單機休閒App，雖然最後都沒得到獎，但對我來說仍然是一個很寶貴的經驗，於是想將這些記錄下來。 </p>
+<div align="center">
+  <img src="https://meetonfriday.com/img/lazy-loading-animation.gif" data-original="https://john850512.files.wordpress.com/2016/06/13344805_1361583450524569_7605267586142400751_n.jpg" width="30%" />
+</div>
+
+<p>(我們美術設計的帥氣海報)<br><a id="more"></a></p>
+<div align="center">
+  <img src="https://meetonfriday.com/img/lazy-loading-animation.gif" data-original="https://john850512.files.wordpress.com/2016/06/13435471_1361583433857904_2662107738779589322_n.jpg" width="70%" />
+</div>
+(每組遊戲的海報) 
+
+<div align="center">
+  <img src="https://meetonfriday.com/img/lazy-loading-animation.gif" data-original="https://john850512.files.wordpress.com/2016/06/13407273_1361583403857907_3457890409076938274_n.jpg" width="70%" />
+</div>
+
+<p>(豐盛的獎品…我也好想要一台) </p>
+<p>雖然沒有得獎，還是不免來介紹一下我們的遊戲吧xD最後再來說心得:</p>
+<hr>
+<h2 id="遊戲名稱-SaveMore"><a href="#遊戲名稱-SaveMore" class="headerlink" title="遊戲名稱: SaveMore"></a>遊戲名稱: SaveMore</h2><ul>
+<li>遊戲類型: 3D類型的類似RPG遊戲 </li>
+<li>開發工具: Unity - C# </li>
+<li>github: <a href="https://github.com/john850512/SaveMore" target="_blank" rel="noopener">https://github.com/john850512/SaveMore</a> </li>
+<li>Demo: <a href="https://www.youtube.com/watch?v=ob6LvOYn8Yc&amp;feature=youtu.be" target="_blank" rel="noopener">https://www.youtube.com/watch?v=ob6LvOYn8Yc&amp;feature=youtu.be</a> </li>
+</ul>
+<h2 id="背景故事"><a href="#背景故事" class="headerlink" title="背景故事"></a>背景故事</h2><p>在未來的世界，病毒因為某次的突變產生出人類身體無法抵抗的品種，只有病毒自己本身才能摧毀自己。於是未來的科學家發明了能自由操控的進化血球，進化血球擁有特殊的能力可以在病毒入侵的部位創造一個特殊空間，在這空間中進化血球可以將病毒吞噬並吐出撞擊其他的病毒，使之消滅而不會影響人物身體的原本機能。  </p>
+<h2 id="遊戲架構"><a href="#遊戲架構" class="headerlink" title="遊戲架構"></a>遊戲架構</h2><p>一開始我們以人物的身體作為背景，凸顯出我們的防衛主題，在遊戲開始時身體的某些部位會逐漸出現病狀(紅色警訊)，玩家可以點擊進入遊戲關卡。 </p>
+<p>進入遊戲關卡後，玩家需要操控虛擬搖桿來控制進化血球的移動及攻擊，發射武器將病毒擊暈並吞噬，之後吐出病毒已消滅其他病毒，消滅全部病毒即可成功防守，當前關卡也會消失。 人物年齡以及免疫力會隨著關卡的破關次數逐漸增加，反之若玩家進行關卡失敗則免疫力降低，當免疫力過低時玩家則會死亡，整個遊戲到此結束。 為了增加遊戲的多元性，不同部位的關卡同時發病時，會引發特殊關卡出現，特殊關卡有著更強大的魔王，魔王有更多元的攻擊模式、移動模式以及生命力等待玩家挑戰。</p>
+<h2 id="遊戲畫面"><a href="#遊戲畫面" class="headerlink" title="遊戲畫面"></a>遊戲畫面</h2><h3 id="進入畫面"><a href="#進入畫面" class="headerlink" title="進入畫面"></a>進入畫面</h3><div align="center">
+  <img src="https://meetonfriday.com/img/lazy-loading-animation.gif" data-original="https://john850512.files.wordpress.com/2016/06/11.png" width="50%" />
+</div>
+
+<h3 id="角色選擇"><a href="#角色選擇" class="headerlink" title="角色選擇"></a>角色選擇</h3><table align="center" border=0>
+  <tr>
+      <td align="center"><img src="https://meetonfriday.com/img/lazy-loading-animation.gif" data-original="https://john850512.files.wordpress.com/2016/06/13.png?w=1400&h=&crop=1"  /></td>
+      <td align="center"><img src="https://meetonfriday.com/img/lazy-loading-animation.gif" data-original="https://john850512.files.wordpress.com/2016/06/14.png?w=1400&h=&crop=1"   /></td>
+      <td align="center"><img src="https://meetonfriday.com/img/lazy-loading-animation.gif" data-original="https://john850512.files.wordpress.com/2016/06/15.png?w=1400&h=&crop=1"   /></td>
+  </tr>
+</table>
+
+<h3 id="成就系統"><a href="#成就系統" class="headerlink" title="成就系統"></a>成就系統</h3><table align="center" border=0>
+  <tr>
+      <td align="center"><img src="https://meetonfriday.com/img/lazy-loading-animation.gif" data-original="https://john850512.files.wordpress.com/2016/06/19.png?w=1400&h="  /></td>
+      <td align="center"><img src="https://meetonfriday.com/img/lazy-loading-animation.gif" data-original="https://john850512.files.wordpress.com/2016/06/18.png?w=1400&h="   /></td>
+  </tr>
+  <tr>
+      <td align="center"><img src="https://meetonfriday.com/img/lazy-loading-animation.gif" data-original="https://john850512.files.wordpress.com/2016/06/17.png?w=1400&h="  /></td>
+      <td align="center"><img src="https://meetonfriday.com/img/lazy-loading-animation.gif" data-original="https://john850512.files.wordpress.com/2016/06/16.png?w=1400&h="   /></td>
+  </tr>
+</table>
+
+<h3 id="遊玩畫面"><a href="#遊玩畫面" class="headerlink" title="遊玩畫面"></a>遊玩畫面</h3><table align="center" border=0>
+  <tr>
+      <td align="center"><img src="https://meetonfriday.com/img/lazy-loading-animation.gif" data-original="https://john850512.files.wordpress.com/2016/06/23.png?w=1400&h="  /></td>
+      <td align="center"><img src="https://meetonfriday.com/img/lazy-loading-animation.gif" data-original="https://john850512.files.wordpress.com/2016/06/25.png?w=1400&h="   /></td>
+      <td align="center"><img src="https://meetonfriday.com/img/lazy-loading-animation.gif" data-original="https://john850512.files.wordpress.com/2016/06/20.png?w=1400&h="   /></td>
+  </tr>
+  <tr>
+      <td align="center"><img src="https://meetonfriday.com/img/lazy-loading-animation.gif" data-original="https://john850512.files.wordpress.com/2016/06/24.png?w=1400&h="  /></td>
+      <td align="center"><img src="https://meetonfriday.com/img/lazy-loading-animation.gif" data-original="https://john850512.files.wordpress.com/2016/06/29.png?w=1400&h="   /></td>
+      <td align="center"><img src="https://meetonfriday.com/img/lazy-loading-animation.gif" data-original="https://john850512.files.wordpress.com/2016/06/28.png?w=1400&h="   /></td>
+  </tr>
+</table>
+
+
+<hr>
+<p>這一個學期6個月的製作過程中，從一開始什麼都不會開始摸Unity、C#，到後來有一定的了解，學習的過程真的蠻艱辛的，還要兼顧其他的課業……。 </p>
+<p>客觀看一下這次前三名的作品，都會發現一個共通性: <strong>遊戲完成度很高</strong>，不論是美術的角色、遊戲設計、UI風格都跟遊戲很完整的搭配，在遊戲可玩度上也是很完整，幾乎可以上PlayStore也不奇怪的作品。 </p>
+<p>反省一下我們的作品，其實我覺得在構想上並不差，但是遊戲風格沒有一致姓，不論是遊戲風格、UI都沒有很完整的搭配起來(風格上其實差異蠻大的)。</p>
+<p>而在程式部分也頗差，沒有使遊戲能很順暢地遊玩(當時評審幾乎沒有一個順利破一關過，只有我們已經很了解的人才有辦法破關)，而且設計上還有不少大BUG(儘管當下沒使他們發現)……。 </p>
+<p>而且時間分配上也很糟糕，明明我覺得我們是很早開工的，但是實際上到最後一天的清晨才把大部分的雛形給做完，在中間拖了很多時間，常常開會時上週的東西到這週還是沒有交出來，最後就是在爆程式的肝(我在報告前一天完全沒有睡…..)，以後專題一定要更加注意時間。 </p>
+<p>接下來細說一下我的部分吧xD我是負責程式的部分，這次做這件作品真的學到很多，首先是深刻的體驗到了效能的重要性，遊戲是很重視使用者體驗的，一點點的Lag都會讓使用者不快，尤其我們的遊戲又有怪物AI，要怎麼讓多個AI在地圖上又不至於會卡住就很重要了(後來用了亂數分散怪物AI的追蹤時間)。再來還有很多同步問題，在存取同一個物件資源的時候，如何保護他使得其他程式無法同時控制此資源(當時為了魔法鎮的放大縮小搞了好久阿)…..等，很多東西都是邊學邊做，不斷的Google、查API文檔，看論壇、請教學長才得以完成。 </p>
+<p>上大學以來沒做過什麼可以拿出來玩的作品，雖然此次沒有得獎，但真的收穫良多。     </p>
+<p>最後附上評審在評分遊戲時問的相關問題以及面試(他還有提供實習的機會)時的相關問題: </p>
+<p>評分時: </p>
+<ol>
+<li>你覺得製作這款遊戲上最困難的地方是那些? <ul>
+<li>遊戲效能的優化、怪物的AI </li>
+</ul>
+</li>
+<li>怪物的AI是如何去寫的? <ul>
+<li>用A* Algorithm </li>
+</ul>
+</li>
+<li>魔王的AI是如何去撰寫的? <ul>
+<li>先想好行動模式，分別撰寫 </li>
+</ul>
+</li>
+<li>虛擬搖桿是自己寫出來的嗎? <ul>
+<li>參考網路上的OpenSource </li>
+</ul>
+</li>
+<li>這款遊戲的美術風格? <ul>
+<li>(忘記我們美術當時說什麼了)   </li>
+</ul>
+</li>
+</ol>
+<p>面試時: </p>
+<ol>
+<li>你覺得在製作這款遊戲時和企劃、美術間遇到的最大困難是什麼? <ul>
+<li>溝通問題，每人的想法都不一樣 </li>
+</ul>
+</li>
+<li>你對寫程式有熱情嗎?你接受在公司待12小時以上嗎? <ul>
+<li>廢話這裡當然要說有 </li>
+</ul>
+</li>
+<li>如果你是程式，你會同時想學習企劃嗎? <ul>
+<li>會，因為這款遊戲製作中我也有參與到企劃，還蠻有興趣的 </li>
+</ul>
+</li>
+<li>如果進我們公司，你最想在這裡學到什麼? <ul>
+<li>和不同部門間的溝通、業界的生態 </li>
+</ul>
+</li>
+<li>說出一款你最喜歡玩的手機遊戲並介紹他 <ul>
+<li>落櫻散華抄</li>
+</ul>
+</li>
+</ol>
+
+                <hr>
+                <!-- Pager -->
+                <ul class="pager">
+    
+    <li class="previous">
+        <a href="/posts/6c292315/" data-toggle="tooltip" data-placement="top" title="[C]Find All Shortest Path">&larr; Newer Post</a>
+    </li>
+    
+    
+    <li class="next">
+        <a href="/posts/73b67c08/" data-toggle="tooltip" data-placement="top" title="[Unity]FBX模型的動畫在手機上失效了">Older Post &rarr;</a>
+    </li>
+    
+</ul>
+
+                <!-- tip start -->
+                
+
+                
+                <!-- tip end -->
+
+                <!-- Sharing -->
+                
+                <!-- Sharing -->
+
+                <!-- gitment start -->
+                
+                <!-- gitment end -->
+
+                <!-- 来必力City版安装代码 -->
+                
+                <!-- City版安装代码已完成 -->
+
+                <!-- disqus comment start -->
+                
+                <div class="comment">
+                    <div id="disqus_thread" class="disqus-thread"></div>
+                </div>
+                
+                <!-- disqus comment end -->
+            </div>
+            
+            <!-- Tabe of Content -->
+            <!-- Table of Contents -->
+
+    
+      
+        <aside id="sidebar">
+          <div id="toc" class="toc-article">
+          <strong class="toc-title">Contents</strong>
+          
+            <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#遊戲名稱-SaveMore"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">遊戲名稱: SaveMore</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#背景故事"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">背景故事</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#遊戲架構"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">遊戲架構</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#遊戲畫面"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">遊戲畫面</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#進入畫面"><span class="toc-nav-number">4.1.</span> <span class="toc-nav-text">進入畫面</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#角色選擇"><span class="toc-nav-number">4.2.</span> <span class="toc-nav-text">角色選擇</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#成就系統"><span class="toc-nav-number">4.3.</span> <span class="toc-nav-text">成就系統</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#遊玩畫面"><span class="toc-nav-number">4.4.</span> <span class="toc-nav-text">遊玩畫面</span></a></li></ol></li></ol>
+          
+          </div>
+        </aside>
+      
+    
+
+        </div>
+    </div>
+</article>
+
+	
+    <!-- disqus embedded js code start (one page only need to embed once) -->	
+    <script type="text/javascript">	
+        /* * * CONFIGURATION VARIABLES * * */	
+        var disqus_shortname = "meetonfriday";	
+        var disqus_identifier = "https://meetonfriday.com/posts/231cc914/";	
+        var disqus_url = "https://meetonfriday.com/posts/231cc914/";	
+        (function() {	
+            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;	
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';	
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);	
+        })();	
+    </script>	
+    <!-- disqus embedded js code start end -->	
+    
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/john850512">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://www.linkedin.com/in/john85051232">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                
+                    <li>
+                        <a target="_blank" href="https://www.facebook.com/meetonfridayyy">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+                
+                    <li>
+                        <a target="_blank"  href="https://mail.google.com/mail/?view=cm&fs=1&to=john85051232@gmail.com">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-envelope-o fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+                
+                
+
+                
+
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; John 2025 
+                    <br>
+                    Powered by 
+                    <a href="https://github.com/john850512/hexo-theme-jiji" target="_blank" rel="noopener">
+                        <i>hexo-theme-jiji</i>
+                    </a> | 
+                    <iframe name="star" style="margin-left: 2px; margin-bottom:-5px;" frameborder="0" scrolling="0"
+                        width="100px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=john850512&repo=hexo-theme-jiji&type=star&count=true">
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+
+</footer>
+
+<!-- jQuery -->
+
+<script src="/js/jquery.min.js"></script>
+
+
+<!-- Bootstrap Core JavaScript -->
+
+<script src="/js/bootstrap.min.js"></script>
+
+
+<!-- Custom Theme JavaScript -->
+
+<script src="/js/hux-blog.min.js"></script>
+
+
+<!-- Search -->
+
+<script src="/js/search.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("https://meetonfriday.com/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+<!-- Search -->
+
+    <script type="text/javascript">      
+        var search_path = "search.xml";
+        if (search_path.length == 0) {
+            search_path = "search.xml";
+        }
+    var path = "/" + search_path;
+    searchFunc(path, 'local-search-input', 'local-search-result');
+    </script>
+
+
+<!-- busuanzi -->
+<!--<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>-->
+<script async src="//cdn.jsdelivr.net/npm/busuanzi@2.3.0"></script>
+
+
+
+
+	<a id="rocket" href="#top" class=""></a>
+	<script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script>
+    <script type="text/javascript" src="/js/toc.js?v=1.0.0" async=""></script>
+
+    
+        <!-- background effects line -->
+        
+        <!-- background effects end -->
+    
+    
+    <!-- background animation-->>
+    <!--<script size="50" alpha='0.3' zIndex="-999" src="/js/ribbonStatic.js"></script>-->
+    
+        <script src="/js/ribbonDynamic.js"></script>
+    
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script>
+            window.imageLazyLoadSetting = {
+                isSPA: false,
+                processImages: null,
+            };
+        </script><script>window.addEventListener("load",function(){var t=/\.(gif|jpg|jpeg|tiff|png)$/i,r=/^data:image\/[a-z]+;base64,/;Array.prototype.slice.call(document.querySelectorAll("img[data-original]")).forEach(function(a){var e=a.parentNode;"A"===e.tagName&&(e.href.match(t)||e.href.match(r))&&(e.href=a.dataset.original)})});</script><script>!function(n){n.imageLazyLoadSetting.processImages=o;var i=n.imageLazyLoadSetting.isSPA,r=Array.prototype.slice.call(document.querySelectorAll("img[data-original]"));function o(){i&&(r=Array.prototype.slice.call(document.querySelectorAll("img[data-original]")));for(var t,e,a=0;a<r.length;a++)t=r[a],0<=(e=t.getBoundingClientRect()).bottom&&0<=e.left&&e.top<=(n.innerHeight||document.documentElement.clientHeight)&&function(){var t,e,n,i,o=r[a];t=o,e=function(){r=r.filter(function(t){return o!==t})},n=new Image,i=t.getAttribute("data-original"),n.onload=function(){t.src=i,e&&e()},n.src=i}()}o(),n.addEventListener("scroll",function(){var t,e;t=o,e=n,clearTimeout(t.tId),t.tId=setTimeout(function(){t.call(e)},500)})}(this);</script></body>
+
+</html>

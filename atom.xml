@@ -1,0 +1,409 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>星期五。見面</title>
+  <icon>https://meetonfriday.com/img/avatar.jpg</icon>
+  <subtitle>程式 | 學習 | 日記 | 玩樂</subtitle>
+  <link href="https://meetonfriday.com/atom.xml" rel="self"/>
+  
+  <link href="https://meetonfriday.com/"/>
+  <updated>2025-03-10T11:00:42.777Z</updated>
+  <id>https://meetonfriday.com/</id>
+  
+  <author>
+    <name>John</name>
+    <email>john85051232@gmail.com</email>
+  </author>
+  
+  <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Google從Android 15 (Android-V)開始將淘汰NNAPI改推LiteRT (TensorFlow Lite)</title>
+    <link href="https://meetonfriday.com/posts/666bbf67/"/>
+    <id>https://meetonfriday.com/posts/666bbf67/</id>
+    <published>2025-03-10T10:00:00.000Z</published>
+    <updated>2025-03-10T11:00:42.777Z</updated>
+    
+    
+    <summary type="html">Google在最新的NNAPI文檔中宣布隨著Android 15(V)的推出即將淘汰NNAPI，未來將改推LiteRT(TensorFlow Lite)，本文從相關文檔中進行整理並做個介紹。</summary>
+    
+    
+    
+    <category term="study" scheme="https://meetonfriday.com/categories/study/"/>
+    
+    
+    <category term="deep learning" scheme="https://meetonfriday.com/tags/deep-learning/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>[課程筆記]Linux Driver正點原子課程筆記5 - 新字元設備驅動實驗</title>
+    <link href="https://meetonfriday.com/posts/edcd30e6/"/>
+    <id>https://meetonfriday.com/posts/edcd30e6/</id>
+    <published>2021-03-28T16:30:00.000Z</published>
+    <updated>2025-03-10T11:00:42.777Z</updated>
+    
+    
+    <summary type="html">在之前的課程中了解到了怎麼註冊一個chrdev，但之前使用的api是舊版的存在著一些問題，例如`register_chrdev()`這個function: 1. 會佔用主設備號下的所有次設備號，浪費了很多次設備號 2. 必須手動指定主設備號，也就是說你得先手動查詢哪個主設備號還沒被佔用，然後再去指定。所以這節課程會使用新的api來撰寫字元驅動，新版的api有兩種方式...</summary>
+    
+    
+    
+    <category term="【課程筆記】" scheme="https://meetonfriday.com/categories/%E3%80%90%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98%E3%80%91/"/>
+    
+    
+    <category term="linux kernel" scheme="https://meetonfriday.com/tags/linux-kernel/"/>
+    
+    <category term="study" scheme="https://meetonfriday.com/tags/study/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>[讀書心得]跟著柴鼠學FQ 做自己的提款機</title>
+    <link href="https://meetonfriday.com/posts/638f6f64/"/>
+    <id>https://meetonfriday.com/posts/638f6f64/</id>
+    <published>2021-03-27T13:30:00.000Z</published>
+    <updated>2025-03-10T11:00:42.777Z</updated>
+    
+    
+    <summary type="html">本文是【跟著柴鼠學FQ 做自己的提款機】的讀書心得和書籍導讀:你可以把這本書當成是你重獲自由的「投資工具使用說明書」，FQ就像提款機的零件，只有親手組裝自己的提款機，才能成為你收入階層的跳板，讓資產向上提升──低薪族，靠理財加薪;月光族，存到第一桶金;小資族，變優渥...</summary>
+    
+    
+    
+    <category term="reading" scheme="https://meetonfriday.com/categories/reading/"/>
+    
+    
+    <category term="reading" scheme="https://meetonfriday.com/tags/reading/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>令人搖頭的羅技產品品質? G413鍵盤出保紀錄(2021年)</title>
+    <link href="https://meetonfriday.com/posts/5cb74faa/"/>
+    <id>https://meetonfriday.com/posts/5cb74faa/</id>
+    <published>2021-03-10T17:30:00.000Z</published>
+    <updated>2025-03-10T11:00:42.777Z</updated>
+    
+    
+    <summary type="html">這篇文是講述自己對於羅技產品的親身體驗以及產品故障出保過程。羅技產品在市場上一直深受電競玩家的喜愛，想當初第一次接觸羅技產品是在研究所的時候。當初在參加清交大合辦的&quot;梅竹黑客松&quot;的時候，羅技作為出題者也有參與，並且給予參加羅技組的參賽者&quot;競賽時間內可免費體驗羅技系列產品&quot;的福利，也因此當時在參加競賽的時候體驗到了羅技的鍵盤、滑鼠、攝影機...</summary>
+    
+    
+    
+    <category term="daily" scheme="https://meetonfriday.com/categories/daily/"/>
+    
+    
+    <category term="others" scheme="https://meetonfriday.com/tags/others/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>[讀書心得]35歲，為什麼還沒被重用？</title>
+    <link href="https://meetonfriday.com/posts/dedf856f/"/>
+    <id>https://meetonfriday.com/posts/dedf856f/</id>
+    <published>2021-03-08T18:30:00.000Z</published>
+    <updated>2025-03-10T11:00:42.777Z</updated>
+    
+    
+    <summary type="html">本文是【35歲，為什麼還沒被重用】的讀書心得:是什麼關鍵，讓鴻海、台達電、統一、旺旺成為簽證客戶？是什麼原因，讓近百位合夥人願意提早將退休金全部結算？一本值得反覆咀嚼的好書，告訴你如何創造自己價值、如何找出成功方法，如何走出數字迷思。</summary>
+    
+    
+    
+    <category term="reading" scheme="https://meetonfriday.com/categories/reading/"/>
+    
+    
+    <category term="reading" scheme="https://meetonfriday.com/tags/reading/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>[課程筆記]Linux Driver正點原子課程筆記4 - Led燈驅動實驗</title>
+    <link href="https://meetonfriday.com/posts/9aca0070/"/>
+    <id>https://meetonfriday.com/posts/9aca0070/</id>
+    <published>2021-03-02T16:30:00.000Z</published>
+    <updated>2025-03-10T11:00:42.776Z</updated>
+    
+    
+    <summary type="html">Led燈驅動實驗。嘗試透過driver去操作led register來達到led開關的實驗。Linux下**無法直接對physical address做讀寫操作**，因為linux會enable **MMU(Memory Manage Unit)**，MMU的功能為1. virtual address (VA) &lt;-&gt; physical address (PA)的mapping 2. 內存保護、register的訪問權限...</summary>
+    
+    
+    
+    <category term="【課程筆記】" scheme="https://meetonfriday.com/categories/%E3%80%90%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98%E3%80%91/"/>
+    
+    
+    <category term="linux kernel" scheme="https://meetonfriday.com/tags/linux-kernel/"/>
+    
+    <category term="study" scheme="https://meetonfriday.com/tags/study/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>[課程筆記]Linux Driver正點原子課程筆記3 - 我的第一個Linux驅動</title>
+    <link href="https://meetonfriday.com/posts/62f55520/"/>
+    <id>https://meetonfriday.com/posts/62f55520/</id>
+    <published>2021-03-01T16:30:00.000Z</published>
+    <updated>2025-03-10T11:00:42.776Z</updated>
+    
+    
+    <summary type="html">字符設備驅動框架。上次有說到字符驅動提供給外部的api都被定義在file_operations structs內，這個結構被定義在/include/linux/fs.h下，簡單介紹一下這個struct內的member: 1. owner: 擁有該結構的module pointer，一般設置為THIS_MODULE 2.`llseek()`: 用於修改當前文件的讀寫位置...</summary>
+    
+    
+    
+    <category term="【課程筆記】" scheme="https://meetonfriday.com/categories/%E3%80%90%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98%E3%80%91/"/>
+    
+    
+    <category term="linux kernel" scheme="https://meetonfriday.com/tags/linux-kernel/"/>
+    
+    <category term="study" scheme="https://meetonfriday.com/tags/study/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>全台灣最大數據分析競賽上線啦!蝦皮2020數據分析競賽心得</title>
+    <link href="https://meetonfriday.com/posts/10ddd910/"/>
+    <id>https://meetonfriday.com/posts/10ddd910/</id>
+    <published>2021-01-24T17:30:00.000Z</published>
+    <updated>2025-03-10T11:00:42.776Z</updated>
+    
+    
+    <summary type="html">儘管競賽名稱是全台灣最大數據分析競賽，但實際上的競賽內容我覺得還不太夠格冠上這個名稱xD 為何這樣說呢? 首先，組別總共分成學生組和職業組，根據組別其實競賽題型差異極大: 1. 學生組: 考類似leetcode的演算法題型 2. 職業組: 考kaggle數據分析競賽。並且使用的平台都是在kaggle上(不太知道學生組這樣的題型要如何在kaggle上去做排名?)。接下來是競賽時間，他是線下賽，一開始想說一個kaggle的線上賽好說歹說都是星期起跳的，線下賽好歹你也要給個一天的時間吧結果競賽時間只有2個小時，你沒看錯就是120分鐘而已呢...</summary>
+    
+    
+    
+    <category term="daily" scheme="https://meetonfriday.com/categories/daily/"/>
+    
+    
+    <category term="competitive programming" scheme="https://meetonfriday.com/tags/competitive-programming/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>[讀書心得]富爸爸商學院</title>
+    <link href="https://meetonfriday.com/posts/15ad89ab/"/>
+    <id>https://meetonfriday.com/posts/15ad89ab/</id>
+    <published>2021-01-24T15:30:00.000Z</published>
+    <updated>2025-03-10T11:00:42.776Z</updated>
+    
+    
+    <summary type="html">本文是【富爸爸商學院】的讀書心得: 聽到「直銷」或「業務」，你的第一反應是先拒絕再說？你知道銷售力可以帶來超越想像的成長，培養出過人的商業技巧與成功心態嗎？跟大多數人一樣，當羅勃特．T．清崎第一次聽到直銷時，他也抱著懷疑的態度。不過，經過深入了解，他發現直銷產業其實是一所真正的商學院，不只沒有高不可攀的入學門檻，還蘊藏著足以改變一生的核心價值。</summary>
+    
+    
+    
+    <category term="reading" scheme="https://meetonfriday.com/categories/reading/"/>
+    
+    
+    <category term="reading" scheme="https://meetonfriday.com/tags/reading/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>[課程筆記]Linux Driver正點原子課程筆記1 &amp; 2 - Linux驅動開發 &amp; 字符設備驅動開發基礎實驗</title>
+    <link href="https://meetonfriday.com/posts/81763900/"/>
+    <id>https://meetonfriday.com/posts/81763900/</id>
+    <published>2021-01-23T21:30:00.000Z</published>
+    <updated>2025-03-10T11:00:42.776Z</updated>
+    
+    
+    <summary type="html">驅動開發思維。為何需要Linux driver? 1.直接在Linux下操作register不現實，太複雜也不安全2.Linux具有各種驅動框架(driver framework)，使得各種設置能夠依照一訂的規範進行開發。Linux下一切皆文件，而所有的driver都放置在/dev/xxx下，可以透過fops(file operation)來操作(打開、關閉、讀寫)，新版的Linux下supoort device tree，是一個.dts，記錄devices information，kernel會去分析.dts文件了解有哪些設備...</summary>
+    
+    
+    
+    <category term="【課程筆記】" scheme="https://meetonfriday.com/categories/%E3%80%90%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98%E3%80%91/"/>
+    
+    
+    <category term="linux kernel" scheme="https://meetonfriday.com/tags/linux-kernel/"/>
+    
+    <category term="study" scheme="https://meetonfriday.com/tags/study/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>[課程筆記]課程筆記系列總覽</title>
+    <link href="https://meetonfriday.com/posts/85f1c2a/"/>
+    <id>https://meetonfriday.com/posts/85f1c2a/</id>
+    <published>2021-01-23T21:30:00.000Z</published>
+    <updated>2025-03-10T11:00:42.776Z</updated>
+    
+    
+    <summary type="html">本文記錄了自己在上課時所記錄的一些課程筆記，可以透過這邊文章連結到所有以往發過的課程筆記文章。</summary>
+    
+    
+    
+    <category term="【課程筆記】" scheme="https://meetonfriday.com/categories/%E3%80%90%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98%E3%80%91/"/>
+    
+    
+    <category term="study" scheme="https://meetonfriday.com/tags/study/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>[論文速速讀]Learning Deep Features for Discriminative Localization</title>
+    <link href="https://meetonfriday.com/posts/2b446abf/"/>
+    <id>https://meetonfriday.com/posts/2b446abf/</id>
+    <published>2021-01-09T10:30:00.000Z</published>
+    <updated>2025-03-10T11:00:42.776Z</updated>
+    
+    
+    <summary type="html">本文介紹CNN可視化的一種技術，Classification Activaion Mapping (CAM)，透過heatmap的方式顯示模型分類時認為圖片重要的依據為何。這篇論文的貢獻是提出了使用NIN提出的Global Average Pooling來做CNN可視化的想法。概念不難但卻非常好用，而且很酷。</summary>
+    
+    
+    
+    <category term="【論文速速讀】" scheme="https://meetonfriday.com/categories/%E3%80%90%E8%AB%96%E6%96%87%E9%80%9F%E9%80%9F%E8%AE%80%E3%80%91/"/>
+    
+    
+    <category term="deep learning" scheme="https://meetonfriday.com/tags/deep-learning/"/>
+    
+    <category term="paper" scheme="https://meetonfriday.com/tags/paper/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>驅動程式安裝失敗: 文件的哈希值不在指定的目錄中，此文件可能已損壞或被竄改</title>
+    <link href="https://meetonfriday.com/posts/640a781c/"/>
+    <id>https://meetonfriday.com/posts/640a781c/</id>
+    <published>2021-01-06T17:30:00.000Z</published>
+    <updated>2025-03-10T11:00:42.776Z</updated>
+    
+    
+    <summary type="html">本文介紹在window10下手動更新驅動程式時如果出現&quot;文件的哈希值不在指定的目錄中，此文件可能已損壞或被竄改&quot;失敗資訊時的情形，以及解決方法。</summary>
+    
+    
+    
+    <category term="daily" scheme="https://meetonfriday.com/categories/daily/"/>
+    
+    
+    <category term="others" scheme="https://meetonfriday.com/tags/others/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>[Linux Kernel慢慢學]了解Linux CCF (Common Clock Framework)中的那些基本元件</title>
+    <link href="https://meetonfriday.com/posts/f43c1090/"/>
+    <id>https://meetonfriday.com/posts/f43c1090/</id>
+    <published>2021-01-02T23:30:00.000Z</published>
+    <updated>2025-03-10T11:00:42.776Z</updated>
+    
+    
+    <summary type="html">Linux CCF (Common Clock Framework)是一個用來管理clock的子系統，CCF向使用clk的driver提供操作clock的interface，同時也向clk driver的開發者提供一個管理clock的通用框架。這篇文章作為了解Linux Clock框架的事前學習，介紹了一個系統的時間相關元件通常由哪幾項元件組成，而他們各自又是什麼東西。</summary>
+    
+    
+    
+    <category term="【Linux Kernel慢慢學】" scheme="https://meetonfriday.com/categories/%E3%80%90Linux-Kernel%E6%85%A2%E6%85%A2%E5%AD%B8%E3%80%91/"/>
+    
+    
+    <category term="c" scheme="https://meetonfriday.com/tags/c/"/>
+    
+    <category term="linux kernel" scheme="https://meetonfriday.com/tags/linux-kernel/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>[Linux Kernel慢慢學]學習Linux Kernel的Coding Style</title>
+    <link href="https://meetonfriday.com/posts/f43c1090/"/>
+    <id>https://meetonfriday.com/posts/f43c1090/</id>
+    <published>2021-01-02T23:30:00.000Z</published>
+    <updated>2025-03-10T11:00:42.776Z</updated>
+    
+    
+    
+    
+    <category term="【Linux Kernel慢慢學】" scheme="https://meetonfriday.com/categories/%E3%80%90Linux-Kernel%E6%85%A2%E6%85%A2%E5%AD%B8%E3%80%91/"/>
+    
+    
+    <category term="c" scheme="https://meetonfriday.com/tags/c/"/>
+    
+    <category term="linux kernel" scheme="https://meetonfriday.com/tags/linux-kernel/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>使用Hexo在Github Page上架設部落格 - 2020年度回顧</title>
+    <link href="https://meetonfriday.com/posts/55a05954/"/>
+    <id>https://meetonfriday.com/posts/55a05954/</id>
+    <published>2020-12-13T08:00:00.000Z</published>
+    <updated>2025-03-10T11:00:42.775Z</updated>
+    
+    
+    <summary type="html">介紹使用Hexo+Github Page架設部落格的歷程，以及回顧這段時間的流量增減。</summary>
+    
+    
+    
+    <category term="daily" scheme="https://meetonfriday.com/categories/daily/"/>
+    
+    
+  </entry>
+  
+  <entry>
+    <title>關於研究所的那些事 - 推甄、找教授、生活日常</title>
+    <link href="https://meetonfriday.com/posts/f955f6de/"/>
+    <id>https://meetonfriday.com/posts/f955f6de/</id>
+    <published>2020-12-11T22:00:00.000Z</published>
+    <updated>2025-03-10T11:00:42.775Z</updated>
+    
+    
+    <summary type="html">這篇文章算是個系列文統整然後加上一些補充，主題涵蓋了研究所推甄、面試、找教授，以及研究生生活的一些日記，如果好奇研究生生活都是怎麼過的讀者可以去看看。</summary>
+    
+    
+    
+    <category term="daily" scheme="https://meetonfriday.com/categories/daily/"/>
+    
+    
+  </entry>
+  
+  <entry>
+    <title>[C]在不同檔案間共用變數?你可以用extern阿</title>
+    <link href="https://meetonfriday.com/posts/9514e1a0/"/>
+    <id>https://meetonfriday.com/posts/9514e1a0/</id>
+    <published>2020-11-26T17:00:00.000Z</published>
+    <updated>2025-03-10T11:00:42.775Z</updated>
+    
+    
+    <summary type="html">這篇不是教學文喔，嚴格來說是工作上發生的蠢事，因為太蠢了所以紀錄一下，順便做個筆記(寫這篇廢文的時候真的是羞愧到想挖洞把自己埋起來，我對不起大學教授我程式沒學好...咦好像也不用對不起，他也沒教什麼...)</summary>
+    
+    
+    
+    <category term="study" scheme="https://meetonfriday.com/categories/study/"/>
+    
+    
+    <category term="c" scheme="https://meetonfriday.com/tags/c/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>[課堂筆記]深度學習優化器新霸主</title>
+    <link href="https://meetonfriday.com/posts/8e7bb892/"/>
+    <id>https://meetonfriday.com/posts/8e7bb892/</id>
+    <published>2020-11-24T16:00:00.000Z</published>
+    <updated>2025-03-10T11:00:42.775Z</updated>
+    
+    
+    <summary type="html">這篇文章是巨匠LIVE講堂(1124)上課的課堂筆記，講者為尹相志老師，主要在介紹近年的深度學習優化器技術。</summary>
+    
+    
+    
+    <category term="study" scheme="https://meetonfriday.com/categories/study/"/>
+    
+    
+    <category term="deep learning" scheme="https://meetonfriday.com/tags/deep-learning/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Neural Networks API Introduction: Android APP背後是如何執行一個神經網路模型的?</title>
+    <link href="https://meetonfriday.com/posts/668f0de1/"/>
+    <id>https://meetonfriday.com/posts/668f0de1/</id>
+    <published>2020-11-15T10:30:00.000Z</published>
+    <updated>2025-03-10T11:00:42.775Z</updated>
+    
+    
+    <summary type="html">本篇是對於官方文檔的中文閱讀筆記，內容是閱讀後透過自己的理解重新撰寫的，所以不全然是文檔的翻譯內容。深度學習的任務如果應用於手機端，為了使手機上的應用端可以更加方便的使用底層的不同裝置，Google在Android 8.1 (API level 27)後提供了ANN API(Android Neural Networks API)。ANN API使用C語言所撰寫，對於上層的深度學習框架(Tensorflow Lite, Caffe2...)提供了底層不同硬體資源的支持。</summary>
+    
+    
+    
+    <category term="study" scheme="https://meetonfriday.com/categories/study/"/>
+    
+    
+    <category term="c" scheme="https://meetonfriday.com/tags/c/"/>
+    
+    <category term="deep learning" scheme="https://meetonfriday.com/tags/deep-learning/"/>
+    
+  </entry>
+  
+</feed>

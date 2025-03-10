@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<!-- Head tag -->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="baidu-site-verification" content="093lY4ziMu" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="keyword"  content="programming, study, daily, entertainment">
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="星期五。見面">
+    <meta property="og:locale" content="zh-TW" />
+    
+    <meta property="og:title" content="[Linux Kernel慢慢學]探討Designated Initializers" />
+    
+    
+    <meta property="og:description" content="在看別人c語言寫的程式碼中，有時可能會別人在struct會是array中使用到了&#34;.&#34;(點或是英文叫做dot)來進行初始化，這種方法被稱作Designated Initializers，本文將會對此進行簡單介紹。" />
+    <meta name="description" content="在看別人c語言寫的程式碼中，有時可能會別人在struct會是array中使用到了&#34;.&#34;(點或是英文叫做dot)來進行初始化，這種方法被稱作Designated Initializers，本文將會對此進行簡單介紹。">
+    
+    
+    <meta property="og:image" content="/img/avatar.jpg" />
+    
+
+    <link rel="shortcut icon" href="/img/avatar.jpg">
+    <!-- Place this tag in your head or just before your close body tag. -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <!--<link href='http://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>-->
+    <title>
+        
+          [Linux Kernel慢慢學]探討Designated Initializers - MeetonFriday
+        
+    </title>
+    <!-- canonical -->
+    
+    
+      <link rel="canonical" href="https://meetonfriday.com/posts/39485259/">
+    
+
+    <!-- Bootstrap Core CSS -->
+    
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+
+
+    <!-- Custom CSS --> 
+    
+<link rel="stylesheet" href="/css/dusign-dark.css">
+
+    
+<link rel="stylesheet" href="/css/dusign-common-dark.css">
+
+    <!-- 
+<link rel="stylesheet" href="/css/font-awesome.css">
+ -->
+    
+<link rel="stylesheet" href="/css/toc.css">
+
+
+    
+    <!-- Pygments Highlight CSS -->
+    
+<link rel="stylesheet" href="/css/highlight.css">
+
+
+    
+<link rel="stylesheet" href="/css/widget.css">
+
+
+    
+<link rel="stylesheet" href="/css/rocket.css">
+
+
+    
+<link rel="stylesheet" href="/css/signature.css">
+
+
+    
+<link rel="stylesheet" href="/css/fonts.googleapis.css">
+
+
+    <!-- <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.3.0/css/font-awesome.min.css">-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.min.css">
+    
+    <!-- Google Analytics -->
+    
+      <!-- <script>
+          // dynamic User by Hux
+          var _gaId = 'UA-163346001-1';
+          var _gaDomain = 'auto';
+      
+          // Originial
+          (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+          (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+          })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+      
+          ga('create', _gaId, _gaDomain);
+          ga('send', 'pageview');
+      </script> -->
+      
+      <!-- Global site tag (gtag.js) - Google Analytics -->
+      <script async src="https://www.googletagmanager.com/gtag/js?id=UA-163346001-1"></script>
+      <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+      
+        gtag('config', 'UA-163346001-1');
+      </script>
+      
+    <!-- google ad sense-->
+    <script data-ad-client="ca-pub-9561340457908416" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<meta name="generator" content="Hexo 4.2.1"><link rel="alternate" href="/atom.xml" title="星期五。見面" type="application/atom+xml">
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+	<!-- Modified by Yu-Hsuan Yen -->
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        
+            
+                background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.5)), url('/img/header_img/header-bg.jpg')
+            
+        
+    }
+    
+</style>
+
+<header class="intro-header" >
+    <!-- Signature -->
+    <div id="signature">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                
+                    <div class="post-heading">
+                        <div class="tags">
+                            
+                              <a class="tag" href="/tags/#c" title="c">c</a>
+                            
+                              <a class="tag" href="/tags/#linux kernel" title="linux kernel">linux kernel</a>
+                            
+                        </div>
+                        <h1>[Linux Kernel慢慢學]探討Designated Initializers</h1>
+                        <h2 class="subheading"></h2>
+                        <span class="meta">
+                            Posted by John on
+                            2020-10-06
+                        </span>
+
+                        
+                            <div class="blank_box"></div>
+                            <span class="meta">
+                                Words <span class="post-count">1.3k</span> and
+                                Reading Time <span class="post-count">5</span> Minutes
+                            </span>
+                            <div class="blank_box"></div>
+                            <!-- 不蒜子统计 start -->
+                            <span class="meta">
+                                Viewed <span id="busuanzi_value_page_pv"><i class="fa fa-spinner fa-spin"></i></span> Times
+                            </span>
+                            <!-- 不蒜子统计 end -->
+                        
+
+                    </div>
+                
+
+                </div>
+            </div>
+        </div>      
+    </div>
+
+    
+        
+            <div class="waveWrapper">
+                <div class="wave wave_before" style="background-image: url('/img/wave-dark.png')"></div>
+                <div class="wave wave_after" style="background-image: url('/img/wave-dark.png')"></div>
+            </div>
+        
+    
+</header>
+
+	
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">星期五。見面</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archive/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/categories/">Categories</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/reading/">Reading</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+    
+    <!-- Main Content -->
+    <!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+            <!-- Post Container -->
+
+    
+        
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+        
+    
+
+                <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>在看別人c語言寫的程式碼中，有時可能會別人在struct會是array中使用到了”.”(點或是英文叫做dot)來進行初始化，例如下面這段struct student的宣告: </p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">student</span> <span class="title">s</span> = &#123;</span></span><br><span class="line">    .id = <span class="number">1</span>;</span><br><span class="line">    .name = <span class="string">"Just John"</span>;</span><br><span class="line">    .<span class="built_in">height</span> = <span class="number">180</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>又或是，在linux kernel code中你可以看到一堆這樣的用法<br><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">/* drivers/clk/clk-aspeed.c */</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">const</span> <span class="class"><span class="keyword">struct</span> <span class="title">aspeed_clk_soc_data</span> <span class="title">ast2500_data</span> = &#123;</span></span><br><span class="line">    .div_table = ast2500_div_table,</span><br><span class="line">    .eclk_div_table = ast2500_eclk_div_table,</span><br><span class="line">    .mac_div_table = ast2500_mac_div_table,</span><br><span class="line">    .calc_pll = aspeed_ast2500_calc_pll,</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></p>
+<p>可是如果沒用過的人可能就不知道這是什麼意思，然後這個偏偏又不是很好下關鍵字去google，因為”.”很容易被關聯到其他的問題，所以這篇就專門針對這個來進行介紹。</p>
+<a id="more"></a>
+<h2 id="Designated-Initializers"><a href="#Designated-Initializers" class="headerlink" title="Designated Initializers"></a>Designated Initializers</h2><p>上面的用法其實稱作Designated Initializers，在Using the GNU Compiler Collection (GCC)的<a href="https://gcc.gnu.org/onlinedocs/gcc/Designated-Inits.html?fbclid=IwAR1RJmNpWM0MRnU4fd29brOkRYKe-S60ZGoXUFqFx_J5b6F2kF9d6ZtIR20#:~:targetText=6.29%20Designated%20Initializers,array%20or%20structure%20being%20initialized.&amp;targetText=To%20initialize%20a%20range%20of,This%20is%20a%20GNU%20extension" target="_blank" rel="noopener">6.29 Designated Initializers</a>中你可以看到詳盡的介紹，下面透過中文的方式針對裡面比較重要的內容進行簡介。</p>
+<p>在C90以前的規格，原本規定是必須按照固定的順序來對structure或array進行初始化的。</p>
+<p>不過在C99開始，你可以透過指定array indeices (or structure field names in strure)來進行初始化。</p>
+<h3 id="Array"><a href="#Array" class="headerlink" title="Array"></a>Array</h3><p>首先針對Array來介紹，例如你可以透過<strong>[index] = </strong>來初始化陣列的部分元素<br><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> a[<span class="number">6</span>] = &#123; [<span class="number">4</span>] = <span class="number">50</span>, [<span class="number">5</span>] = <span class="number">100</span>&#125;;</span><br></pre></td></tr></table></figure></p>
+<p>上面的寫法和下列寫法相等</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> a[<span class="number">6</span>] = &#123; <span class="number">0</span>, <span class="number">0</span>, <span class="number">50</span>, <span class="number">0</span>, <span class="number">100</span>, <span class="number">0</span> &#125;;</span><br></pre></td></tr></table></figure>
+<p>其實這裡還扯到了一件事情: array沒有被給值的elements都會是0嗎?</p>
+<p>這個問題跟我們常用的陣列初始化寫法本質是一樣的事情，只是可能都沒有想過，考慮以下的陣列宣告</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> arr[<span class="number">100</span>] = &#123;<span class="number">0</span>&#125;;</span><br></pre></td></tr></table></figure>
+<p>為什麼這樣就是讓arr的100個element都變成了0呢? </p>
+<p>這樣的寫法實際上只給予了arr[0]值，其他的arr都是沒有被給值初始化的，有些人會稱這個叫做<strong>Partical Initialization</strong></p>
+<ul>
+<li>不過這個詞其實並不標準，Standard並沒有定義什麼是Partical Initialization，，所以還是盡量不要用會比較好，以免被誤導</li>
+</ul>
+<p>對於上面的狀況，在C99 Standard 6.7.8.21中是這樣寫的:</p>
+<blockquote>
+<p>If there are fewer initializers in a brace-enclosed list than there are elements or members of an aggregate, or fewer characters in a string literal used to initialize an array of known size than there are elements in the array, the remainder of the aggregate shall be initialized implicitly the same as objects that have static storage duration.</p>
+</blockquote>
+<p>也就是說，當我們宣告一個struct, array or string (with known size)時，但給定的initializers數量小於實際上該struct, array, string的大小時，<strong>剩餘的部分會被當作static storage duration來初始化，而static  variable的initialization是0</strong></p>
+<ul>
+<li>大家應該都有印象static和global variable初始化的值都是0，其實這與variable在memory layout中放置的位置有關，但這裡就不繼續往下追了</li>
+</ul>
+<p>好了我們把話題扯回Designated Initializers，對於Array，GNU extension還允許你透過<br><strong>[first … last] = value</strong><br>的方式來宣告</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> widths[] = &#123; [<span class="number">0</span> ... <span class="number">9</span>] = <span class="number">1</span>, [<span class="number">10</span> ... <span class="number">99</span>] = <span class="number">2</span>, [<span class="number">100</span>] = <span class="number">3</span> &#125;;</span><br></pre></td></tr></table></figure>
+<p>注意此時array的長度會是最大值的index+1。</p>
+<p>此外，在宣告時如果沒有給定index的initializer，element會根據他旁邊的index來決定他的index，例如:</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> a[<span class="number">6</span>] = &#123; [<span class="number">1</span>] = v1, v2, [<span class="number">4</span>] = v4 &#125;;</span><br></pre></td></tr></table></figure>
+<p>等價於</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> a[<span class="number">6</span>] = &#123; <span class="number">0</span>, v1, v2, <span class="number">0</span>, v4, <span class="number">0</span> &#125;;</span><br></pre></td></tr></table></figure>
+<p>最後來看兩個例子，示範Array在C99的designator initization中可以達到什麼樣的好處</p>
+<h4 id="Example-1"><a href="#Example-1" class="headerlink" title="Example 1"></a>Example 1</h4><p>假設我們原本有以下的資料:</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">enum</span> data_name &#123;</span><br><span class="line">  CHINESE = <span class="number">0</span>,</span><br><span class="line">  ENGLISH = <span class="number">1</span>,</span><br><span class="line">  KOREAN = <span class="number">2</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">char</span> *say_hello[] = &#123;</span><br><span class="line">  <span class="string">"你好"</span>,</span><br><span class="line">  <span class="string">"hello"</span>,</span><br><span class="line">  <span class="string">"안녕하십니까"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在這樣的設計中，我們可以透過say_hello[CHINESE]來取得中文版的你好字串，但當enum的順序一有變動，對應的say_hello就要整個重改。</p>
+<p>如果我們改成這樣的寫法:</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">char</span> *say_hello[] = &#123;</span><br><span class="line">  [CHINESE] = <span class="string">"你好"</span>,</span><br><span class="line">  [ENGLISH] = <span class="string">"hello"</span>,</span><br><span class="line">  [KOREAN] = <span class="string">"안녕하십니까"</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>就不會有上述問題了，如此為設計上增添了許多靈活性。</p>
+<h4 id="Example-2"><a href="#Example-2" class="headerlink" title="Example 2"></a>Example 2</h4><p>在要做字元表的時候，使用這種方式會特別方便，我們可以直接給予char index來進行初始化:</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> whitespace[<span class="number">256</span>]</span><br><span class="line">  = &#123; [<span class="string">' '</span>] = <span class="number">1</span>, [<span class="string">'\t'</span>] = <span class="number">1</span>, [<span class="string">'\h'</span>] = <span class="number">1</span>,</span><br><span class="line">      [<span class="string">'\f'</span>] = <span class="number">1</span>, [<span class="string">'\n'</span>] = <span class="number">1</span>, [<span class="string">'\r'</span>] = <span class="number">1</span> &#125;;</span><br></pre></td></tr></table></figure>
+<h3 id="Structure"><a href="#Structure" class="headerlink" title="Structure"></a>Structure</h3><p>對於structure，C99允許你透過指定field name的方式來對該struct進行初始化，這樣的好處免去了宣告時一定要按照順序的麻煩，並且未來更改struct時不用整個宣告重寫</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">point</span> &#123;</span></span><br><span class="line">  <span class="keyword">int</span> x;</span><br><span class="line">  <span class="keyword">int</span> y;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">point</span> <span class="title">p</span> = &#123;</span>.x = <span class="number">1</span>, .y = <span class="number">2</span>&#125;;</span><br></pre></td></tr></table></figure>
+<p>上述的p宣告效果和</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">point</span> <span class="title">p</span> = &#123;</span> x = <span class="number">1</span>, y = <span class="number">2</span>&#125;;</span><br></pre></td></tr></table></figure>
+<p>效果相同</p>
+<blockquote>
+<p>Omitted fields are implicitly initialized the same as for objects that have static storage duration.</p>
+</blockquote>
+<p>沒有宣告的fields一樣會被初始化成0(與陣列相同)。</p>
+<p>並且這個方法也可以被用在union，不過這裡就不詳述，有興趣的可以再去看。</p>
+<h2 id="Combine-array-amp-struct"><a href="#Combine-array-amp-struct" class="headerlink" title="Combine array &amp; struct"></a>Combine array &amp; struct</h2><p>把array和struct混合起來一起用就變成</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">point</span> <span class="title">ptarray</span>[10] = &#123;</span> </span><br><span class="line">  [<span class="number">2</span>].y = yv2, </span><br><span class="line">  [<span class="number">2</span>].x = xv2, </span><br><span class="line">  [<span class="number">0</span>].x = xv0 &#125;;</span><br></pre></td></tr></table></figure>
+<h2 id="結語"><a href="#結語" class="headerlink" title="結語"></a>結語</h2><p>最後，補充一些小部分:</p>
+<blockquote>
+<p>If the same field is initialized multiple times, or overlapping fields of a union are initialized, the value from the last initialization is used</p>
+</blockquote>
+<p>如果在初始化時，有相同的field被重複initialize，則最後使用最後一次的initization。</p>
+<blockquote>
+<p>The ‘[index]’ or ‘.fieldname’ is known as a designator.</p>
+</blockquote>
+<p>最後，<strong>[index]和.fieldname都叫做designator</strong>，這也是為什麼這個方法叫做designator initization。</p>
+<h2 id="References"><a href="#References" class="headerlink" title="References"></a>References</h2><ul>
+<li><a href="https://stackoverflow.com/questions/10828294/c-and-c-partial-initialization-of-automatic-structure" target="_blank" rel="noopener">C and C++ : Partial initialization of automatic structure</a></li>
+<li><a href="http://hungmingwu-blog.logdown.com/posts/70061-designated-initializerr-in-c99" target="_blank" rel="noopener">Designated initializer in C99</a></li>
+<li><a href="https://medium.com/cubemail88/c-struct%E5%88%9D%E5%A7%8B%E5%8C%96%E9%80%B2%E9%9A%8E%E7%94%A8%E6%B3%95designated-initializers-b6705968ede5" target="_blank" rel="noopener">[c]struct初始化進階用法designated initializers</a></li>
+</ul>
+
+                <hr>
+                <!-- Pager -->
+                <ul class="pager">
+    
+    <li class="previous">
+        <a href="/posts/7c0020de/" data-toggle="tooltip" data-placement="top" title="[論文速速讀]Deep Residual Learning for Image Recognition">&larr; Newer Post</a>
+    </li>
+    
+    
+    <li class="next">
+        <a href="/posts/53e1ff1f/" data-toggle="tooltip" data-placement="top" title="研發替代役替第九十梯-15天生存紀實-2">Older Post &rarr;</a>
+    </li>
+    
+</ul>
+
+                <!-- tip start -->
+                
+
+                
+                <!-- tip end -->
+
+                <!-- Sharing -->
+                
+                <!-- Sharing -->
+
+                <!-- gitment start -->
+                
+                <!-- gitment end -->
+
+                <!-- 来必力City版安装代码 -->
+                
+                <!-- City版安装代码已完成 -->
+
+                <!-- disqus comment start -->
+                
+                <div class="comment">
+                    <div id="disqus_thread" class="disqus-thread"></div>
+                </div>
+                
+                <!-- disqus comment end -->
+            </div>
+            
+            <!-- Tabe of Content -->
+            <!-- Table of Contents -->
+
+    
+      
+        <aside id="sidebar">
+          <div id="toc" class="toc-article">
+          <strong class="toc-title">Contents</strong>
+          
+            <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#前言"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">前言</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Designated-Initializers"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">Designated Initializers</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Array"><span class="toc-nav-number">2.1.</span> <span class="toc-nav-text">Array</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#Example-1"><span class="toc-nav-number">2.1.1.</span> <span class="toc-nav-text">Example 1</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#Example-2"><span class="toc-nav-number">2.1.2.</span> <span class="toc-nav-text">Example 2</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Structure"><span class="toc-nav-number">2.2.</span> <span class="toc-nav-text">Structure</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Combine-array-amp-struct"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">Combine array &amp; struct</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#結語"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">結語</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#References"><span class="toc-nav-number">5.</span> <span class="toc-nav-text">References</span></a></li></ol>
+          
+          </div>
+        </aside>
+      
+    
+
+        </div>
+    </div>
+</article>
+
+	
+    <!-- disqus embedded js code start (one page only need to embed once) -->	
+    <script type="text/javascript">	
+        /* * * CONFIGURATION VARIABLES * * */	
+        var disqus_shortname = "meetonfriday";	
+        var disqus_identifier = "https://meetonfriday.com/posts/39485259/";	
+        var disqus_url = "https://meetonfriday.com/posts/39485259/";	
+        (function() {	
+            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;	
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';	
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);	
+        })();	
+    </script>	
+    <!-- disqus embedded js code start end -->	
+    
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/john850512">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://www.linkedin.com/in/john85051232">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                
+                    <li>
+                        <a target="_blank" href="https://www.facebook.com/meetonfridayyy">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+                
+                    <li>
+                        <a target="_blank"  href="https://mail.google.com/mail/?view=cm&fs=1&to=john85051232@gmail.com">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-envelope-o fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+                
+                
+
+                
+
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; John 2025 
+                    <br>
+                    Powered by 
+                    <a href="https://github.com/john850512/hexo-theme-jiji" target="_blank" rel="noopener">
+                        <i>hexo-theme-jiji</i>
+                    </a> | 
+                    <iframe name="star" style="margin-left: 2px; margin-bottom:-5px;" frameborder="0" scrolling="0"
+                        width="100px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=john850512&repo=hexo-theme-jiji&type=star&count=true">
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+
+</footer>
+
+<!-- jQuery -->
+
+<script src="/js/jquery.min.js"></script>
+
+
+<!-- Bootstrap Core JavaScript -->
+
+<script src="/js/bootstrap.min.js"></script>
+
+
+<!-- Custom Theme JavaScript -->
+
+<script src="/js/hux-blog.min.js"></script>
+
+
+<!-- Search -->
+
+<script src="/js/search.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("https://meetonfriday.com/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+<!-- Search -->
+
+    <script type="text/javascript">      
+        var search_path = "search.xml";
+        if (search_path.length == 0) {
+            search_path = "search.xml";
+        }
+    var path = "/" + search_path;
+    searchFunc(path, 'local-search-input', 'local-search-result');
+    </script>
+
+
+<!-- busuanzi -->
+<!--<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>-->
+<script async src="//cdn.jsdelivr.net/npm/busuanzi@2.3.0"></script>
+
+
+
+
+	<a id="rocket" href="#top" class=""></a>
+	<script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script>
+    <script type="text/javascript" src="/js/toc.js?v=1.0.0" async=""></script>
+
+    
+        <!-- background effects line -->
+        
+        <!-- background effects end -->
+    
+    
+    <!-- background animation-->>
+    <!--<script size="50" alpha='0.3' zIndex="-999" src="/js/ribbonStatic.js"></script>-->
+    
+        <script src="/js/ribbonDynamic.js"></script>
+    
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script>
+            window.imageLazyLoadSetting = {
+                isSPA: false,
+                processImages: null,
+            };
+        </script><script>window.addEventListener("load",function(){var t=/\.(gif|jpg|jpeg|tiff|png)$/i,r=/^data:image\/[a-z]+;base64,/;Array.prototype.slice.call(document.querySelectorAll("img[data-original]")).forEach(function(a){var e=a.parentNode;"A"===e.tagName&&(e.href.match(t)||e.href.match(r))&&(e.href=a.dataset.original)})});</script><script>!function(n){n.imageLazyLoadSetting.processImages=o;var i=n.imageLazyLoadSetting.isSPA,r=Array.prototype.slice.call(document.querySelectorAll("img[data-original]"));function o(){i&&(r=Array.prototype.slice.call(document.querySelectorAll("img[data-original]")));for(var t,e,a=0;a<r.length;a++)t=r[a],0<=(e=t.getBoundingClientRect()).bottom&&0<=e.left&&e.top<=(n.innerHeight||document.documentElement.clientHeight)&&function(){var t,e,n,i,o=r[a];t=o,e=function(){r=r.filter(function(t){return o!==t})},n=new Image,i=t.getAttribute("data-original"),n.onload=function(){t.src=i,e&&e()},n.src=i}()}o(),n.addEventListener("scroll",function(){var t,e;t=o,e=n,clearTimeout(t.tId),t.tId=setTimeout(function(){t.call(e)},500)})}(this);</script></body>
+
+</html>

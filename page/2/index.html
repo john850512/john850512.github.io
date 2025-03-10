@@ -1,0 +1,1451 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<!-- Head tag -->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="baidu-site-verification" content="093lY4ziMu" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="keyword"  content="programming, study, daily, entertainment">
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="星期五。見面">
+    <meta property="og:locale" content="zh-TW" />
+    
+    <meta property="og:title" content="星期五。見面 - 程式 | 學習 | 日記 | 玩樂" />
+    
+    
+    <meta property="og:description" content="John的個人部落格，不定時撰寫一些技術文章(Programming, Machine Learning, Deep Learning)和生活札記。" />
+    <meta name="description" content="John的個人部落格，不定時撰寫一些技術文章(Programming, Machine Learning, Deep Learning)和生活札記。">
+    
+    
+    <meta property="og:image" content="/img/avatar.jpg" />
+    
+
+    <link rel="shortcut icon" href="/img/avatar.jpg">
+    <!-- Place this tag in your head or just before your close body tag. -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <!--<link href='http://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>-->
+    <title>
+        
+          MeetonFriday - 程式 | 學習 | 日記 | 玩樂
+        
+    </title>
+    <!-- canonical -->
+    
+    
+      <link rel="canonical" href="https://meetonfriday.com/page/2/">
+    
+
+    <!-- Bootstrap Core CSS -->
+    
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+
+
+    <!-- Custom CSS --> 
+    
+<link rel="stylesheet" href="/css/dusign-dark.css">
+
+    
+<link rel="stylesheet" href="/css/dusign-common-dark.css">
+
+    <!-- 
+<link rel="stylesheet" href="/css/font-awesome.css">
+ -->
+    
+<link rel="stylesheet" href="/css/toc.css">
+
+
+    
+    <!-- Pygments Highlight CSS -->
+    
+<link rel="stylesheet" href="/css/highlight.css">
+
+
+    
+<link rel="stylesheet" href="/css/widget.css">
+
+
+    
+<link rel="stylesheet" href="/css/rocket.css">
+
+
+    
+<link rel="stylesheet" href="/css/signature.css">
+
+
+    
+<link rel="stylesheet" href="/css/fonts.googleapis.css">
+
+
+    <!-- <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.3.0/css/font-awesome.min.css">-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.min.css">
+    
+    <!-- Google Analytics -->
+    
+      <!-- <script>
+          // dynamic User by Hux
+          var _gaId = 'UA-163346001-1';
+          var _gaDomain = 'auto';
+      
+          // Originial
+          (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+          (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+          })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+      
+          ga('create', _gaId, _gaDomain);
+          ga('send', 'pageview');
+      </script> -->
+      
+      <!-- Global site tag (gtag.js) - Google Analytics -->
+      <script async src="https://www.googletagmanager.com/gtag/js?id=UA-163346001-1"></script>
+      <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+      
+        gtag('config', 'UA-163346001-1');
+      </script>
+      
+    <!-- google ad sense-->
+    <script data-ad-client="ca-pub-9561340457908416" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<meta name="generator" content="Hexo 4.2.1"><link rel="alternate" href="/atom.xml" title="星期五。見面" type="application/atom+xml">
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+	<!-- Modified by Yu-Hsuan Yen -->
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        
+            
+                background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.5)), url('/img/header_img/header-bg.jpg')
+            
+        
+    }
+    
+</style>
+
+<header class="intro-header" >
+    <!-- Signature -->
+    <div id="signature">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                
+                    <div class="site-heading">
+                        <h1>星期五。見面</h1>
+                        <!--<hr class="small">-->
+                        <span id="subdusi" class="subheading">程式 | 學習 | 日記 | 玩樂</span>
+                    </div>
+                
+
+                </div>
+            </div>
+        </div>      
+    </div>
+
+    
+        
+            <div class="waveWrapper">
+                <div class="wave wave_before" style="background-image: url('/img/wave-dark.png')"></div>
+                <div class="wave wave_after" style="background-image: url('/img/wave-dark.png')"></div>
+            </div>
+        
+    
+</header>
+
+	
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">星期五。見面</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archive/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/categories/">Categories</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/reading/">Reading</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+    
+    <!-- Main Content -->
+    <!-- Main Content -->
+<div class="container">
+    <div class="row">
+        
+
+    <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-1
+                col-md-8 col-md-offset-1
+                col-sm-12
+                col-xs-12
+            ">
+                <!-- Top -->
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+        <div class="post-preview">
+            <!-- <a href="/posts/aa55d3f9/"> -->
+            <h2 class="post-title">
+                <img class="top_logo" src="/img/tp.png"/>
+                &nbsp;&nbsp;&nbsp;&nbsp;[論文速速讀]系列文章介紹
+            </h2>
+            <h3 class="post-subtitle">
+                
+            </h3>
+            <div class="post-content-preview">
+                <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>論文速速讀系列是從今年四月開始，我開始寫一些論文的中文讀書筆記，還記得第一篇是<a href="https://meetonfriday.com/posts/98f60d1d/">[論文速速讀]ReZero is All You Need: Fast Convergence at Large Depth</a>，之後發現儘管自己已經陸續產出了幾篇文章，可是好像都沒正式的跟大家介紹這系列文章的由來xD</p>
+<p>所以這篇文章就是來講講這系列文章到底是什麼，以及我會和會想寫這些文章。</p>
+<h2 id="論文速速讀系列是什麼"><a href="#論文速速讀系列是什麼" class="headerlink" title="論文速速讀系列是什麼?"></a>論文速速讀系列是什麼?</h2><p>由於在AI領域每年總是有一些非常重大的突破和應用，如果跟不上潮流很有可能就會錯失許多機會。例如，對NLP領域熟悉的話你一定聽過2013年的word2vec、2014年開始流行的attention、2018年的Bert…這些很有名的技術。</p>
+<p>還記得Bert剛出的時候我好像剛進碩士實驗室，當時只知道這個技術屌打了當時一堆NLP的研究，但我想也想不到兩年後Bert已經造成如此大的影響力，一堆基於Bert的變形應用在各大領域上都取得了非常優異的結果。</p>
+<p>因此，我想要藉由這系列的文章讓自己能夠更加快速的了解AI的新技術和研究，同時逼迫自己看論文xD</p>
+            </div>
+
+            <div class="post-read-more">
+                <a href="/posts/aa55d3f9/">繼續閱讀</a>
+            </div>       
+
+            <!-- </a> -->
+            
+                <p class="post-meta">
+                    Posted by John on
+                    2020-07-09
+                </p>
+            
+
+        </div>
+        <hr>
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+        <div class="post-preview">
+            <!-- <a href="/posts/85f1c2a/"> -->
+            <h2 class="post-title">
+                <img class="top_logo" src="/img/tp.png"/>
+                &nbsp;&nbsp;&nbsp;&nbsp;[課程筆記]課程筆記系列總覽
+            </h2>
+            <h3 class="post-subtitle">
+                
+            </h3>
+            <div class="post-content-preview">
+                <p>本文記錄了自己在上課時所記錄的一些課程筆記，可以透過這邊文章連結到所有以往發過的課程筆記文章。</p>
+<p><img src="https://res.cloudinary.com/meet-on-friday/image/upload/c_scale,w_400/v1605107656/headerimage/001_yqduwu_c28mgu.png" alt=""></p>
+            </div>
+
+            <div class="post-read-more">
+                <a href="/posts/85f1c2a/">繼續閱讀</a>
+            </div>       
+
+            <!-- </a> -->
+            
+                <p class="post-meta">
+                    Posted by John on
+                    2021-01-24
+                </p>
+            
+
+        </div>
+        <hr>
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+
+<!-- Main Content -->
+
+    
+
+        <div class="post-preview">
+            <!-- <a href="/posts/62f55520/"> -->
+            <h2 class="post-title">
+                [課程筆記]Linux Driver正點原子課程筆記3 - 我的第一個Linux驅動
+            </h2>
+            <h3 class="post-subtitle">
+                
+            </h3>
+            <div class="post-content-preview">
+                <p>〖想觀看更多課程筆記，至<a href="https://meetonfriday.com/posts/85f1c2a/">[課程筆記]課程筆記系列總覽</a>可以看到目前已發布的所有文章！〗</p>
+<h2 id="Course-3-我的第一個Linux驅動"><a href="#Course-3-我的第一個Linux驅動" class="headerlink" title="Course 3 - 我的第一個Linux驅動"></a>Course 3 - 我的第一個Linux驅動</h2><h3 id="字符設備驅動框架"><a href="#字符設備驅動框架" class="headerlink" title="字符設備驅動框架"></a>字符設備驅動框架</h3><p>上次有說到字符驅動提供給外部的api都被定義在file_operations structs內，這個結構被定義在/include/linux/fs.h下</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">0</span><br><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* /include/linux/fs.h */</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">file_operations</span> &#123;</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">module</span> *<span class="title">owner</span>;</span></span><br><span class="line">    <span class="keyword">loff_t</span> (*llseek) (struct file *, <span class="keyword">loff_t</span>, <span class="keyword">int</span>);</span><br><span class="line">    <span class="keyword">ssize_t</span> (*<span class="built_in">read</span>) (struct file *, <span class="keyword">char</span> __user *, <span class="keyword">size_t</span>, <span class="keyword">loff_t</span> *);</span><br><span class="line">    <span class="keyword">ssize_t</span> (*<span class="built_in">write</span>) (struct file *, <span class="keyword">const</span> <span class="keyword">char</span> __user *, <span class="keyword">size_t</span>, <span class="keyword">loff_t</span> *);</span><br><span class="line">    <span class="keyword">ssize_t</span> (*read_iter) (struct kiocb *, struct iov_iter *);</span><br><span class="line">    <span class="keyword">ssize_t</span> (*write_iter) (struct kiocb *, struct iov_iter *);</span><br><span class="line">    <span class="keyword">int</span> (*iterate) (struct file *, struct dir_context *);</span><br><span class="line">    <span class="keyword">int</span> (*iterate_shared) (struct file *, struct dir_context *);</span><br><span class="line">    <span class="keyword">__poll_t</span> (*poll) (struct file *, struct poll_table_struct *);</span><br><span class="line">    <span class="keyword">long</span> (*unlocked_ioctl) (struct file *, <span class="keyword">unsigned</span> <span class="keyword">int</span>, <span class="keyword">unsigned</span> <span class="keyword">long</span>);</span><br><span class="line">    <span class="keyword">long</span> (*compat_ioctl) (struct file *, <span class="keyword">unsigned</span> <span class="keyword">int</span>, <span class="keyword">unsigned</span> <span class="keyword">long</span>);</span><br><span class="line">    <span class="keyword">int</span> (*mmap) (struct file *, struct vm_area_struct *);</span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">long</span> mmap_supported_flags;</span><br><span class="line">    <span class="keyword">int</span> (*<span class="built_in">open</span>) (struct inode *, struct file *);</span><br><span class="line">    <span class="keyword">int</span> (*<span class="built_in">flush</span>) (struct file *, <span class="keyword">fl_owner_t</span> id);</span><br><span class="line">    <span class="keyword">int</span> (*<span class="built_in">release</span>) (struct inode *, struct file *);</span><br><span class="line">    <span class="keyword">int</span> (*fsync) (struct file *, <span class="keyword">loff_t</span>, <span class="keyword">loff_t</span>, <span class="keyword">int</span> datasync);</span><br><span class="line">    <span class="keyword">int</span> (*fasync) (<span class="keyword">int</span>, struct file *, <span class="keyword">int</span>);</span><br><span class="line">    <span class="keyword">int</span> (*lock) (struct file *, <span class="keyword">int</span>, struct file_lock *);</span><br><span class="line">    <span class="keyword">ssize_t</span> (*sendpage) (struct file *, struct page *, <span class="keyword">int</span>, <span class="keyword">size_t</span>, <span class="keyword">loff_t</span> *, <span class="keyword">int</span>);</span><br><span class="line">    <span class="function"><span class="keyword">unsigned</span> <span class="title">long</span> <span class="params">(*get_unmapped_area)</span><span class="params">(struct file *, <span class="keyword">unsigned</span> <span class="keyword">long</span>, <span class="keyword">unsigned</span> <span class="keyword">long</span>, <span class="keyword">unsigned</span> <span class="keyword">long</span>, <span class="keyword">unsigned</span> <span class="keyword">long</span>)</span></span>;</span><br><span class="line">    <span class="keyword">int</span> (*check_flags)(<span class="keyword">int</span>);</span><br><span class="line">    <span class="keyword">int</span> (*flock) (struct file *, <span class="keyword">int</span>, struct file_lock *);</span><br><span class="line">    <span class="keyword">ssize_t</span> (*splice_write)(struct pipe_inode_info *, struct file *, <span class="keyword">loff_t</span> *, <span class="keyword">size_t</span>, <span class="keyword">unsigned</span> <span class="keyword">int</span>);</span><br><span class="line">    <span class="keyword">ssize_t</span> (*splice_read)(struct file *, <span class="keyword">loff_t</span> *, struct pipe_inode_info *, <span class="keyword">size_t</span>, <span class="keyword">unsigned</span> <span class="keyword">int</span>);</span><br><span class="line">    <span class="keyword">int</span> (*setlease)(struct file *, <span class="keyword">long</span>, struct file_lock **, <span class="keyword">void</span> **);</span><br><span class="line">    <span class="keyword">long</span> (*fallocate)(struct file *file, <span class="keyword">int</span> mode, <span class="keyword">loff_t</span> offset,</span><br><span class="line">              <span class="keyword">loff_t</span> len);</span><br><span class="line">    <span class="keyword">void</span> (*show_fdinfo)(struct seq_file *m, struct file *f);</span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifndef</span> CONFIG_MMU</span></span><br><span class="line">    <span class="keyword">unsigned</span> (*mmap_capabilities)(struct file *);</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line">    <span class="keyword">ssize_t</span> (*copy_file_range)(struct file *, <span class="keyword">loff_t</span>, struct file *,</span><br><span class="line">            <span class="keyword">loff_t</span>, <span class="keyword">size_t</span>, <span class="keyword">unsigned</span> <span class="keyword">int</span>);</span><br><span class="line">    <span class="keyword">int</span> (*clone_file_range)(struct file *, <span class="keyword">loff_t</span>, struct file *, <span class="keyword">loff_t</span>,</span><br><span class="line">            u64);</span><br><span class="line">    <span class="keyword">int</span> (*dedupe_file_range)(struct file *, <span class="keyword">loff_t</span>, struct file *, <span class="keyword">loff_t</span>,</span><br><span class="line">            u64);</span><br><span class="line">    <span class="keyword">int</span> (*fadvise)(struct file *, <span class="keyword">loff_t</span>, <span class="keyword">loff_t</span>, <span class="keyword">int</span>);</span><br><span class="line">&#125; __randomize_layout;</span><br></pre></td></tr></table></figure>
+<p>簡單介紹一下這個struct內的member: </p>
+<ul>
+<li>owner: 擁有該結構的module pointer，一般設置為THIS_MODULE</li>
+<li><code>llseek()</code>: 用於修改當前文件的讀寫位置</li>
+<li><code>open()</code>: 打開文件</li>
+<li><code>read()</code> &amp; <code>write()</code>:用來存取文件</li>
+<li><code>poll()</code>: 用來輪詢device是否可以進行non-blocking的讀寫</li>
+<li><code>unlocked_ioctl()</code> &amp; <code>compat_ioctl()</code>: 提供對設備控制的街口<ul>
+<li>關於這部分的詳細介紹可以參閱<a href="https://meetonfriday.com/posts/736969d7/">[Linux Kernel慢慢學]Different betweeen ioctl, unlocked_ioctl and compat_ioctl</a></li>
+</ul>
+</li>
+<li><code>mmap()</code>: 將device memory mapping到process memory，如此就不用做繁瑣的memory copy</li>
+</ul>
+<p>function pointer不用全部實現，會用到哪個就實作哪個就好。</p>
+            </div>
+            <div class="post-read-more">
+                <a href="/posts/62f55520/">繼續閱讀</a>
+            </div>       
+
+            <!-- </a> -->
+            
+                <p class="post-meta">
+                    Posted by John on
+                    2021-03-02
+                </p>
+            
+
+        </div>
+        <hr>
+
+    
+
+    
+
+        <div class="post-preview">
+            <!-- <a href="/posts/10ddd910/"> -->
+            <h2 class="post-title">
+                全台灣最大數據分析競賽上線啦!蝦皮2020數據分析競賽心得
+            </h2>
+            <h3 class="post-subtitle">
+                
+            </h3>
+            <div class="post-content-preview">
+                <p>這篇文章紀錄2020/11/21的<a href="https://careers.shopee.tw/bestcoder/" target="_blank" rel="noopener">蝦皮數據分析競賽</a>心得~</p>
+<p><img src="https://res.cloudinary.com/meet-on-friday/image/upload/c_scale,w_600/v1614182087/blog_posts_2021/2021_02/%E5%9C%96%E7%89%871_mfa3qb.png" alt=""></p>
+<h2 id="競賽介紹"><a href="#競賽介紹" class="headerlink" title="競賽介紹"></a>競賽介紹</h2><p>儘管競賽名稱是<strong>全台灣最大數據分析競賽</strong>，但實際上的競賽內容我覺得還不太夠格冠上這個名稱xD</p>
+<p>為何這樣說呢?</p>
+<p>首先，組別總共分成學生組和職業組，根據組別其實競賽題型差異極大:</p>
+<ul>
+<li>學生組: 考類似leetcode的演算法題型</li>
+<li>職業組: 考kaggle數據分析競賽</li>
+</ul>
+<p>並且使用的平台都是在kaggle上(不太知道學生組這樣的題型要如何在kaggle上去做排名?)</p>
+<p>接下來是競賽時間，他是線下賽，一開始想說一個kaggle的線上賽好說歹說都是星期起跳的，線下賽好歹你也要給個一天的時間吧</p>
+<p>結果競賽時間只有<strong>2個小時</strong>，你沒看錯就是120分鐘而已呢。</p>
+            </div>
+            <div class="post-read-more">
+                <a href="/posts/10ddd910/">繼續閱讀</a>
+            </div>       
+
+            <!-- </a> -->
+            
+                <p class="post-meta">
+                    Posted by John on
+                    2021-01-25
+                </p>
+            
+
+        </div>
+        <hr>
+
+    
+
+    
+
+        <div class="post-preview">
+            <!-- <a href="/posts/15ad89ab/"> -->
+            <h2 class="post-title">
+                [讀書心得]富爸爸商學院
+            </h2>
+            <h3 class="post-subtitle">
+                
+            </h3>
+            <div class="post-content-preview">
+                <h2 id="書籍資訊"><a href="#書籍資訊" class="headerlink" title="書籍資訊"></a>書籍資訊</h2><ul>
+<li>書名: 富爸爸商學院</li>
+<li>作者: Robert T. Kiyosaki, Sharon L. Lechter</li>
+<li>出版日期: Jan 25, 2005</li>
+<li>博客來網址(如果覺得這是一本好書，請支持原作唷！): <a href="https://www.books.com.tw/exep/assp.php/john85051232/products/0010865217?utm_source=john85051232&amp;utm_medium=ap-books&amp;utm_content=recommend&amp;utm_campaign=ap-202103" target="_blank" rel="noopener">富爸爸商學院：銷售致富的財商教育</a></li>
+</ul>
+<p><img src="https://res.cloudinary.com/meet-on-friday/image/upload/c_scale,w_400/v1614172662/blog_posts_2021/2021_02/E603651d7bd3d4949915534-0_c3asav.png" alt=""></p>
+<p>(本文是【富爸爸商學院】的讀書心得和書籍導讀，如果你看完覺得這本書對你是有幫助的，歡迎購買原做支持作者！)<br>聽到「直銷」或「業務」，你的第一反應是先拒絕再說？<br>你知道銷售力可以帶來超越想像的成長，培養出過人的商業技巧與成功心態嗎？</p>
+<p>跟大多數人一樣，當羅勃特．T．清崎第一次聽到直銷時，他也抱著懷疑的態度。</p>
+<p>不過，經過深入了解，他發現直銷產業其實是一所真正的商學院，不只沒有高不可攀的入學門檻，還蘊藏著足以改變一生的核心價值。</p>
+            </div>
+            <div class="post-read-more">
+                <a href="/posts/15ad89ab/">繼續閱讀</a>
+            </div>       
+
+            <!-- </a> -->
+            
+                <p class="post-meta">
+                    Posted by John on
+                    2021-01-24
+                </p>
+            
+
+        </div>
+        <hr>
+
+    
+
+    
+
+        <div class="post-preview">
+            <!-- <a href="/posts/81763900/"> -->
+            <h2 class="post-title">
+                [課程筆記]Linux Driver正點原子課程筆記1 & 2 - Linux驅動開發 & 字符設備驅動開發基礎實驗
+            </h2>
+            <h3 class="post-subtitle">
+                
+            </h3>
+            <div class="post-content-preview">
+                <p>〖想觀看更多課程筆記，至<a href="https://meetonfriday.com/posts/85f1c2a/">[課程筆記]課程筆記系列總覽</a>可以看到目前已發布的所有文章！〗</p>
+<h2 id="Course-1-Linux驅動開發"><a href="#Course-1-Linux驅動開發" class="headerlink" title="Course 1 - Linux驅動開發"></a>Course 1 - Linux驅動開發</h2><h3 id="驅動開發思維"><a href="#驅動開發思維" class="headerlink" title="驅動開發思維"></a>驅動開發思維</h3><p>為何需要Linux driver?</p>
+<ul>
+<li>直接在Linux下操作register不現實，太複雜也不安全</li>
+<li>Linux具有各種驅動框架(driver framework)，使得各種設置能夠依照一訂的規範進行開發</li>
+</ul>
+<p>Linux下一切皆文件，而所有的driver都放置在/dev/xxx下，可以透過fops(file operation)來操作(打開、關閉、讀寫)</p>
+<p>新版的Linux下supoort device tree，是一個.dts，記錄devices information，kernel會去分析.dts文件了解有哪些設備</p>
+<h3 id="驅動開發分類"><a href="#驅動開發分類" class="headerlink" title="驅動開發分類"></a>驅動開發分類</h3><p>linux 驅動分成三大類</p>
+<ol>
+<li>char device driver: 字符設備驅動，按照字符依序存取，大部分的驅動都是這種，e.g. i2c</li>
+<li>block device driver: 能以固定大小長度傳送和轉移，可以不需要按照順序操作，e.g. SD card</li>
+<li>network device driver: 網路設備驅動，e.g. wifi</li>
+</ol>
+            </div>
+            <div class="post-read-more">
+                <a href="/posts/81763900/">繼續閱讀</a>
+            </div>       
+
+            <!-- </a> -->
+            
+                <p class="post-meta">
+                    Posted by John on
+                    2021-01-24
+                </p>
+            
+
+        </div>
+        <hr>
+
+    
+
+    
+
+    
+
+        <div class="post-preview">
+            <!-- <a href="/posts/2b446abf/"> -->
+            <h2 class="post-title">
+                [論文速速讀]Learning Deep Features for Discriminative Localization
+            </h2>
+            <h3 class="post-subtitle">
+                
+            </h3>
+            <div class="post-content-preview">
+                <p>〖想觀看更多中文論文導讀，至<a href="https://meetonfriday.com/posts/aa55d3f9/">[論文速速讀]系列文章介紹</a>可以看到目前已發布的所有文章！〗</p>
+<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>paper: <a href="https://arxiv.org/pdf/1512.04150.pdf" target="_blank" rel="noopener">https://arxiv.org/pdf/1512.04150.pdf</a></p>
+<p>會寫這篇主要是因為，CNN雖然厲害，對大多數人來說他還是一個人黑盒子，有時候我們根本不知道模型學到了什麼，如果模型沒學好就拿出來用就可能會發生如下悲劇: <a href="https://www.ptt.cc/bbs/Gossiping/M.1604224525.A.FFD.html?fbclid=IwAR0RRvGcY3No7mblHpIz5zgeFwKtFT05GPJ9y8OIttOiQ-7KWIlBpjQ-pkI" target="_blank" rel="noopener">[新聞] 蘇格蘭AI誤把裁判的光頭當成足球跟拍轉播</a></p>
+<blockquote>
+<p><img src="https://res.cloudinary.com/meet-on-friday/image/upload/c_scale,w_300/v1610184422/blog_posts_2021/2021_01/%E6%88%AA%E5%9C%96_2021-01-09_%E4%B8%8B%E5%8D%885.26.50_letcfh.png" alt=""><br>將科技應用在運動比賽上是一件很棒的事情，但有的時候，即使是最偉大的發明也有出錯的可能。上週末在蘇格蘭的一場足球比賽中就發生了這樣的事情，一個由 AI 控制的攝影機，不小心把邊審的光頭誤認是足球。<br>由程式控制的攝影機會自動追蹤球在哪、並且嘗試跟拍，不再需要真人攝像師去控制。除了這會搶走一個人的工作之外，理論上聽起來還蠻有道理的。問題是──攝影機無法分辨足球和光頭的區別，它不斷的聚焦在邊審這個沒太大動作的人身上，而不是場上的球員。<br>…</p>
+</blockquote>
+<p>所以解釋性AI就很重要，我們想試著去了解模型學到或看到了什麼。</p>
+<p>本文介紹CNN可視化的一種技術，<strong>Classification Activaion Mapping (CAM)，透過heatmap的方式顯示模型分類時認為圖片重要的依據為何</strong>。概念不難但卻非常好用，而且很酷。</p>
+<p>在跟老闆介紹時，如果只跟他說模型有多猛架構多炫…老闆可能還是無法理解，有了這個技術就可以拿去跟老闆說”看看我的CNN模型都學到了什麼玩意兒～”</p>
+<p>相信老闆看到圖片的效果一定會眼前為之一亮!</p>
+            </div>
+            <div class="post-read-more">
+                <a href="/posts/2b446abf/">繼續閱讀</a>
+            </div>       
+
+            <!-- </a> -->
+            
+                <p class="post-meta">
+                    Posted by John on
+                    2021-01-09
+                </p>
+            
+
+        </div>
+        <hr>
+
+    
+
+
+<!-- Pager -->
+<ul class="pager">
+    
+        <li class="previous">
+            <a href="/">&larr; Newer Posts</a>
+        </li>
+    
+    
+        <li class="next">
+            <a href="/page/3/">Older Posts &rarr;</a>
+        </li>
+    
+</ul>
+
+
+
+            </div>
+
+    <!-- Sidebar Container -->
+            <div class="
+                col-lg-3 col-lg-offset-0
+                col-md-3 col-md-offset-0
+                col-sm-12
+                col-xs-12
+                sidebar-container
+            ">
+                
+    
+<!--
+<h5>SEARCH</h5>
+<div class="search-article" class="tags">
+	<input id="search-kw" type="text" name="search_article" placeholder="Enter keywords for search" />
+	<div class="search-img">
+		<img 
+			src="/img/search.png" 
+			alt="search" 
+			onMouseOver="this.src='/img/search-focus.png'" 
+			onMouseOut="this.src='/img/search.png'"/>
+	</div>
+</div>-->
+
+<h5>SEARCH</h5>
+<div id="site_search">
+	<div class="form-group">
+		<input type="text" id="local-search-input" name="q" results="0" placeholder="search" class="st-search-input st-default-search-input form-control"/>
+	</div>  
+	<div id="local-search-result"></div>
+</div>
+
+    <hr>
+
+    <!-- Short About -->
+<section class="visible-md visible-lg">
+    <h5>ABOUT ME</h5>
+    <div class="short-about">
+
+        
+            <img id = "avatar_pic" src="/img/avatar.jpg" />
+        
+
+        
+            <p>Just John, 就是醬</p>
+        
+
+        <!-- SNS Link -->
+        <ul class="list-inline">
+            
+                <li>
+                    <a target="_blank"  href="https://github.com/john850512">
+                        <span class="fa-stack fa-lg">
+                            <i class="fa fa-circle fa-stack-2x"></i>
+                            <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                        </span>
+                    </a>
+                </li>
+            
+
+            
+                <li>
+                    <a target="_blank"  href="https://www.linkedin.com/in/john85051232">
+                        <span class="fa-stack fa-lg">
+                            <i class="fa fa-circle fa-stack-2x"></i>
+                            <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
+                        </span>
+                    </a>
+                </li>
+            
+
+            
+                <li>
+                    <a target="_blank"  href="https://www.facebook.com/meetonfridayyy">
+                        <span class="fa-stack fa-lg">
+                            <i class="fa fa-circle fa-stack-2x"></i>
+                            <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                        </span>
+                    </a>
+                </li>
+            
+
+            
+                <li>
+                    <a target="_blank"  href="https://mail.google.com/mail/?view=cm&fs=1&to=john85051232@gmail.com">
+                        <span class="fa-stack fa-lg">
+                            <i class="fa fa-circle fa-stack-2x"></i>
+                            <i class="fa fa-envelope-o fa-stack-1x fa-inverse"></i>
+                        </span>
+                    </a>
+                </li>
+            
+            
+            
+
+            
+
+            
+
+            
+
+        </ul>
+    </div>
+</section>
+
+    <hr>
+
+    <!-- Categories -->
+
+    <h5>categories</h5>
+    <div class="widget">
+      <ul>
+        
+          <!-- 【論文速速讀】 -->
+          
+            <li><a href="/categories/#【論文速速讀】">【論文速速讀】(23)</a></li>
+           
+        
+          <!-- 【課程筆記】 -->
+          
+            <li><a href="/categories/#【課程筆記】">【課程筆記】(5)</a></li>
+           
+        
+          <!-- 【Linux-Kernel慢慢學】 -->
+          
+            <li><a href="/categories/#【Linux Kernel慢慢學】">【Linux Kernel慢慢學】(8)</a></li>
+           
+        
+          <!-- study -->
+          
+            <li><a href="/categories/#study">study(17)</a></li>
+           
+        
+          <!-- reading -->
+          
+            <li><a href="/categories/#reading">reading(3)</a></li>
+           
+        
+          <!-- programming -->
+          
+            <li><a href="/categories/#programming">programming(68)</a></li>
+           
+        
+          <!-- daily -->
+          
+            <li><a href="/categories/#daily">daily(47)</a></li>
+           
+        
+      </ul> 
+    </div>
+
+
+    <hr>
+
+    <!-- Featured Tags -->
+
+<section>
+    <!-- no hr -->
+    <h5>FEATURED TAGS</h5>
+    <div class="tags">
+        
+            
+            <a href="/tags/#c" title="c" rel="40">c</a>
+            
+        
+            
+            <a href="/tags/#c++" title="c++" rel="23">c++</a>
+            
+        
+            
+            <a href="/tags/#uva" title="uva" rel="16">uva</a>
+            
+        
+            
+            <a href="/tags/#conference" title="conference" rel="4">conference</a>
+            
+        
+            
+            <a href="/tags/#ncpc" title="ncpc" rel="4">ncpc</a>
+            
+        
+            
+            <a href="/tags/#competitive programming" title="competitive programming" rel="4">competitive programming</a>
+            
+        
+            
+            <a href="/tags/#competition" title="competition" rel="4">competition</a>
+            
+        
+            
+        
+            
+        
+            
+            <a href="/tags/#recommendation" title="recommendation" rel="6">recommendation</a>
+            
+        
+            
+            <a href="/tags/#c#" title="c#" rel="4">c#</a>
+            
+        
+            
+            <a href="/tags/#unity" title="unity" rel="5">unity</a>
+            
+        
+            
+        
+            
+        
+            
+            <a href="/tags/#travel" title="travel" rel="5">travel</a>
+            
+        
+            
+        
+            
+        
+            
+            <a href="/tags/#deep learning" title="deep learning" rel="51">deep learning</a>
+            
+        
+            
+            <a href="/tags/#machine learning" title="machine learning" rel="14">machine learning</a>
+            
+        
+            
+        
+            
+            <a href="/tags/#python" title="python" rel="28">python</a>
+            
+        
+            
+        
+            
+            <a href="/tags/#pytorch" title="pytorch" rel="8">pytorch</a>
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+            <a href="/tags/#linux kernel" title="linux kernel" rel="15">linux kernel</a>
+            
+        
+            
+        
+            
+            <a href="/tags/#paper" title="paper" rel="23">paper</a>
+            
+        
+            
+        
+            
+        
+            
+            <a href="/tags/#study" title="study" rel="5">study</a>
+            
+        
+            
+        
+    </div>
+</section>
+
+    <hr>
+
+    
+  <h5>VISITORS</h5>
+  <div class="widget">
+    <span>
+    	Viewed <b><i><span id="busuanzi_value_site_pv"><i class="fa fa-spinner fa-spin"></i></span></i></b> Times
+	</span>
+	<br/>
+	<span>
+		<b><i><span id="busuanzi_value_site_uv"><i class="fa fa-spinner fa-spin"></i></span></i></b> Visitors In Total
+	</span>
+  </div>
+
+    <hr>
+
+    
+  <h5>RECENT POSTS</h5>
+  <div class="widget">
+    <ul>
+      
+        <li>
+          <a href="/posts/666bbf67/">Google從Android 15 (Android-V)開始將淘汰NNAPI改推LiteRT (TensorFlow Lite)</a>
+        </li>
+      
+        <li>
+          <a href="/posts/edcd30e6/">[課程筆記]Linux Driver正點原子課程筆記5 - 新字元設備驅動實驗</a>
+        </li>
+      
+        <li>
+          <a href="/posts/638f6f64/">[讀書心得]跟著柴鼠學FQ 做自己的提款機</a>
+        </li>
+      
+        <li>
+          <a href="/posts/5cb74faa/">令人搖頭的羅技產品品質? G413鍵盤出保紀錄(2021年)</a>
+        </li>
+      
+        <li>
+          <a href="/posts/dedf856f/">[讀書心得]35歲，為什麼還沒被重用？</a>
+        </li>
+      
+    </ul>
+  </div>
+
+    <hr>
+
+    
+    <h5>ARCHIVES</h5>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/#2025">2025</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/#2021">2021</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/#2020">2020</a><span class="archive-list-count">61</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/#2019">2019</a><span class="archive-list-count">23</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/#2018">2018</a><span class="archive-list-count">24</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/#2017">2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/#2016">2016</a><span class="archive-list-count">37</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/#2015">2015</a><span class="archive-list-count">6</span></li></ul>
+    </div>
+
+
+    <hr>
+
+
+            </div>
+
+        
+    </div>
+</div>
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/john850512">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://www.linkedin.com/in/john85051232">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                
+                    <li>
+                        <a target="_blank" href="https://www.facebook.com/meetonfridayyy">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+                
+                    <li>
+                        <a target="_blank"  href="https://mail.google.com/mail/?view=cm&fs=1&to=john85051232@gmail.com">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-envelope-o fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+                
+                
+
+                
+
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; John 2025 
+                    <br>
+                    Powered by 
+                    <a href="https://github.com/john850512/hexo-theme-jiji" target="_blank" rel="noopener">
+                        <i>hexo-theme-jiji</i>
+                    </a> | 
+                    <iframe name="star" style="margin-left: 2px; margin-bottom:-5px;" frameborder="0" scrolling="0"
+                        width="100px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=john850512&repo=hexo-theme-jiji&type=star&count=true">
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+
+</footer>
+
+<!-- jQuery -->
+
+<script src="/js/jquery.min.js"></script>
+
+
+<!-- Bootstrap Core JavaScript -->
+
+<script src="/js/bootstrap.min.js"></script>
+
+
+<!-- Custom Theme JavaScript -->
+
+<script src="/js/hux-blog.min.js"></script>
+
+
+<!-- Search -->
+
+<script src="/js/search.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("https://meetonfriday.com/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+<!-- Search -->
+
+    <script type="text/javascript">      
+        var search_path = "search.xml";
+        if (search_path.length == 0) {
+            search_path = "search.xml";
+        }
+    var path = "/" + search_path;
+    searchFunc(path, 'local-search-input', 'local-search-result');
+    </script>
+
+
+<!-- busuanzi -->
+<!--<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>-->
+<script async src="//cdn.jsdelivr.net/npm/busuanzi@2.3.0"></script>
+
+
+
+
+	<a id="rocket" href="#top" class=""></a>
+	<script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script>
+    <script type="text/javascript" src="/js/toc.js?v=1.0.0" async=""></script>
+
+    
+        <!-- background effects line -->
+        
+        <!-- background effects end -->
+    
+    
+    <!-- background animation-->>
+    <!--<script size="50" alpha='0.3' zIndex="-999" src="/js/ribbonStatic.js"></script>-->
+    
+        <script src="/js/ribbonDynamic.js"></script>
+    
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script>
+            window.imageLazyLoadSetting = {
+                isSPA: false,
+                processImages: null,
+            };
+        </script><script>window.addEventListener("load",function(){var t=/\.(gif|jpg|jpeg|tiff|png)$/i,r=/^data:image\/[a-z]+;base64,/;Array.prototype.slice.call(document.querySelectorAll("img[data-original]")).forEach(function(a){var e=a.parentNode;"A"===e.tagName&&(e.href.match(t)||e.href.match(r))&&(e.href=a.dataset.original)})});</script><script>!function(n){n.imageLazyLoadSetting.processImages=o;var i=n.imageLazyLoadSetting.isSPA,r=Array.prototype.slice.call(document.querySelectorAll("img[data-original]"));function o(){i&&(r=Array.prototype.slice.call(document.querySelectorAll("img[data-original]")));for(var t,e,a=0;a<r.length;a++)t=r[a],0<=(e=t.getBoundingClientRect()).bottom&&0<=e.left&&e.top<=(n.innerHeight||document.documentElement.clientHeight)&&function(){var t,e,n,i,o=r[a];t=o,e=function(){r=r.filter(function(t){return o!==t})},n=new Image,i=t.getAttribute("data-original"),n.onload=function(){t.src=i,e&&e()},n.src=i}()}o(),n.addEventListener("scroll",function(){var t,e;t=o,e=n,clearTimeout(t.tId),t.tId=setTimeout(function(){t.call(e)},500)})}(this);</script></body>
+
+</html>

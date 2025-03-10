@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<!-- Head tag -->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="baidu-site-verification" content="093lY4ziMu" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="keyword"  content="programming, study, daily, entertainment">
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="星期五。見面">
+    <meta property="og:locale" content="zh-TW" />
+    
+    <meta property="og:title" content="[論文速速讀]Squeeze-and-Excitation Networks" />
+    
+    
+    <meta property="og:description" content="SENet，也就是ILSVRC 2017年的冠軍，是由自駕車公司Momenta所提出。SENet的精神是提出了一個隨插隨用的SE block到處插入別人家的模塊中(很沒節操的)。使得model可以針對每一層的channel產生了類似注意力機制的學習機制，廢話不多說，開始來看看SENet做了什麼事情吧！" />
+    <meta name="description" content="SENet，也就是ILSVRC 2017年的冠軍，是由自駕車公司Momenta所提出。SENet的精神是提出了一個隨插隨用的SE block到處插入別人家的模塊中(很沒節操的)。使得model可以針對每一層的channel產生了類似注意力機制的學習機制，廢話不多說，開始來看看SENet做了什麼事情吧！">
+    
+    
+    <meta property="og:image" content="https://res.cloudinary.com/meet-on-friday/image/upload/c_scale,w_800/v1603005064/blog_posts/%E6%88%AA%E5%9C%96_2020-10-18_%E4%B8%8B%E5%8D%883.10.41_ozyf3s.png" />
+    
+
+    <link rel="shortcut icon" href="/img/avatar.jpg">
+    <!-- Place this tag in your head or just before your close body tag. -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <!--<link href='http://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>-->
+    <title>
+        
+          [論文速速讀]Squeeze-and-Excitation Networks - MeetonFriday
+        
+    </title>
+    <!-- canonical -->
+    
+    
+      <link rel="canonical" href="https://meetonfriday.com/posts/79fdff34/">
+    
+
+    <!-- Bootstrap Core CSS -->
+    
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+
+
+    <!-- Custom CSS --> 
+    
+<link rel="stylesheet" href="/css/dusign-dark.css">
+
+    
+<link rel="stylesheet" href="/css/dusign-common-dark.css">
+
+    <!-- 
+<link rel="stylesheet" href="/css/font-awesome.css">
+ -->
+    
+<link rel="stylesheet" href="/css/toc.css">
+
+
+    
+    <!-- Pygments Highlight CSS -->
+    
+<link rel="stylesheet" href="/css/highlight.css">
+
+
+    
+<link rel="stylesheet" href="/css/widget.css">
+
+
+    
+<link rel="stylesheet" href="/css/rocket.css">
+
+
+    
+<link rel="stylesheet" href="/css/signature.css">
+
+
+    
+<link rel="stylesheet" href="/css/fonts.googleapis.css">
+
+
+    <!-- <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.3.0/css/font-awesome.min.css">-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.min.css">
+    
+    <!-- Google Analytics -->
+    
+      <!-- <script>
+          // dynamic User by Hux
+          var _gaId = 'UA-163346001-1';
+          var _gaDomain = 'auto';
+      
+          // Originial
+          (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+          (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+          })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+      
+          ga('create', _gaId, _gaDomain);
+          ga('send', 'pageview');
+      </script> -->
+      
+      <!-- Global site tag (gtag.js) - Google Analytics -->
+      <script async src="https://www.googletagmanager.com/gtag/js?id=UA-163346001-1"></script>
+      <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+      
+        gtag('config', 'UA-163346001-1');
+      </script>
+      
+    <!-- google ad sense-->
+    <script data-ad-client="ca-pub-9561340457908416" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<meta name="generator" content="Hexo 4.2.1"><link rel="alternate" href="/atom.xml" title="星期五。見面" type="application/atom+xml">
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+	<!-- Modified by Yu-Hsuan Yen -->
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        
+            
+                background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.5)), url('/img/header_img/header-bg.jpg')
+            
+        
+    }
+    
+</style>
+
+<header class="intro-header" >
+    <!-- Signature -->
+    <div id="signature">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                
+                    <div class="post-heading">
+                        <div class="tags">
+                            
+                              <a class="tag" href="/tags/#deep learning" title="deep learning">deep learning</a>
+                            
+                              <a class="tag" href="/tags/#paper" title="paper">paper</a>
+                            
+                        </div>
+                        <h1>[論文速速讀]Squeeze-and-Excitation Networks</h1>
+                        <h2 class="subheading"></h2>
+                        <span class="meta">
+                            Posted by John on
+                            2020-10-18
+                        </span>
+
+                        
+                            <div class="blank_box"></div>
+                            <span class="meta">
+                                Words <span class="post-count">3.4k</span> and
+                                Reading Time <span class="post-count">13</span> Minutes
+                            </span>
+                            <div class="blank_box"></div>
+                            <!-- 不蒜子统计 start -->
+                            <span class="meta">
+                                Viewed <span id="busuanzi_value_page_pv"><i class="fa fa-spinner fa-spin"></i></span> Times
+                            </span>
+                            <!-- 不蒜子统计 end -->
+                        
+
+                    </div>
+                
+
+                </div>
+            </div>
+        </div>      
+    </div>
+
+    
+        
+            <div class="waveWrapper">
+                <div class="wave wave_before" style="background-image: url('/img/wave-dark.png')"></div>
+                <div class="wave wave_after" style="background-image: url('/img/wave-dark.png')"></div>
+            </div>
+        
+    
+</header>
+
+	
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">星期五。見面</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archive/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/categories/">Categories</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/reading/">Reading</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+    
+    <!-- Main Content -->
+    <!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+            <!-- Post Container -->
+
+    
+        
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+        
+    
+
+                <p>〖想觀看更多中文論文導讀，至<a href="https://meetonfriday.com/posts/aa55d3f9/">[論文速速讀]系列文章介紹</a>可以看到目前已發布的所有文章！〗</p>
+<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>paper: <a href="https://arxiv.org/pdf/1709.01507.pdf" target="_blank" rel="noopener">https://arxiv.org/pdf/1709.01507.pdf</a></p>
+<p>SENet，也就是ILSVRC 2017年的冠軍，是由自駕車公司Momenta所提出，撰寫這篇的同時也為ILSVRC的中文論文導讀系列畫下了一個句點(因為2017是ILSVRC的最後一屆)。</p>
+<p>SENet的精神是提出了一個<strong>隨插隨用的SE block，讓你可以很沒節操的到處插入別人家的模塊中</strong>。使得model能夠針對每一層的channel產生了<strong>類似注意力機制的學習機制</strong>，廢話不多說，開始來看看SENet做了什麼事情吧！</p>
+<a id="more"></a>
+<h2 id="Abstract"><a href="#Abstract" class="headerlink" title="Abstract"></a>Abstract</h2><blockquote>
+<p>In this work, we focus instead on the channel relationship and propose a novel architectural unit, which we term the “Squeeze-and-Excitation” (SE) block, that adaptively recalibrates channel-wise feature responses by explicitly modelling interdependencies between channels</p>
+</blockquote>
+<p>有別於以往的研究都在探討怎麼在spatial domain上面透過不同的方法增強CNN的feature encoding能力，SENet則是朝向channel的角度來思考，透過提出SE block,一種基於<strong>channel-wise attention</strong>的模塊，使得模型可以針對不同的channel來給予不同的權重。</p>
+<ul>
+<li>spatial domain指的是空間域，也就是圖片上的pixel和pixel之間的關係</li>
+<li>咦~最後一句話聽起來是不是有點NLP的注意力機制(attention mechanism)的意味在呢? 在NLP的注意力機制盛行後(~2016左右)，學者們也開始思考注意力機制在CV的應用摟</li>
+</ul>
+<h2 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h2><blockquote>
+<p>Recent research has shown that the representations produced by CNNs can be strengthened by integrating learning mechanisms into the network that help capture spatial correlations between features</p>
+</blockquote>
+<p>已經有許多研究表示，可以透過不同的學習機制來增強CNN的捕捉空間相關性的feature能力，例如Inception就是一種mult-scale的學習機制，也有許多人做了不同的嘗試，例如使用了空間域上的注意力機制等。</p>
+<p>在這篇論文中提出了不同的觀點 - <strong>the relationship between channels</strong>，透過對channel上的依賴關係來進行建模，達到提升CNN的效果，為此提出了<strong>Squeeze-and-Excitation (SE) block。</strong></p>
+<p>這種機制可以學習channel上的全局訊息，來達到<strong>channel的recalibration(重新校准)</strong>，也就是強調比較重要的channel feature，並抑制比較不重要的channel feature的權重。</p>
+<ul>
+<li>顧名思義，壓縮(Squeeze)後取得channel上不同程度的重要性然後再激發出來(Excitation)</li>
+<li>最後一句話是什麼意思呢？例如不同的channel學習了不同動物的部位特徵，有腳、手、頭、嘴…之類的，那比較重要的部位就給予比較高的權重，比較不重要的(例如某些類別的腳都長得相同沒有分辨性)就降低他的權重</li>
+<li>要如何讓模型知道哪些channel是重要的呢？這是學出來的</li>
+</ul>
+<p>SE block的架構如下:<br><img src="https://meetonfriday.com/img/lazy-loading-animation.gif" data-original="https://res.cloudinary.com/meet-on-friday/image/upload/c_scale,w_800/v1603005064/blog_posts/%E6%88%AA%E5%9C%96_2020-10-18_%E4%B8%8B%E5%8D%883.10.41_ozyf3s.png" alt=""></p>
+<p>假設前一層的輸出為$X$，透過一個Convolution運算$F_{tr}$變成了$U$。SE block的目的是希望透過channel的重新校正(Recalibration)來幫助模型提升特徵萃取的能力，總共分成了兩個步驟：</p>
+<p><strong>Squeeze</strong>: 透過一個<script type="math/tex">F_{sq}</script>操作將這個<script type="math/tex">U</script>在channel上的global information萃取出來(squeeze)。也就是說$U$原本的shape是$(W, H, C)$，透過$F_{sq}$每一個channel取一個代表的值出來，如此就得到了一個$(1, 1, C)$的tensor，論文中稱之channel descriptor</p>
+<ul>
+<li>再白話一點解釋的話，每一張$H\times W$的圖片都取一個代表值(channel descriptor)，總共有$C$張圖片。這個channel descriptor代表了這一個$U$的全局訊息</li>
+<li>怎麼取呢？ 有看過前面論文速速讀系列的你可能就想到了一個很常用的操作了: <strong>GAP(Global Average Pooling)</strong>，如果沒想到的快去看<a href="https://meetonfriday.com/posts/a151bfa2/">[論文速速讀]Network In Network</a>這篇論文</li>
+</ul>
+<p><strong>Excitation</strong>: 接下來透過$F_{sq}$操作，來學習這些channel descriptor的重要程度，也就反映了原本$U$上面每個channel的重要程度(大)。</p>
+<ul>
+<li>$F_{sq}$到底是什麼操作呢？簡單來說就是接<strong>兩個FC layer(一個降維一個升維)</strong></li>
+</ul>
+<p>最後將$U$乘上大小不同的權重就得到了output $\widetilde{X}$</p>
+<p>SE block可以很無節操的隨便插入別人家的模型中，就如同Residual block一樣，<strong>block插入在淺層和深層的時候模型會自動學習並調整他的channel designators來適應不同的需求。</strong></p>
+<ul>
+<li>在淺層中，他會傾向去增強一些shared low-level representation</li>
+<li>在比較後面的層中，則是會去強調一些具有分辨性的representation</li>
+</ul>
+<blockquote>
+<p>As a consequence, the benefits of the feature recalibration performed by SE blocks can be accumulated through the network</p>
+</blockquote>
+<p>結論就是，SE block想插哪裏就插哪裡，淺層深層都可以！</p>
+<h2 id="Related-Work"><a href="#Related-Work" class="headerlink" title="Related Work"></a>Related Work</h2><p>有部分內容在介紹之前的一些model，如VGG、GoogLeNet、Resnet…等，所以跳過，有興趣的可以去看論文速速讀的其他篇。</p>
+<h3 id="Attention-and-gating-mechanisms"><a href="#Attention-and-gating-mechanisms" class="headerlink" title="Attention and gating mechanisms"></a>Attention and gating mechanisms</h3><p>Attention機制來了！ 從2016年開始在NLP領域廣泛使用的注意力機制也有越來越多的CV應用。一個注意力機制通常是採用門控機制(sigmoid, softmax)來達成。</p>
+<p>關於注意力機制在NLP的應用可以參考下列的論文速速讀系列：</p>
+<ul>
+<li><a href="https://meetonfriday.com/posts/5839a8bf/">[論文速速讀]Attention Is All You Need</a></li>
+<li><a href="https://meetonfriday.com/posts/4f49bf9b/">[論文速速讀]NEURAL MACHINE TRANSLATION BY JOINTLY LEARNING TO ALIGN AND TRANSLATE</a></li>
+<li><a href="https://meetonfriday.com/posts/8cad39eb/">[論文速速讀]Hierarchical Attention Networks for Document Classification</a></li>
+</ul>
+<h2 id="Squeeze-and-Excitation-Blocks"><a href="#Squeeze-and-Excitation-Blocks" class="headerlink" title="Squeeze-and-Excitation Blocks"></a>Squeeze-and-Excitation Blocks</h2><p>這邊其實就是Introduction的細部解釋，所以會介紹快一點。</p>
+<h3 id="Squeeze-Global-Information-Embedding"><a href="#Squeeze-Global-Information-Embedding" class="headerlink" title="Squeeze: Global Information Embedding"></a>Squeeze: Global Information Embedding</h3><p>對於convolution後得到的<script type="math/tex">\mathbf{U}=\left[\mathbf{u}_{1}, \mathbf{u}_{2}, \ldots, \mathbf{u}_{C}\right]</script>，將全局空間壓縮成一個值來代表該channel，有很多做法，這裡選擇了最簡單的Global Average Pooling (GAP)來達成</p>
+<script type="math/tex; mode=display">
+z_{c}=\mathbf{F}_{s q}\left(\mathbf{u}_{c}\right)=\frac{1}{H \times W} \sum_{i=1}^{H} \sum_{j=1}^{W} u_{c}(i, j)</script><p>為何是GAP?</p>
+<ul>
+<li>其實在進行卷積操作的時候，我們得到的輸出實質上和前一層所有channel都交錯地糾纏在一起</li>
+<li>但這個關係有點複雜，所以我們想透過GAP來進行簡化: 也就是<strong>GAP得出來的每個點都單純對應該channel而已，和其他channel並沒有任何關係</strong></li>
+<li>而這個特性也能幫助我們來訓練模型對訊息特徵的敏感度: 單純的將重要的channel權重加大、不重要的channel權重降低</li>
+</ul>
+<h3 id="Excitation-Adaptive-Recalibration"><a href="#Excitation-Adaptive-Recalibration" class="headerlink" title="Excitation: Adaptive Recalibration"></a>Excitation: Adaptive Recalibration</h3><p>這個部分就是兩層FC layer，先升維再降維(為了降低模型複雜度)。</p>
+<script type="math/tex; mode=display">
+\mathbf{s}=\mathbf{F}_{e x}(\mathbf{z}, \mathbf{W})=\sigma(g(\mathbf{z}, \mathbf{W}))=\sigma\left(\mathbf{W}_{2} \delta\left(\mathbf{W}_{1} \mathbf{z}\right)\right)</script><p>對於GAP後的output $Z \in R^{1 \times 1 \times C}$</p>
+<ul>
+<li>透過$W_{1} \in R^{1 \times 1 \times (\frac{C}{R} \times C)}$來降維，會得到$R^{1 \times 1 \times \frac{C}{R}}$，$\delta$是Relu function</li>
+<li>$W_{2} \in R^{1 \times 1 \times (C \times \frac{C}{R})}$是用來升維的FC layers，$\sigma$是sigmoid function，用來將值調整在0~1的門控機制</li>
+</ul>
+<p>最後將他們乘起來，<script type="math/tex">\mathbf{F}_{\text {scale}}\left(\mathbf{u}_{c}, s_{c}\right)</script> 是 <strong>channel-wise multiplication</strong></p>
+<script type="math/tex; mode=display">
+\tilde{\mathbf{x}}_{c}=\mathbf{F}_{\text {scale}}\left(\mathbf{u}_{c}, s_{c}\right)=s_{c} \mathbf{u}_{c}</script><h3 id="Instantiations"><a href="#Instantiations" class="headerlink" title="Instantiations"></a>Instantiations</h3><p>這裡告訴你怎麼無節操的去插入別人家的網路ლ(╹◡╹ლ)</p>
+<p>插入Inception model:<br><img src="https://meetonfriday.com/img/lazy-loading-animation.gif" data-original="https://res.cloudinary.com/meet-on-friday/image/upload/c_scale,w_800/v1603011357/blog_posts/%E6%88%AA%E5%9C%96_2020-10-18_%E4%B8%8B%E5%8D%884.55.26_vrwmcr.png" alt=""></p>
+<p>插入ResNet model:<br><img src="https://meetonfriday.com/img/lazy-loading-animation.gif" data-original="https://res.cloudinary.com/meet-on-friday/image/upload/c_scale,w_800/v1603011373/blog_posts/%E6%88%AA%E5%9C%96_2020-10-18_%E4%B8%8B%E5%8D%884.56.03_kjtehn.png" alt=""></p>
+<p>簡單輕鬆又好用！</p>
+<h2 id="Model-and-Computational-Complexity"><a href="#Model-and-Computational-Complexity" class="headerlink" title="Model and Computational Complexity"></a>Model and Computational Complexity</h2><p>下面表格列出了ResNet、SE-ResNet-50和SE-ResNeXt-50的架構</p>
+<p><img src="https://meetonfriday.com/img/lazy-loading-animation.gif" data-original="https://res.cloudinary.com/meet-on-friday/image/upload/c_scale,w_800/v1603011574/blog_posts/%E6%88%AA%E5%9C%96_2020-10-18_%E4%B8%8B%E5%8D%884.59.19_jdas3k.png" alt=""></p>
+<ul>
+<li>fc中括號的兩個數字分別代表SE block的兩個FC Layer output</li>
+</ul>
+<p>以及他的error rate和FLOPS(Floating Point Operations Per Second)<br><img src="https://meetonfriday.com/img/lazy-loading-animation.gif" data-original="https://res.cloudinary.com/meet-on-friday/image/upload/c_scale,w_800/v1603011775/blog_posts/%E6%88%AA%E5%9C%96_2020-10-18_%E4%B8%8B%E5%8D%885.02.44_bq7i96.png" alt=""></p>
+<ul>
+<li>可以發現ResNet-50搭配SENet的效果可以堪比ResNet-101，但計算量只多出了一點點(3.86-&gt;3.87)</li>
+<li>其他的部分請自己看圖說故事</li>
+</ul>
+<p>而對於模型所增加的參數量都來自SE block的兩個FC layer</p>
+<script type="math/tex; mode=display">
+\frac{2}{r} \sum_{s=1}^{S} N_{s} \cdot C_{s}^{2}</script><ul>
+<li>$r$: reduction ratio</li>
+<li>$S$:  number of stages (a stage refers to the collection of blocks operating on feature maps of a common spatial dimension)</li>
+<li>$C_{s}$:  dimension of the output channels</li>
+<li>$N_{s}$: number of repeated blocks for stage $s$</li>
+</ul>
+<p>以SE-ResNet-50為例，參數量大約增加了10%左右，並且SE block在<strong>越深層的部分會使用越多的參數</strong>(因為越深層dimension越大)。對此他們嘗試在最後一個stage把SE block都移除，降低了4%的參數量，但相對的accuracy只降低了1%。</p>
+<h2 id="Experiments"><a href="#Experiments" class="headerlink" title="Experiments"></a>Experiments</h2><h3 id="Image-Classification"><a href="#Image-Classification" class="headerlink" title="Image Classification"></a>Image Classification</h3><h4 id="Network-depth"><a href="#Network-depth" class="headerlink" title="Network depth"></a>Network depth</h4><p>在不同深度的ResNet上加入SENet，證實不同的models都可以有效提升效果</p>
+<p><img src="https://meetonfriday.com/img/lazy-loading-animation.gif" data-original="https://res.cloudinary.com/meet-on-friday/image/upload/c_scale,w_800/v1603013527/blog_posts/%E6%88%AA%E5%9C%96_2020-10-18_%E4%B8%8B%E5%8D%885.31.47_jyybkf.png" alt=""></p>
+<h4 id="Integration-with-modern-architectures"><a href="#Integration-with-modern-architectures" class="headerlink" title="Integration with modern architectures"></a>Integration with modern architectures</h4><p>這次配上了比較先進的SOTA models</p>
+<ul>
+<li>Inception-ResNet-v2 </li>
+<li>ResNeXt</li>
+</ul>
+<p><img src="https://meetonfriday.com/img/lazy-loading-animation.gif" data-original="https://res.cloudinary.com/meet-on-friday/image/upload/c_scale,w_800/v1603013529/blog_posts/%E6%88%AA%E5%9C%96_2020-10-18_%E4%B8%8B%E5%8D%885.31.54_gp4iz3.png" alt=""></p>
+<h4 id="Mobile-setting"><a href="#Mobile-setting" class="headerlink" title="Mobile setting"></a>Mobile setting</h4><p>針對行動端最佳化的模型設計來測試</p>
+<ul>
+<li>MobileNet</li>
+<li>ShuffleNet</li>
+</ul>
+<p><img src="https://meetonfriday.com/img/lazy-loading-animation.gif" data-original="https://res.cloudinary.com/meet-on-friday/image/upload/c_scale,w_800/v1603013890/blog_posts/%E6%88%AA%E5%9C%96_2020-10-18_%E4%B8%8B%E5%8D%885.37.58_bhiv2t.png" alt=""></p>
+<h4 id="Additional-datasets"><a href="#Additional-datasets" class="headerlink" title="Additional datasets"></a>Additional datasets</h4><p>測試ImageNet以外的dataset，跳過，有興趣的再自己去看。</p>
+<h3 id="Scene-Classification"><a href="#Scene-Classification" class="headerlink" title="Scene Classification"></a>Scene Classification</h3><p>在場景分類任務的dataset上訓練，跳過。</p>
+<h3 id="ILSVRC-2017-Classification-Competition"><a href="#ILSVRC-2017-Classification-Competition" class="headerlink" title="ILSVRC 2017 Classification Competition"></a>ILSVRC 2017 Classification Competition</h3><p>ILSVRC的數據，和以前的冠軍相同的，都採用了ensemble的策略</p>
+<p><img src="https://meetonfriday.com/img/lazy-loading-animation.gif" data-original="https://res.cloudinary.com/meet-on-friday/image/upload/c_scale,w_800/v1603014038/blog_posts/%E6%88%AA%E5%9C%96_2020-10-18_%E4%B8%8B%E5%8D%885.40.19_dp6yeo.png" alt=""></p>
+<p><strong>【下方高能預警】</strong> 到這邊差不多惹，上面已經很清楚的介紹了SENet，下面是一堆針對設計上的實驗跟分析，如果你只是想知道SENet到底在幹嘛的那我建議看到這裡就夠惹，如果你是很想了解細節內容的就跟隨我繼續往下吧！</p>
+<h2 id="Ablation-Study"><a href="#Ablation-Study" class="headerlink" title="Ablation Study"></a>Ablation Study</h2><h3 id="Reduction-ratio"><a href="#Reduction-ratio" class="headerlink" title="Reduction ratio"></a>Reduction ratio</h3><p>在SE block的FC layer降維(reduction ration)到底要降到多少？</p>
+<p>這裡基於SE-ResNet-50做了不同r的實驗，發現結果並不會隨著提升r而上升，所以最後採用<strong>r=16</strong></p>
+<p><img src="https://meetonfriday.com/img/lazy-loading-animation.gif" data-original="https://res.cloudinary.com/meet-on-friday/image/upload/c_scale,w_800/v1603014380/blog_posts/%E6%88%AA%E5%9C%96_2020-10-18_%E4%B8%8B%E5%8D%885.45.10_yjbcgm.png" alt=""></p>
+<h3 id="Squeeze-Operator"><a href="#Squeeze-Operator" class="headerlink" title="Squeeze Operator"></a>Squeeze Operator</h3><p>比較了Global Average Pooling 和Global Maximum Pooling，發現GAP比較好，所以採用GAP。</p>
+<h3 id="Excitation-Operator"><a href="#Excitation-Operator" class="headerlink" title="Excitation Operator"></a>Excitation Operator</h3><p>對於第二個FC layer的activation function，比較了ReLU、tanh和sigmoid，發現sigmoid最好，ReLU特差。因此他們建議選擇一個好的Excitation Operator對於SE block是很重要的。</p>
+<h3 id="Different-stages"><a href="#Different-stages" class="headerlink" title="Different stages"></a>Different stages</h3><p>單純將SE block部分加入model某個stage進行分析的實驗，跳過。</p>
+<p><strong>有錢人當然是全都加加爆。</strong></p>
+<h3 id="Integration-strategy"><a href="#Integration-strategy" class="headerlink" title="Integration strategy"></a>Integration strategy</h3><p>身為一個要插入別人家模型的模塊，當然要研究一下插在哪裡比較好！</p>
+<p>所以除了原本的架構，還多實驗了3種不同的位置:</p>
+<ol>
+<li>SE-PRE block, in which the SE block is moved before the residual unit</li>
+<li>SE-POST block, in which the SE unit is moved after the summation with the identity branch (after ReLU)</li>
+<li>SE-Identity block, in which the SE unit is placed on the identity connection in parallel to the residual unit</li>
+</ol>
+<p><img src="https://meetonfriday.com/img/lazy-loading-animation.gif" data-original="https://res.cloudinary.com/meet-on-friday/image/upload/c_scale,w_800/v1603015665/blog_posts/%E6%88%AA%E5%9C%96_2020-10-18_%E4%B8%8B%E5%8D%886.07.29_qyldu3.png" alt=""></p>
+<p><img src="https://meetonfriday.com/img/lazy-loading-animation.gif" data-original="https://res.cloudinary.com/meet-on-friday/image/upload/c_scale,w_800/v1603015961/blog_posts/%E6%88%AA%E5%9C%96_2020-10-18_%E4%B8%8B%E5%8D%886.12.31_ezkps3.png" alt=""></p>
+<p>此外，上面的架構都是將SE block放在Residual block外面。他們也實驗了將這個設計直接做在Residual block內，不過效果並沒有比較好，具體可以去看原文。</p>
+<h2 id="Role-of-SE-Blocks"><a href="#Role-of-SE-Blocks" class="headerlink" title="Role of SE Blocks"></a>Role of SE Blocks</h2><p>(寫到快死掉了…怎麼做了這麼多分析…)</p>
+<p>儘管SE block被證明可以提升效果，但他們想更進一步去看Squeeze和Excitation到底是怎麼影響模型的。所以做了分析的實驗。</p>
+<h3 id="Effect-of-Squeeze"><a href="#Effect-of-Squeeze" class="headerlink" title="Effect of Squeeze"></a>Effect of Squeeze</h3><p>“使用GAP將channel獨立出來到底有沒有用呢？”</p>
+<p>為了驗證這個想法，他們將GAP換成了1x1 Conv，如此一來output之間還是channel dependent的然後做實驗。</p>
+<p><img src="https://meetonfriday.com/img/lazy-loading-animation.gif" data-original="https://res.cloudinary.com/meet-on-friday/image/upload/c_scale,w_800/v1603016302/blog_posts/%E6%88%AA%E5%9C%96_2020-10-18_%E4%B8%8B%E5%8D%886.18.09_m2t5h3.png" alt=""></p>
+<p>結果就是GAP還是比較好，並且GAP不用額外的計算參數。</p>
+<h3 id="Role-of-Excitation"><a href="#Role-of-Excitation" class="headerlink" title="Role of Excitation"></a>Role of Excitation</h3><p>觀察Excitation在不同類別和不同layer時的分佈。</p>
+<p>取了四個類別: goldfish, pug, plane and cliff，每一類採樣了50個樣本，並觀察他們在最後一個stage中SE block uniformly sampled channels的average activations(也做了1000類的average activations作為比較基準)。</p>
+<p><img src="https://meetonfriday.com/img/lazy-loading-animation.gif" data-original="https://res.cloudinary.com/meet-on-friday/image/upload/c_scale,w_800/v1603017087/blog_posts/%E6%88%AA%E5%9C%96_2020-10-18_%E4%B8%8B%E5%8D%886.31.14_lwdnlm.png" alt=""></p>
+<p>圖片的名字是這樣命名的: <code>SE_&lt;stageID&gt;_&lt;blockID&gt;</code></p>
+<p>在這個實驗中發現了三件個現象：</p>
+<ol>
+<li>不同類別的分佈在較淺層都差不多，這代表模型在淺層學到的都是比較共同的初階特徵(Ex:點線面)，<strong>這些特徵每個類別都會用到，所以此時SE block的權重分佈會比較一致</strong><ul>
+<li>例如SE_2_3, SE_3_4</li>
+</ul>
+</li>
+<li>在比較深層的時候，不同類別的channel值開始出現差異性。因為這時候<strong>不同類別的高階特徵可能就具有較大的差異性</strong><ul>
+<li>例如SE_4_6, SE_5_1</li>
+</ul>
+</li>
+</ol>
+<p>上面兩個觀察驗證了我們在Introduction講的: SE block在淺層和深層學習的任務不同，他會自己根據block所在的位置去學習對應的目標。</p>
+<ol>
+<li>最後，在最後一個stage的後半block觀察到了一些現象<ul>
+<li>SE_5_2有大部分的activation都趨近於1，少部分的channel值是0</li>
+<li>SE_5_3中每個類別的activations分佈都很類似</li>
+</ul>
+</li>
+</ol>
+<p>對於activation都是1的部分，該block就會退化成standard residual block，因為都是1的話就等於SE block沒有作用。</p>
+<p>而對於activations分佈類似的SE block也不會造成模型太大的影響，因為SE block並沒有達到根據不同類別給予不同的權重的效果。</p>
+<p>這些觀察代表<strong>在深層的時候SE block可能已經趨近飽和，做不太到什麼事情但又造成了較大的計算複雜度</strong>(因為深層的dimension都比較大，所以SE block的參數量也會變大)。所以他們就參考了這項實驗，把最後stage的SE block移除，結果如同Model and Computational Complexity章節提到的，準確度只降了1%。</p>
+<h2 id="結論"><a href="#結論" class="headerlink" title="結論"></a>結論</h2><p>終於寫完了嗚嗚嗚…這篇的Ablation Study世界長欸…寫到懷疑人生。</p>
+<p>快速做個總結，SENet並不是一個神經網路模型，而是提出一個新的SE block用來加入其他現有模型，以達到更好效果的研究。</p>
+<p>通過SE block，我們可以讓模型有著類似注意力機制的效果: 對於分類某個類別來說，哪些channel的特徵是比較有用的呢?</p>
+<p>而為此所耗費的計算量也是非常少的，卻大大提升了現有模型的結果。</p>
+<p>隨插隨用棒棒噠！</p>
+
+                <hr>
+                <!-- Pager -->
+                <ul class="pager">
+    
+    <li class="previous">
+        <a href="/posts/736969d7/" data-toggle="tooltip" data-placement="top" title="[Linux Kernel慢慢學]Different betweeen ioctl, unlocked_ioctl and compat_ioctl">&larr; Newer Post</a>
+    </li>
+    
+    
+    <li class="next">
+        <a href="/posts/c4426b79/" data-toggle="tooltip" data-placement="top" title="[Linux Kernel慢慢學]Linux modules載入及載入順序">Older Post &rarr;</a>
+    </li>
+    
+</ul>
+
+                <!-- tip start -->
+                
+
+                
+                <!-- tip end -->
+
+                <!-- Sharing -->
+                
+                <!-- Sharing -->
+
+                <!-- gitment start -->
+                
+                <!-- gitment end -->
+
+                <!-- 来必力City版安装代码 -->
+                
+                <!-- City版安装代码已完成 -->
+
+                <!-- disqus comment start -->
+                
+                <div class="comment">
+                    <div id="disqus_thread" class="disqus-thread"></div>
+                </div>
+                
+                <!-- disqus comment end -->
+            </div>
+            
+            <!-- Tabe of Content -->
+            <!-- Table of Contents -->
+
+    
+      
+        <aside id="sidebar">
+          <div id="toc" class="toc-article">
+          <strong class="toc-title">Contents</strong>
+          
+            <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#前言"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">前言</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Abstract"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">Abstract</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Introduction"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">Introduction</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Related-Work"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">Related Work</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Attention-and-gating-mechanisms"><span class="toc-nav-number">4.1.</span> <span class="toc-nav-text">Attention and gating mechanisms</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Squeeze-and-Excitation-Blocks"><span class="toc-nav-number">5.</span> <span class="toc-nav-text">Squeeze-and-Excitation Blocks</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Squeeze-Global-Information-Embedding"><span class="toc-nav-number">5.1.</span> <span class="toc-nav-text">Squeeze: Global Information Embedding</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Excitation-Adaptive-Recalibration"><span class="toc-nav-number">5.2.</span> <span class="toc-nav-text">Excitation: Adaptive Recalibration</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Instantiations"><span class="toc-nav-number">5.3.</span> <span class="toc-nav-text">Instantiations</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Model-and-Computational-Complexity"><span class="toc-nav-number">6.</span> <span class="toc-nav-text">Model and Computational Complexity</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Experiments"><span class="toc-nav-number">7.</span> <span class="toc-nav-text">Experiments</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Image-Classification"><span class="toc-nav-number">7.1.</span> <span class="toc-nav-text">Image Classification</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#Network-depth"><span class="toc-nav-number">7.1.1.</span> <span class="toc-nav-text">Network depth</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#Integration-with-modern-architectures"><span class="toc-nav-number">7.1.2.</span> <span class="toc-nav-text">Integration with modern architectures</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#Mobile-setting"><span class="toc-nav-number">7.1.3.</span> <span class="toc-nav-text">Mobile setting</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#Additional-datasets"><span class="toc-nav-number">7.1.4.</span> <span class="toc-nav-text">Additional datasets</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Scene-Classification"><span class="toc-nav-number">7.2.</span> <span class="toc-nav-text">Scene Classification</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#ILSVRC-2017-Classification-Competition"><span class="toc-nav-number">7.3.</span> <span class="toc-nav-text">ILSVRC 2017 Classification Competition</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Ablation-Study"><span class="toc-nav-number">8.</span> <span class="toc-nav-text">Ablation Study</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Reduction-ratio"><span class="toc-nav-number">8.1.</span> <span class="toc-nav-text">Reduction ratio</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Squeeze-Operator"><span class="toc-nav-number">8.2.</span> <span class="toc-nav-text">Squeeze Operator</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Excitation-Operator"><span class="toc-nav-number">8.3.</span> <span class="toc-nav-text">Excitation Operator</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Different-stages"><span class="toc-nav-number">8.4.</span> <span class="toc-nav-text">Different stages</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Integration-strategy"><span class="toc-nav-number">8.5.</span> <span class="toc-nav-text">Integration strategy</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Role-of-SE-Blocks"><span class="toc-nav-number">9.</span> <span class="toc-nav-text">Role of SE Blocks</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Effect-of-Squeeze"><span class="toc-nav-number">9.1.</span> <span class="toc-nav-text">Effect of Squeeze</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Role-of-Excitation"><span class="toc-nav-number">9.2.</span> <span class="toc-nav-text">Role of Excitation</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#結論"><span class="toc-nav-number">10.</span> <span class="toc-nav-text">結論</span></a></li></ol>
+          
+          </div>
+        </aside>
+      
+    
+
+        </div>
+    </div>
+</article>
+
+	
+    <!-- disqus embedded js code start (one page only need to embed once) -->	
+    <script type="text/javascript">	
+        /* * * CONFIGURATION VARIABLES * * */	
+        var disqus_shortname = "meetonfriday";	
+        var disqus_identifier = "https://meetonfriday.com/posts/79fdff34/";	
+        var disqus_url = "https://meetonfriday.com/posts/79fdff34/";	
+        (function() {	
+            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;	
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';	
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);	
+        })();	
+    </script>	
+    <!-- disqus embedded js code start end -->	
+    
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/john850512">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://www.linkedin.com/in/john85051232">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                
+                    <li>
+                        <a target="_blank" href="https://www.facebook.com/meetonfridayyy">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+                
+                    <li>
+                        <a target="_blank"  href="https://mail.google.com/mail/?view=cm&fs=1&to=john85051232@gmail.com">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-envelope-o fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+                
+                
+
+                
+
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; John 2025 
+                    <br>
+                    Powered by 
+                    <a href="https://github.com/john850512/hexo-theme-jiji" target="_blank" rel="noopener">
+                        <i>hexo-theme-jiji</i>
+                    </a> | 
+                    <iframe name="star" style="margin-left: 2px; margin-bottom:-5px;" frameborder="0" scrolling="0"
+                        width="100px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=john850512&repo=hexo-theme-jiji&type=star&count=true">
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+
+</footer>
+
+<!-- jQuery -->
+
+<script src="/js/jquery.min.js"></script>
+
+
+<!-- Bootstrap Core JavaScript -->
+
+<script src="/js/bootstrap.min.js"></script>
+
+
+<!-- Custom Theme JavaScript -->
+
+<script src="/js/hux-blog.min.js"></script>
+
+
+<!-- Search -->
+
+<script src="/js/search.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("https://meetonfriday.com/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+<!-- Search -->
+
+    <script type="text/javascript">      
+        var search_path = "search.xml";
+        if (search_path.length == 0) {
+            search_path = "search.xml";
+        }
+    var path = "/" + search_path;
+    searchFunc(path, 'local-search-input', 'local-search-result');
+    </script>
+
+
+<!-- busuanzi -->
+<!--<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>-->
+<script async src="//cdn.jsdelivr.net/npm/busuanzi@2.3.0"></script>
+
+
+
+
+	<a id="rocket" href="#top" class=""></a>
+	<script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script>
+    <script type="text/javascript" src="/js/toc.js?v=1.0.0" async=""></script>
+
+    
+        <!-- background effects line -->
+        
+        <!-- background effects end -->
+    
+    
+    <!-- background animation-->>
+    <!--<script size="50" alpha='0.3' zIndex="-999" src="/js/ribbonStatic.js"></script>-->
+    
+        <script src="/js/ribbonDynamic.js"></script>
+    
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script>
+            window.imageLazyLoadSetting = {
+                isSPA: false,
+                processImages: null,
+            };
+        </script><script>window.addEventListener("load",function(){var t=/\.(gif|jpg|jpeg|tiff|png)$/i,r=/^data:image\/[a-z]+;base64,/;Array.prototype.slice.call(document.querySelectorAll("img[data-original]")).forEach(function(a){var e=a.parentNode;"A"===e.tagName&&(e.href.match(t)||e.href.match(r))&&(e.href=a.dataset.original)})});</script><script>!function(n){n.imageLazyLoadSetting.processImages=o;var i=n.imageLazyLoadSetting.isSPA,r=Array.prototype.slice.call(document.querySelectorAll("img[data-original]"));function o(){i&&(r=Array.prototype.slice.call(document.querySelectorAll("img[data-original]")));for(var t,e,a=0;a<r.length;a++)t=r[a],0<=(e=t.getBoundingClientRect()).bottom&&0<=e.left&&e.top<=(n.innerHeight||document.documentElement.clientHeight)&&function(){var t,e,n,i,o=r[a];t=o,e=function(){r=r.filter(function(t){return o!==t})},n=new Image,i=t.getAttribute("data-original"),n.onload=function(){t.src=i,e&&e()},n.src=i}()}o(),n.addEventListener("scroll",function(){var t,e;t=o,e=n,clearTimeout(t.tId),t.tId=setTimeout(function(){t.call(e)},500)})}(this);</script></body>
+
+</html>

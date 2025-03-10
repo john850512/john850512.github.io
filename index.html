@@ -1,0 +1,1497 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<!-- Head tag -->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="baidu-site-verification" content="093lY4ziMu" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="keyword"  content="programming, study, daily, entertainment">
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="星期五。見面">
+    <meta property="og:locale" content="zh-TW" />
+    
+    <meta property="og:title" content="星期五。見面 - 程式 | 學習 | 日記 | 玩樂" />
+    
+    
+    <meta property="og:description" content="John的個人部落格，不定時撰寫一些技術文章(Programming, Machine Learning, Deep Learning)和生活札記。" />
+    <meta name="description" content="John的個人部落格，不定時撰寫一些技術文章(Programming, Machine Learning, Deep Learning)和生活札記。">
+    
+    
+    <meta property="og:image" content="/img/avatar.jpg" />
+    
+
+    <link rel="shortcut icon" href="/img/avatar.jpg">
+    <!-- Place this tag in your head or just before your close body tag. -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <!--<link href='http://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>-->
+    <title>
+        
+          MeetonFriday - 程式 | 學習 | 日記 | 玩樂
+        
+    </title>
+    <!-- canonical -->
+    
+    
+      <link rel="canonical" href="https://meetonfriday.com/">
+    
+
+    <!-- Bootstrap Core CSS -->
+    
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+
+
+    <!-- Custom CSS --> 
+    
+<link rel="stylesheet" href="/css/dusign-dark.css">
+
+    
+<link rel="stylesheet" href="/css/dusign-common-dark.css">
+
+    <!-- 
+<link rel="stylesheet" href="/css/font-awesome.css">
+ -->
+    
+<link rel="stylesheet" href="/css/toc.css">
+
+
+    
+    <!-- Pygments Highlight CSS -->
+    
+<link rel="stylesheet" href="/css/highlight.css">
+
+
+    
+<link rel="stylesheet" href="/css/widget.css">
+
+
+    
+<link rel="stylesheet" href="/css/rocket.css">
+
+
+    
+<link rel="stylesheet" href="/css/signature.css">
+
+
+    
+<link rel="stylesheet" href="/css/fonts.googleapis.css">
+
+
+    <!-- <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.3.0/css/font-awesome.min.css">-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.min.css">
+    
+    <!-- Google Analytics -->
+    
+      <!-- <script>
+          // dynamic User by Hux
+          var _gaId = 'UA-163346001-1';
+          var _gaDomain = 'auto';
+      
+          // Originial
+          (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+          (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+          })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+      
+          ga('create', _gaId, _gaDomain);
+          ga('send', 'pageview');
+      </script> -->
+      
+      <!-- Global site tag (gtag.js) - Google Analytics -->
+      <script async src="https://www.googletagmanager.com/gtag/js?id=UA-163346001-1"></script>
+      <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+      
+        gtag('config', 'UA-163346001-1');
+      </script>
+      
+    <!-- google ad sense-->
+    <script data-ad-client="ca-pub-9561340457908416" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<meta name="generator" content="Hexo 4.2.1"><link rel="alternate" href="/atom.xml" title="星期五。見面" type="application/atom+xml">
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+	<!-- Modified by Yu-Hsuan Yen -->
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        
+            
+                background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.5)), url('/img/header_img/header-bg.jpg')
+            
+        
+    }
+    
+</style>
+
+<header class="intro-header" >
+    <!-- Signature -->
+    <div id="signature">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                
+                    <div class="site-heading">
+                        <h1>星期五。見面</h1>
+                        <!--<hr class="small">-->
+                        <span id="subdusi" class="subheading">程式 | 學習 | 日記 | 玩樂</span>
+                    </div>
+                
+
+                </div>
+            </div>
+        </div>      
+    </div>
+
+    
+        
+            <div class="waveWrapper">
+                <div class="wave wave_before" style="background-image: url('/img/wave-dark.png')"></div>
+                <div class="wave wave_after" style="background-image: url('/img/wave-dark.png')"></div>
+            </div>
+        
+    
+</header>
+
+	
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">星期五。見面</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archive/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/categories/">Categories</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/reading/">Reading</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+    
+    <!-- Main Content -->
+    <!-- Main Content -->
+<div class="container">
+    <div class="row">
+        
+
+    <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-1
+                col-md-8 col-md-offset-1
+                col-sm-12
+                col-xs-12
+            ">
+                <!-- Top -->
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+        <div class="post-preview">
+            <!-- <a href="/posts/aa55d3f9/"> -->
+            <h2 class="post-title">
+                <img class="top_logo" src="/img/tp.png"/>
+                &nbsp;&nbsp;&nbsp;&nbsp;[論文速速讀]系列文章介紹
+            </h2>
+            <h3 class="post-subtitle">
+                
+            </h3>
+            <div class="post-content-preview">
+                <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>論文速速讀系列是從今年四月開始，我開始寫一些論文的中文讀書筆記，還記得第一篇是<a href="https://meetonfriday.com/posts/98f60d1d/">[論文速速讀]ReZero is All You Need: Fast Convergence at Large Depth</a>，之後發現儘管自己已經陸續產出了幾篇文章，可是好像都沒正式的跟大家介紹這系列文章的由來xD</p>
+<p>所以這篇文章就是來講講這系列文章到底是什麼，以及我會和會想寫這些文章。</p>
+<h2 id="論文速速讀系列是什麼"><a href="#論文速速讀系列是什麼" class="headerlink" title="論文速速讀系列是什麼?"></a>論文速速讀系列是什麼?</h2><p>由於在AI領域每年總是有一些非常重大的突破和應用，如果跟不上潮流很有可能就會錯失許多機會。例如，對NLP領域熟悉的話你一定聽過2013年的word2vec、2014年開始流行的attention、2018年的Bert…這些很有名的技術。</p>
+<p>還記得Bert剛出的時候我好像剛進碩士實驗室，當時只知道這個技術屌打了當時一堆NLP的研究，但我想也想不到兩年後Bert已經造成如此大的影響力，一堆基於Bert的變形應用在各大領域上都取得了非常優異的結果。</p>
+<p>因此，我想要藉由這系列的文章讓自己能夠更加快速的了解AI的新技術和研究，同時逼迫自己看論文xD</p>
+            </div>
+
+            <div class="post-read-more">
+                <a href="/posts/aa55d3f9/">繼續閱讀</a>
+            </div>       
+
+            <!-- </a> -->
+            
+                <p class="post-meta">
+                    Posted by John on
+                    2020-07-09
+                </p>
+            
+
+        </div>
+        <hr>
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+        <div class="post-preview">
+            <!-- <a href="/posts/85f1c2a/"> -->
+            <h2 class="post-title">
+                <img class="top_logo" src="/img/tp.png"/>
+                &nbsp;&nbsp;&nbsp;&nbsp;[課程筆記]課程筆記系列總覽
+            </h2>
+            <h3 class="post-subtitle">
+                
+            </h3>
+            <div class="post-content-preview">
+                <p>本文記錄了自己在上課時所記錄的一些課程筆記，可以透過這邊文章連結到所有以往發過的課程筆記文章。</p>
+<p><img src="https://res.cloudinary.com/meet-on-friday/image/upload/c_scale,w_400/v1605107656/headerimage/001_yqduwu_c28mgu.png" alt=""></p>
+            </div>
+
+            <div class="post-read-more">
+                <a href="/posts/85f1c2a/">繼續閱讀</a>
+            </div>       
+
+            <!-- </a> -->
+            
+                <p class="post-meta">
+                    Posted by John on
+                    2021-01-24
+                </p>
+            
+
+        </div>
+        <hr>
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+
+<!-- Main Content -->
+
+    
+
+        <div class="post-preview">
+            <!-- <a href="/posts/666bbf67/"> -->
+            <h2 class="post-title">
+                Google從Android 15 (Android-V)開始將淘汰NNAPI改推LiteRT (TensorFlow Lite)
+            </h2>
+            <h3 class="post-subtitle">
+                
+            </h3>
+            <div class="post-content-preview">
+                <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>在幾年前的文章中曾經介紹過關於如何使用NNAPI來在設備上運行AI模型</p>
+<ul>
+<li>延伸閱讀: <a href="https://meetonfriday.com/posts/668f0de1/">Neural Networks API Introduction: Android APP背後是如何執行一個神經網路模型的?</a></li>
+</ul>
+<p>在Google在最新的<a href="https://developer.android.com/ndk/guides/neuralnetworks" target="_blank" rel="noopener">NNAPI文檔</a>中宣布隨著Android 15(V)的推出即將淘汰NNAPI，未來將主推LiteRT (TensorFlow Lite)。本文摘要整理相關資料並描述Google這麼做的原因為何。</p>
+<h2 id="NNAPI-will-be-Deprecated-with-the-release-of-Android-15-Android-V"><a href="#NNAPI-will-be-Deprecated-with-the-release-of-Android-15-Android-V" class="headerlink" title="NNAPI will be Deprecated with the release of Android 15 (Android-V)"></a>NNAPI will be Deprecated with the release of Android 15 (Android-V)</h2><p>根據NNAPI的google最新document描述到:</p>
+<blockquote>
+<p>Warning: With the release of Android 15, NNAPI will be deprecated. While you can continue to use NNAPI, we expect the majority of devices in the future to use the CPU backend, and therefore for performance critical workloads, we recommend migrating to alternative solutions, for example the TF Lite GPU runtime.</p>
+<p>For more information, see the <a href="https://developer.android.com/ndk/guides/neuralnetworks/migration-guide" target="_blank" rel="noopener">NNAPI Migration Guide</a>.</p>
+</blockquote>
+<p><img src="https://res.cloudinary.com/meet-on-friday/image/upload/v1741587911/blog_posts_2025/nnapi_is_decrepted_iifmh6.png" alt=""></p>
+<p>而在NNAPI migration guide中則說明了原因:</p>
+<ol>
+<li>自從NNAPI release後, 由於ODML (On Device Machine Learning)的快革新, 如transformer, diffusion等model的快速進版, 開發者需要頻繁的更新基礎工具和開發工具</li>
+<li>為了滿足這些需求, Google提供了TensorFlow Lite (LiteRT) in Play Services, 為這些AI模型提供了可更新的TensorFlow runtime服務</li>
+</ol>
+<p>並且提及<strong>在Android 15 (Android-V)後, NNAPI將被標記為棄用(deprecated)並建議開發者改採用TensorFlow Lite (LiteRT) in Play Services</strong></p>
+<h2 id="LiteRT-TensorFlow-Lite-Runtime"><a href="#LiteRT-TensorFlow-Lite-Runtime" class="headerlink" title="LiteRT = TensorFlow Lite Runtime"></a>LiteRT = TensorFlow Lite Runtime</h2><p><img src="https://res.cloudinary.com/meet-on-friday/image/upload/v1741590305/blog_posts_2025/litert_rtrlrj.png" alt=""><br>LiteRT (TensorFlow Lite RunTime) 其實就是大家熟悉的TensorFlow Lite, 只是改名了</p>
+            </div>
+            <div class="post-read-more">
+                <a href="/posts/666bbf67/">繼續閱讀</a>
+            </div>       
+
+            <!-- </a> -->
+            
+                <p class="post-meta">
+                    Posted by John on
+                    2025-03-10
+                </p>
+            
+
+        </div>
+        <hr>
+
+    
+
+    
+
+        <div class="post-preview">
+            <!-- <a href="/posts/edcd30e6/"> -->
+            <h2 class="post-title">
+                [課程筆記]Linux Driver正點原子課程筆記5 - 新字元設備驅動實驗
+            </h2>
+            <h3 class="post-subtitle">
+                
+            </h3>
+            <div class="post-content-preview">
+                <p>〖想觀看更多課程筆記，至<a href="https://meetonfriday.com/posts/85f1c2a/">[課程筆記]課程筆記系列總覽</a>可以看到目前已發布的所有文章！〗</p>
+<h2 id="Course-5-新字元設備驅動實驗"><a href="#Course-5-新字元設備驅動實驗" class="headerlink" title="Course 5 - 新字元設備驅動實驗"></a>Course 5 - 新字元設備驅動實驗</h2><h3 id="新字元設備驅動原理"><a href="#新字元設備驅動原理" class="headerlink" title="新字元設備驅動原理"></a>新字元設備驅動原理</h3><p>在之前的課程中了解到了怎麼註冊一個chrdev，但之前使用的api是舊版的存在著一些問題，例如<code>register_chrdev()</code>這個function</p>
+<ol>
+<li><strong>會佔用主設備號下的所有次設備號</strong>，浪費了很多次設備號</li>
+<li>必須手動指定主設備號，也就是說你得先手動查詢哪個主設備號還沒被佔用，然後再去指定</li>
+</ol>
+<p>所以這節課程會使用新的api來撰寫字元驅動，新版的api有兩種方式:</p>
+<ul>
+<li><code>alloc_chrdev_region()</code>: 向linux kernel申請設備號<ul>
+<li>給定次設備號和名字，告訴linux要申請幾個設備號，讓linux直接幫你尋找主設備號</li>
+</ul>
+</li>
+<li><code>register_chrdev_region()</code>: 給定主設備號去向linux申請<ul>
+<li>給定次設備號為0的devid，讓linux自己去找該主設備下可使用的次設備號</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">0</span><br><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* fs/char_dev.c */</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">alloc_chrdev_region</span><span class="params">(<span class="keyword">dev_t</span> *dev, <span class="keyword">unsigned</span> baseminor, <span class="keyword">unsigned</span> count,</span></span></span><br><span class="line"><span class="function"><span class="params">			<span class="keyword">const</span> <span class="keyword">char</span> *name)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">register_chrdev_region</span><span class="params">(<span class="keyword">dev_t</span> from, <span class="keyword">unsigned</span> count, <span class="keyword">const</span> <span class="keyword">char</span> *name)</span></span>;</span><br></pre></td></tr></table></figure>
+<p>不論是哪種申請方式，釋放時都是call <code>unregister_chrdev_region()</code></p>
+            </div>
+            <div class="post-read-more">
+                <a href="/posts/edcd30e6/">繼續閱讀</a>
+            </div>       
+
+            <!-- </a> -->
+            
+                <p class="post-meta">
+                    Posted by John on
+                    2021-03-29
+                </p>
+            
+
+        </div>
+        <hr>
+
+    
+
+    
+
+        <div class="post-preview">
+            <!-- <a href="/posts/638f6f64/"> -->
+            <h2 class="post-title">
+                [讀書心得]跟著柴鼠學FQ 做自己的提款機
+            </h2>
+            <h3 class="post-subtitle">
+                
+            </h3>
+            <div class="post-content-preview">
+                <h2 id="書籍資訊"><a href="#書籍資訊" class="headerlink" title="書籍資訊"></a>書籍資訊</h2><ul>
+<li>書名: 跟著柴鼠學FQ 做自己的提款機</li>
+<li>作者: 柴鼠兄弟  </li>
+<li>出版日期: Mar 26, 2020</li>
+<li>博客來網址: <a href="https://www.books.com.tw/exep/assp.php/john85051232/products/0010852671?utm_source=john85051232&amp;utm_medium=ap-books&amp;utm_content=recommend&amp;utm_campaign=ap-202103" target="_blank" rel="noopener">跟著柴鼠學FQ 做自己的提款機</a></li>
+</ul>
+<p><img src="https://res.cloudinary.com/meet-on-friday/image/upload/c_scale,w_400/v1616850636/blog_posts_2021/2021_03/E605f2eb43b5ef415191559-0_quus4c.jpg" alt=""></p>
+<p>(本文是【跟著柴鼠學FQ 做自己的提款機】的讀書心得和書籍導讀，如果你看完覺得這本書對你是有幫助的，歡迎<a href="https://www.books.com.tw/exep/assp.php/john85051232/products/0010852671?utm_source=john85051232&amp;utm_medium=ap-books&amp;utm_content=recommend&amp;utm_campaign=ap-202103" target="_blank" rel="noopener">購買原作</a>支持作者！)</p>
+<blockquote>
+<p>你可以把這本書當成是你重獲自由的「投資工具使用說明書」，FQ就像提款機的零件，只有親手組裝自己的提款機，才能成為你收入階層的跳板，讓資產向上提升──<br>．低薪族，靠理財加薪<br>．月光族，存到第一桶金<br>．小資族，變優渥</p>
+<p>本書你將學到：<br>．從0到1最難，喚醒投資理財為什麼重要（讓理財變積極）<br>．把財經術語化繁為簡，讓你成為理財國國民（看懂財經新聞、財報，不再被騙）<br>．投資前，先理財（記帳不再半途而廢，成為好習慣）<br>．破解理財迷思，不再讓錢縮水（抓出理財工具的缺陷BUG，防止隱性虧錢）<br>．建構被動收入的機器（懂得各種被動收入的工具、概念）<br>．比賺錢更困難的事（風險控管，不讓投資成果一夕烏有）</p>
+</blockquote>
+            </div>
+            <div class="post-read-more">
+                <a href="/posts/638f6f64/">繼續閱讀</a>
+            </div>       
+
+            <!-- </a> -->
+            
+                <p class="post-meta">
+                    Posted by John on
+                    2021-03-27
+                </p>
+            
+
+        </div>
+        <hr>
+
+    
+
+    
+
+        <div class="post-preview">
+            <!-- <a href="/posts/5cb74faa/"> -->
+            <h2 class="post-title">
+                令人搖頭的羅技產品品質? G413鍵盤出保紀錄(2021年)
+            </h2>
+            <h3 class="post-subtitle">
+                
+            </h3>
+            <div class="post-content-preview">
+                <p>這篇文是講述自己對於羅技產品的親身體驗以及產品故障出保過程。</p>
+<p><img src="https://res.cloudinary.com/meet-on-friday/image/upload/v1615392305/blog_posts_2021/2021_03/logitech-logo_nou3yj.png" alt=""></p>
+<h2 id="G413機械鍵盤使用體驗"><a href="#G413機械鍵盤使用體驗" class="headerlink" title="G413機械鍵盤使用體驗"></a>G413機械鍵盤使用體驗</h2><p>羅技產品在市場上一直深受電競玩家的喜愛，想當初第一次接觸羅技產品是在研究所的時候。</p>
+<p>當初在參加清交大合辦的”梅竹黑客松”的時候，羅技作為出題者也有參與，並且給予參加羅技組的參賽者”競賽時間內可免費體驗羅技系列產品”的福利，也因此當時在參加競賽的時候體驗到了羅技的鍵盤、滑鼠、攝影機，當初使用的鍵盤印象中就是<a href="https://www.logitechg.com/zh-tw/products/gaming-keyboards/g413-mechanical-gaming-keyboard.920-008315.html" target="_blank" rel="noopener">G413</a></p>
+<p><img src="https://res.cloudinary.com/meet-on-friday/image/upload/c_scale,w_500/v1615393006/blog_posts_2021/2021_03/g413_avbail.png" alt=""></p>
+<p>G413是羅技的機械式鍵盤，採用羅技的Romer-G鍵軸</p>
+<p><img src="https://res.cloudinary.com/meet-on-friday/image/upload/c_scale,w_700/v1615391774/blog_posts_2021/2021_03/%E6%93%B7%E5%8F%96_fwz6p8.png" alt=""></p>
+<blockquote>
+<p>Romer-G™ 觸感機械軸具有 1.5 公釐的短距觸發行程，這表示速度—11.5 公釐相對於標準機械軸的 2.0 公釐觸發行程。比競爭對手的標準機械軸速度快 25%。完美結合了高速、精確與安靜效能，Romer-G 觸感軸在保持清晰觸發的同時也提供可信任的觸發時機。</p>
+</blockquote>
+<p>(以上介紹擷取自<a href="https://www.logitechg.com/zh-tw/products/gaming-keyboards/g413-mechanical-gaming-keyboard.920-008315.html" target="_blank" rel="noopener">羅技官網</a>)</p>
+            </div>
+            <div class="post-read-more">
+                <a href="/posts/5cb74faa/">繼續閱讀</a>
+            </div>       
+
+            <!-- </a> -->
+            
+                <p class="post-meta">
+                    Posted by John on
+                    2021-03-11
+                </p>
+            
+
+        </div>
+        <hr>
+
+    
+
+    
+
+        <div class="post-preview">
+            <!-- <a href="/posts/dedf856f/"> -->
+            <h2 class="post-title">
+                [讀書心得]35歲，為什麼還沒被重用？
+            </h2>
+            <h3 class="post-subtitle">
+                
+            </h3>
+            <div class="post-content-preview">
+                <h2 id="書籍資訊"><a href="#書籍資訊" class="headerlink" title="書籍資訊"></a>書籍資訊</h2><ul>
+<li>書名: 35歲，為什麼還沒被重用</li>
+<li>作者:  薛明玲口述、賴燕芳 採訪撰文</li>
+<li>出版日期: Jan 12, 2014</li>
+<li>金石堂網址: <a href="https://www.kingstone.com.tw/basic/2014941292156/" target="_blank" rel="noopener">35歲，為什麼還沒被重用</a></li>
+</ul>
+<p><img src="https://res.cloudinary.com/meet-on-friday/image/upload/c_scale,w_400/v1615226210/blog_posts_2021/2021_03/E6046647e3ce0f716626826-0_fiwdki.png" alt=""></p>
+<p>(本文是【35歲，為什麼還沒被重用】的讀書心得)</p>
+<blockquote>
+<p>是什麼關鍵，讓鴻海、台達電、統一、旺旺成為簽證客戶？<br>是什麼原因，讓近百位合夥人願意提早將退休金全部結算？<br>一本值得反覆咀嚼的好書，告訴你如何創造自己價值、如何找出成功方法，如何走出數字迷思。</p>
+</blockquote>
+<p>薛明玲，曾任全球四大會計師事務所之一的「資誠聯合會計師事務所」所長，也是台灣第一個和企業老闆並坐股東會的會計師。事實上，自稱「老薛」的他，是一個沒有顯赫家世、求學不順利、在台中鄉下長大的孩子。</p>
+<p>「把每一件經過手邊的事情做到最好」，是薛明玲馳騁職場的成功心法。他曾主動將整套稅務法規整理出兩頁的「實用密笈」送給客戶，迅速建立起專業知名 度。在股東會現場，他會準備多張試算表，提供企業主隨機應變……他發現，成功企業家最在意的，不僅是財報數字正不正確，更強調邏輯思維！</p>
+<p>他說，35歲是人生的分水嶺，心態也轉趨成熟，這時若有成功者指引方向、提供經驗，就能少走冤枉路。因此，薛明玲提供自己30多年的「職場金三角」工 作學，也分享他與鄭崇華、郭台銘、杜英宗、戴勝益等企業家領袖，深度接觸的心得，給你再出發的勇氣，縱使35歲之後，機會依舊等著你。<br>
+            </div>
+            <div class="post-read-more">
+                <a href="/posts/dedf856f/">繼續閱讀</a>
+            </div>       
+
+            <!-- </a> -->
+            
+                <p class="post-meta">
+                    Posted by John on
+                    2021-03-09
+                </p>
+            
+
+        </div>
+        <hr>
+
+    
+
+    
+
+        <div class="post-preview">
+            <!-- <a href="/posts/9aca0070/"> -->
+            <h2 class="post-title">
+                [課程筆記]Linux Driver正點原子課程筆記4 - Led燈驅動實驗
+            </h2>
+            <h3 class="post-subtitle">
+                
+            </h3>
+            <div class="post-content-preview">
+                <p>〖想觀看更多課程筆記，至<a href="https://meetonfriday.com/posts/85f1c2a/">[課程筆記]課程筆記系列總覽</a>可以看到目前已發布的所有文章！〗</p>
+<h2 id="Course-4-Led燈驅動實驗"><a href="#Course-4-Led燈驅動實驗" class="headerlink" title="Course 4 - Led燈驅動實驗"></a>Course 4 - Led燈驅動實驗</h2><p>嘗試透過driver去操作led register來達到led開關的實驗。</p>
+<h3 id="地址映射"><a href="#地址映射" class="headerlink" title="地址映射"></a>地址映射</h3><p>Linux下<strong>無法直接對physical address做讀寫操作</strong>，因為linux會enable <strong>MMU(Memory Manage Unit)</strong>，MMU的功能為</p>
+<ol>
+<li>virtual address (VA) &lt;-&gt; physical address (PA)的mapping</li>
+<li>內存保護、register的訪問權限</li>
+</ol>
+<p>對於32 bit的processor來說，virtual address的range是2^32=4GB。假設開發版有512MB的physical address，則MMU可以將512MB映射到4GB的虛擬空間。</p>
+<ul>
+<li>但PA有512MB，VA有4GB，要如何mapping? 這邊先不討論，有興趣的可以去看MMU的詳細介紹</li>
+</ul>
+<p><img src="https://res.cloudinary.com/meet-on-friday/image/upload/c_scale,w_600/v1614705021/blog_posts_2021/2021_03/BTMfx9z_zdahbi.png" alt=""></p>
+            </div>
+            <div class="post-read-more">
+                <a href="/posts/9aca0070/">繼續閱讀</a>
+            </div>       
+
+            <!-- </a> -->
+            
+                <p class="post-meta">
+                    Posted by John on
+                    2021-03-03
+                </p>
+            
+
+        </div>
+        <hr>
+
+    
+
+
+<!-- Pager -->
+<ul class="pager">
+    
+    
+        <li class="next">
+            <a href="/page/2/">Older Posts &rarr;</a>
+        </li>
+    
+</ul>
+
+
+
+            </div>
+
+    <!-- Sidebar Container -->
+            <div class="
+                col-lg-3 col-lg-offset-0
+                col-md-3 col-md-offset-0
+                col-sm-12
+                col-xs-12
+                sidebar-container
+            ">
+                
+    
+<!--
+<h5>SEARCH</h5>
+<div class="search-article" class="tags">
+	<input id="search-kw" type="text" name="search_article" placeholder="Enter keywords for search" />
+	<div class="search-img">
+		<img 
+			src="/img/search.png" 
+			alt="search" 
+			onMouseOver="this.src='/img/search-focus.png'" 
+			onMouseOut="this.src='/img/search.png'"/>
+	</div>
+</div>-->
+
+<h5>SEARCH</h5>
+<div id="site_search">
+	<div class="form-group">
+		<input type="text" id="local-search-input" name="q" results="0" placeholder="search" class="st-search-input st-default-search-input form-control"/>
+	</div>  
+	<div id="local-search-result"></div>
+</div>
+
+    <hr>
+
+    <!-- Short About -->
+<section class="visible-md visible-lg">
+    <h5>ABOUT ME</h5>
+    <div class="short-about">
+
+        
+            <img id = "avatar_pic" src="/img/avatar.jpg" />
+        
+
+        
+            <p>Just John, 就是醬</p>
+        
+
+        <!-- SNS Link -->
+        <ul class="list-inline">
+            
+                <li>
+                    <a target="_blank"  href="https://github.com/john850512">
+                        <span class="fa-stack fa-lg">
+                            <i class="fa fa-circle fa-stack-2x"></i>
+                            <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                        </span>
+                    </a>
+                </li>
+            
+
+            
+                <li>
+                    <a target="_blank"  href="https://www.linkedin.com/in/john85051232">
+                        <span class="fa-stack fa-lg">
+                            <i class="fa fa-circle fa-stack-2x"></i>
+                            <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
+                        </span>
+                    </a>
+                </li>
+            
+
+            
+                <li>
+                    <a target="_blank"  href="https://www.facebook.com/meetonfridayyy">
+                        <span class="fa-stack fa-lg">
+                            <i class="fa fa-circle fa-stack-2x"></i>
+                            <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                        </span>
+                    </a>
+                </li>
+            
+
+            
+                <li>
+                    <a target="_blank"  href="https://mail.google.com/mail/?view=cm&fs=1&to=john85051232@gmail.com">
+                        <span class="fa-stack fa-lg">
+                            <i class="fa fa-circle fa-stack-2x"></i>
+                            <i class="fa fa-envelope-o fa-stack-1x fa-inverse"></i>
+                        </span>
+                    </a>
+                </li>
+            
+            
+            
+
+            
+
+            
+
+            
+
+        </ul>
+    </div>
+</section>
+
+    <hr>
+
+    <!-- Categories -->
+
+    <h5>categories</h5>
+    <div class="widget">
+      <ul>
+        
+          <!-- 【論文速速讀】 -->
+          
+            <li><a href="/categories/#【論文速速讀】">【論文速速讀】(23)</a></li>
+           
+        
+          <!-- 【課程筆記】 -->
+          
+            <li><a href="/categories/#【課程筆記】">【課程筆記】(5)</a></li>
+           
+        
+          <!-- 【Linux-Kernel慢慢學】 -->
+          
+            <li><a href="/categories/#【Linux Kernel慢慢學】">【Linux Kernel慢慢學】(8)</a></li>
+           
+        
+          <!-- study -->
+          
+            <li><a href="/categories/#study">study(17)</a></li>
+           
+        
+          <!-- reading -->
+          
+            <li><a href="/categories/#reading">reading(3)</a></li>
+           
+        
+          <!-- programming -->
+          
+            <li><a href="/categories/#programming">programming(68)</a></li>
+           
+        
+          <!-- daily -->
+          
+            <li><a href="/categories/#daily">daily(47)</a></li>
+           
+        
+      </ul> 
+    </div>
+
+
+    <hr>
+
+    <!-- Featured Tags -->
+
+<section>
+    <!-- no hr -->
+    <h5>FEATURED TAGS</h5>
+    <div class="tags">
+        
+            
+            <a href="/tags/#c" title="c" rel="40">c</a>
+            
+        
+            
+            <a href="/tags/#c++" title="c++" rel="23">c++</a>
+            
+        
+            
+            <a href="/tags/#uva" title="uva" rel="16">uva</a>
+            
+        
+            
+            <a href="/tags/#conference" title="conference" rel="4">conference</a>
+            
+        
+            
+            <a href="/tags/#ncpc" title="ncpc" rel="4">ncpc</a>
+            
+        
+            
+            <a href="/tags/#competitive programming" title="competitive programming" rel="4">competitive programming</a>
+            
+        
+            
+            <a href="/tags/#competition" title="competition" rel="4">competition</a>
+            
+        
+            
+        
+            
+        
+            
+            <a href="/tags/#recommendation" title="recommendation" rel="6">recommendation</a>
+            
+        
+            
+            <a href="/tags/#c#" title="c#" rel="4">c#</a>
+            
+        
+            
+            <a href="/tags/#unity" title="unity" rel="5">unity</a>
+            
+        
+            
+        
+            
+        
+            
+            <a href="/tags/#travel" title="travel" rel="5">travel</a>
+            
+        
+            
+        
+            
+        
+            
+            <a href="/tags/#deep learning" title="deep learning" rel="51">deep learning</a>
+            
+        
+            
+            <a href="/tags/#machine learning" title="machine learning" rel="14">machine learning</a>
+            
+        
+            
+        
+            
+            <a href="/tags/#python" title="python" rel="28">python</a>
+            
+        
+            
+        
+            
+            <a href="/tags/#pytorch" title="pytorch" rel="8">pytorch</a>
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+            <a href="/tags/#linux kernel" title="linux kernel" rel="15">linux kernel</a>
+            
+        
+            
+        
+            
+            <a href="/tags/#paper" title="paper" rel="23">paper</a>
+            
+        
+            
+        
+            
+        
+            
+            <a href="/tags/#study" title="study" rel="5">study</a>
+            
+        
+            
+        
+    </div>
+</section>
+
+    <hr>
+
+    
+  <h5>VISITORS</h5>
+  <div class="widget">
+    <span>
+    	Viewed <b><i><span id="busuanzi_value_site_pv"><i class="fa fa-spinner fa-spin"></i></span></i></b> Times
+	</span>
+	<br/>
+	<span>
+		<b><i><span id="busuanzi_value_site_uv"><i class="fa fa-spinner fa-spin"></i></span></i></b> Visitors In Total
+	</span>
+  </div>
+
+    <hr>
+
+    
+  <h5>RECENT POSTS</h5>
+  <div class="widget">
+    <ul>
+      
+        <li>
+          <a href="/posts/666bbf67/">Google從Android 15 (Android-V)開始將淘汰NNAPI改推LiteRT (TensorFlow Lite)</a>
+        </li>
+      
+        <li>
+          <a href="/posts/edcd30e6/">[課程筆記]Linux Driver正點原子課程筆記5 - 新字元設備驅動實驗</a>
+        </li>
+      
+        <li>
+          <a href="/posts/638f6f64/">[讀書心得]跟著柴鼠學FQ 做自己的提款機</a>
+        </li>
+      
+        <li>
+          <a href="/posts/5cb74faa/">令人搖頭的羅技產品品質? G413鍵盤出保紀錄(2021年)</a>
+        </li>
+      
+        <li>
+          <a href="/posts/dedf856f/">[讀書心得]35歲，為什麼還沒被重用？</a>
+        </li>
+      
+    </ul>
+  </div>
+
+    <hr>
+
+    
+    <h5>ARCHIVES</h5>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/#2025">2025</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/#2021">2021</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/#2020">2020</a><span class="archive-list-count">61</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/#2019">2019</a><span class="archive-list-count">23</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/#2018">2018</a><span class="archive-list-count">24</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/#2017">2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/#2016">2016</a><span class="archive-list-count">37</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/#2015">2015</a><span class="archive-list-count">6</span></li></ul>
+    </div>
+
+
+    <hr>
+
+
+            </div>
+
+        
+    </div>
+</div>
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/john850512">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://www.linkedin.com/in/john85051232">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                
+                    <li>
+                        <a target="_blank" href="https://www.facebook.com/meetonfridayyy">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+                
+                    <li>
+                        <a target="_blank"  href="https://mail.google.com/mail/?view=cm&fs=1&to=john85051232@gmail.com">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-envelope-o fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+                
+                
+
+                
+
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; John 2025 
+                    <br>
+                    Powered by 
+                    <a href="https://github.com/john850512/hexo-theme-jiji" target="_blank" rel="noopener">
+                        <i>hexo-theme-jiji</i>
+                    </a> | 
+                    <iframe name="star" style="margin-left: 2px; margin-bottom:-5px;" frameborder="0" scrolling="0"
+                        width="100px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=john850512&repo=hexo-theme-jiji&type=star&count=true">
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+
+</footer>
+
+<!-- jQuery -->
+
+<script src="/js/jquery.min.js"></script>
+
+
+<!-- Bootstrap Core JavaScript -->
+
+<script src="/js/bootstrap.min.js"></script>
+
+
+<!-- Custom Theme JavaScript -->
+
+<script src="/js/hux-blog.min.js"></script>
+
+
+<!-- Search -->
+
+<script src="/js/search.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("https://meetonfriday.com/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+<!-- Search -->
+
+    <script type="text/javascript">      
+        var search_path = "search.xml";
+        if (search_path.length == 0) {
+            search_path = "search.xml";
+        }
+    var path = "/" + search_path;
+    searchFunc(path, 'local-search-input', 'local-search-result');
+    </script>
+
+
+<!-- busuanzi -->
+<!--<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>-->
+<script async src="//cdn.jsdelivr.net/npm/busuanzi@2.3.0"></script>
+
+
+
+
+	<a id="rocket" href="#top" class=""></a>
+	<script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script>
+    <script type="text/javascript" src="/js/toc.js?v=1.0.0" async=""></script>
+
+    
+        <!-- background effects line -->
+        
+        <!-- background effects end -->
+    
+    
+    <!-- background animation-->>
+    <!--<script size="50" alpha='0.3' zIndex="-999" src="/js/ribbonStatic.js"></script>-->
+    
+        <script src="/js/ribbonDynamic.js"></script>
+    
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script>
+            window.imageLazyLoadSetting = {
+                isSPA: false,
+                processImages: null,
+            };
+        </script><script>window.addEventListener("load",function(){var t=/\.(gif|jpg|jpeg|tiff|png)$/i,r=/^data:image\/[a-z]+;base64,/;Array.prototype.slice.call(document.querySelectorAll("img[data-original]")).forEach(function(a){var e=a.parentNode;"A"===e.tagName&&(e.href.match(t)||e.href.match(r))&&(e.href=a.dataset.original)})});</script><script>!function(n){n.imageLazyLoadSetting.processImages=o;var i=n.imageLazyLoadSetting.isSPA,r=Array.prototype.slice.call(document.querySelectorAll("img[data-original]"));function o(){i&&(r=Array.prototype.slice.call(document.querySelectorAll("img[data-original]")));for(var t,e,a=0;a<r.length;a++)t=r[a],0<=(e=t.getBoundingClientRect()).bottom&&0<=e.left&&e.top<=(n.innerHeight||document.documentElement.clientHeight)&&function(){var t,e,n,i,o=r[a];t=o,e=function(){r=r.filter(function(t){return o!==t})},n=new Image,i=t.getAttribute("data-original"),n.onload=function(){t.src=i,e&&e()},n.src=i}()}o(),n.addEventListener("scroll",function(){var t,e;t=o,e=n,clearTimeout(t.tId),t.tId=setTimeout(function(){t.call(e)},500)})}(this);</script></body>
+
+</html>

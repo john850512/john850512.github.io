@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<!-- Head tag -->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="baidu-site-verification" content="093lY4ziMu" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="keyword"  content="programming, study, daily, entertainment">
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="星期五。見面">
+    <meta property="og:locale" content="zh-TW" />
+    
+    <meta property="og:title" content="[論文速速讀]End-to-end object detection with Transformers" />
+    
+    
+    <meta property="og:description" content="DETR，是DEtection TRansformer的縮寫，FB首度將NLP的transformer用在CV的object detection上，還不用做NMS。 FB真滴神。已經沒有任何東西可以阻擋attention了...論文網址: https://arxiv.org/pdf/2005.12872.pdf" />
+    <meta name="description" content="DETR，是DEtection TRansformer的縮寫，FB首度將NLP的transformer用在CV的object detection上，還不用做NMS。 FB真滴神。已經沒有任何東西可以阻擋attention了...論文網址: https://arxiv.org/pdf/2005.12872.pdf">
+    
+    
+    <meta property="og:image" content="https://res.cloudinary.com/meet-on-friday/image/upload/v1591122997/blog_posts/01_wiat1e.png" />
+    
+
+    <link rel="shortcut icon" href="/img/avatar.jpg">
+    <!-- Place this tag in your head or just before your close body tag. -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <!--<link href='http://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>-->
+    <title>
+        
+          [論文速速讀]End-to-end object detection with Transformers - MeetonFriday
+        
+    </title>
+    <!-- canonical -->
+    
+    
+      <link rel="canonical" href="https://meetonfriday.com/posts/2e56b772/">
+    
+
+    <!-- Bootstrap Core CSS -->
+    
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+
+
+    <!-- Custom CSS --> 
+    
+<link rel="stylesheet" href="/css/dusign-dark.css">
+
+    
+<link rel="stylesheet" href="/css/dusign-common-dark.css">
+
+    <!-- 
+<link rel="stylesheet" href="/css/font-awesome.css">
+ -->
+    
+<link rel="stylesheet" href="/css/toc.css">
+
+
+    
+    <!-- Pygments Highlight CSS -->
+    
+<link rel="stylesheet" href="/css/highlight.css">
+
+
+    
+<link rel="stylesheet" href="/css/widget.css">
+
+
+    
+<link rel="stylesheet" href="/css/rocket.css">
+
+
+    
+<link rel="stylesheet" href="/css/signature.css">
+
+
+    
+<link rel="stylesheet" href="/css/fonts.googleapis.css">
+
+
+    <!-- <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.3.0/css/font-awesome.min.css">-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.min.css">
+    
+    <!-- Google Analytics -->
+    
+      <!-- <script>
+          // dynamic User by Hux
+          var _gaId = 'UA-163346001-1';
+          var _gaDomain = 'auto';
+      
+          // Originial
+          (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+          (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+          })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+      
+          ga('create', _gaId, _gaDomain);
+          ga('send', 'pageview');
+      </script> -->
+      
+      <!-- Global site tag (gtag.js) - Google Analytics -->
+      <script async src="https://www.googletagmanager.com/gtag/js?id=UA-163346001-1"></script>
+      <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+      
+        gtag('config', 'UA-163346001-1');
+      </script>
+      
+    <!-- google ad sense-->
+    <script data-ad-client="ca-pub-9561340457908416" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<meta name="generator" content="Hexo 4.2.1"><link rel="alternate" href="/atom.xml" title="星期五。見面" type="application/atom+xml">
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+	<!-- Modified by Yu-Hsuan Yen -->
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        
+            
+                background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.5)), url('/img/header_img/header-bg.jpg')
+            
+        
+    }
+    
+</style>
+
+<header class="intro-header" >
+    <!-- Signature -->
+    <div id="signature">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                
+                    <div class="post-heading">
+                        <div class="tags">
+                            
+                              <a class="tag" href="/tags/#deep learning" title="deep learning">deep learning</a>
+                            
+                              <a class="tag" href="/tags/#paper" title="paper">paper</a>
+                            
+                        </div>
+                        <h1>[論文速速讀]End-to-end object detection with Transformers</h1>
+                        <h2 class="subheading"></h2>
+                        <span class="meta">
+                            Posted by John on
+                            2020-06-04
+                        </span>
+
+                        
+                            <div class="blank_box"></div>
+                            <span class="meta">
+                                Words <span class="post-count">2.8k</span> and
+                                Reading Time <span class="post-count">12</span> Minutes
+                            </span>
+                            <div class="blank_box"></div>
+                            <!-- 不蒜子统计 start -->
+                            <span class="meta">
+                                Viewed <span id="busuanzi_value_page_pv"><i class="fa fa-spinner fa-spin"></i></span> Times
+                            </span>
+                            <!-- 不蒜子统计 end -->
+                        
+
+                    </div>
+                
+
+                </div>
+            </div>
+        </div>      
+    </div>
+
+    
+        
+            <div class="waveWrapper">
+                <div class="wave wave_before" style="background-image: url('/img/wave-dark.png')"></div>
+                <div class="wave wave_after" style="background-image: url('/img/wave-dark.png')"></div>
+            </div>
+        
+    
+</header>
+
+	
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">星期五。見面</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archive/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/categories/">Categories</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/reading/">Reading</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+    
+    <!-- Main Content -->
+    <!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+            <!-- Post Container -->
+
+    
+        
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+        
+    
+
+                <p>〖想觀看更多中文論文導讀，至<a href="https://meetonfriday.com/posts/aa55d3f9/">[論文速速讀]系列文章介紹</a>可以看到目前已發布的所有文章！〗</p>
+<p>DETR，是DEtection TRansformer的縮寫，FB首度將NLP的transformer用在CV的object detection上，還不用做NMS。<br>FB真滴神。已經沒有任何東西可以阻擋attention了…</p>
+<p>論文網址: <a href="https://arxiv.org/pdf/2005.12872.pdf" target="_blank" rel="noopener">https://arxiv.org/pdf/2005.12872.pdf</a></p>
+<h2 id="Abstract"><a href="#Abstract" class="headerlink" title="Abstract"></a>Abstract</h2><blockquote>
+<p>We present a new method that views object detection as a direct set prediction problem. Our approach streamlines the detection pipeline, effectively removing the need for many hand-designed components like a non-maximum suppression procedure or anchor generation that explicitly encode our prior knowledge about the task.</p>
+</blockquote>
+<p>將object detection視作一個direct set prediction problem。並且精簡了很多object detection上的額外操作(non-maximum suppression, anchor generation)</p>
+<blockquote>
+<p>The main ingredients of the new framework, called DEtection TRansformer or<br>DETR, are a set-based global loss that forces unique predictions via bipartite matching, and a transformer encoder-decoder architecture.</p>
+</blockquote>
+<p>這段提到了這個架構的重點在於</p>
+<ol>
+<li>set-based global loss that forces unique predictions via bipartite matching，也就是<strong>透過二分匹配的一個global loss</strong></li>
+<li><strong>transformer的encoder-decoder架構</strong></li>
+</ol>
+<a id="more"></a>
+<blockquote>
+<p>Given a fixed small set of learned object queries, DETR reasons about the relations of the objects and the global image context to directly output the final set of predictions in parallel. The new model is conceptually simple and does not require a specialized library, unlike many other modern detectors. DETR demonstrates accuracy and run-time performance on par with the well-established and highly-optimized Faster RCNN baseline on the challenging COCO object detection dataset.</p>
+</blockquote>
+<p>透過transformer使得DETR可以考慮object跟整體image之間的關係，然後去預測最後的結果。並且不用額外的操作(這很重要，在objection detection上有太多繁瑣的額外工作要處理，這些在DETR上都不用做了!!)，最後他們的結果比Faster RCNN好。儘管Faster RCNN已經不是最新的方法，現在有很多方法都超越了，不過你能想像這是第一次把transformer應用在CV領域上，這是一件多麼令人興奮的事情!</p>
+<p>FB也釋出了他們的code: <a href="https://github.com/facebookresearch/detr" target="_blank" rel="noopener">github</a></p>
+<h2 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h2><blockquote>
+<p>We streamline the training pipeline by viewing object detection as a direct set prediction problem. We adopt an encoder-decoder architecture based on transformers, a popular architecture for sequence predictionThe self-attention mechanisms of transformers, which explicitly model all pairwise interactions between elements in a sequence, make these architectures particularly suitable for specific constraints of set prediction such as removing duplicate predictions.</p>
+</blockquote>
+<p>將object detection視為一個set prediction的問題。使用transformer的encoder-decoder架構</p>
+<p>因為transformer的self-attention機制可以對element之間的交互關係來進行建模，這個性質在一些specific constraints of set prediction上的應用非常適合，例如刪除重複的predictions</p>
+<blockquote>
+<p>Our DEtection TRansformer (DETR, see Figure 1) predicts all objects at once, and is trained end-to-end with a set loss function which performs bipartite matching between predicted and ground-truth objects.</p>
+</blockquote>
+<p>DETR可以一次就預測出所有物體，並且他是一個end-to-end的架構，搭配了set loss function來針對prediction和ground truth進行二分匹配(bipartite matching)，下面是架構圖，對CNN跟transformer(不懂的可以去看我寫的transformer的論文介紹<a href="https://meetonfriday.com/posts/5839a8bf/">論文速速讀: Attention Is All You Need</a>)有一些概念的並不難理解，也就是:</p>
+<ol>
+<li>圖片經過CNN後，把學到的features丟到transformer(怎麼丟也是一門學問，後續會說)，</li>
+<li>然後transformer透過decoder來predict set of objects，每個predict都包含了類別跟bounding box，</li>
+<li>然後這個prediction會跟ground truth來計算loss</li>
+</ol>
+<p>所以重點就在於<strong>bipartite matching loss</strong>了<br><img src="https://meetonfriday.com/img/lazy-loading-animation.gif" data-original="https://res.cloudinary.com/meet-on-friday/image/upload/v1591122997/blog_posts/01_wiat1e.png" alt=""></p>
+<blockquote>
+<p>Our matching loss function uniquely assigns a prediction to a ground truth object, and is invariant to a permutation of predicted objects, so we can emit them in parallel</p>
+</blockquote>
+<p>透過這個matching loss function對prediction和ground truth object進行匹配，並且在預測物件上的排列順序是無關的，所以可以平行處理</p>
+<blockquote>
+<p>Our experiments show that our newmodel achieves comparable performances. More precisely, DETR demonstrates significantly better performance on large objects, a result likely enabled by the non-local computations of the transformer</p>
+</blockquote>
+<p>他們發現DETR在較大物件上有更好的performance，可能是因為transformer的non-local computations所造成(也就是說他可以關注大範圍的information)</p>
+<h2 id="Related-work"><a href="#Related-work" class="headerlink" title="Related work"></a>Related work</h2><p>DETR使用了下列多個技術:</p>
+<ul>
+<li>bipartite matching losses for set prediction</li>
+<li>encoder-decoder architectures based on the transformer</li>
+<li>parallel decoding</li>
+<li>object detection methods.</li>
+</ul>
+<h3 id="Set-Prediction"><a href="#Set-Prediction" class="headerlink" title="Set Prediction"></a>Set Prediction</h3><blockquote>
+<p>Most current detectors use postprocessings such as<br>non-maximal suppression to address this issue, but direct set prediction are postprocessing-free. They need global inference schemes that model interactions between all predicted elements to avoid redundancy</p>
+</blockquote>
+<p>object detection很大的一個問題就是要如何去解決重複的prediction，一個方法是透過non-maximal suppression(NMS)的後處理來刪除重複的prediction。但是這個問題在set prediction上則不用這樣做，他們可以透過對predicted elements之間的關係進行inference來解決這個issue。</p>
+<blockquote>
+<p>　The usual solution is to design a loss based on the Hungarian algorithm, to find a bipartite matching between ground-truth and prediction.<br>This enforces permutation-invariance, and guarantees that each target element has a unique match. We follow the bipartite matching loss approach.</p>
+</blockquote>
+<p><strong>(上面這一段英文是本篇重點)，透過匈牙利算法(Hungarian algorithm)去一對一的匹配prediction跟ground truth，並且這個結果預位置無關(permutation-invariance)，因為不管prediction在set的哪個位置上，都會透過algo找到與他最相似的ground。</strong></p>
+<p>此外，這一段也講到傳統在做set prediction時，會使用RNN，不過這裡使用的是transformer。合理，RNN系列本來就可以被attention替換掉，看看NLP近年的研究，哪一個RNN成果沒被attention洗過一輪的?</p>
+<h3 id="Transformers-and-Parallel-Decoding"><a href="#Transformers-and-Parallel-Decoding" class="headerlink" title="Transformers and Parallel Decoding"></a>Transformers and Parallel Decoding</h3><p>介紹Transformer，不懂的可以去看<a href="https://meetonfriday.com/posts/5839a8bf/">論文速速讀: Attention Is All You Need</a></p>
+<h3 id="Object-detection"><a href="#Object-detection" class="headerlink" title="Object detection"></a>Object detection</h3><p>跳過，覺得這裡比較不重要，有興趣自己去細看</p>
+<h2 id="The-DETR-model"><a href="#The-DETR-model" class="headerlink" title="The DETR model"></a>The DETR model</h2><blockquote>
+<p>Two ingredients are essential for direct set predictions in detection:<br>(1) a set prediction loss that forces unique matching between predicted and ground truth boxes;<br>(2) an architecture that predicts (in a single pass) a set of objects and models their relation.<br>We describe our architecture in detail in Figure 2.</p>
+</blockquote>
+<p>DETR的兩個重點:</p>
+<ol>
+<li>一個set prediction loss來評估prediction跟ground truth boxes對應關係的好壞，說白了就是前面說的Hungarian algorithm</li>
+<li>一個可以去預測一組objects的模型架構，說白了就是我大transformer+CNN</li>
+</ol>
+<h3 id="Object-detection-set-prediction-loss"><a href="#Object-detection-set-prediction-loss" class="headerlink" title="Object detection set prediction loss"></a>Object detection set prediction loss</h3><blockquote>
+<p>DETR infers a fixed-size set of N predictions, in a single pass through the decoder, where N is set to be significantly larger than the typical number of objects in an image. One of the main difficulties of training is to score predicted objects (class, position, size) with respect to the ground truth</p>
+</blockquote>
+<p>一開始會設置一個$N$，代表要預測幾個object，這個$N$要被設置好才好來進行prediction跟ground truth之間的匹配(通常會設一個普遍大於image所應該有的object數量)。接下來就是需要一個好的score function來評估匹配的prediction跟ground truth的好壞(object類別、位置跟大小)</p>
+<p>下面來介紹一下loss function，首先先定義一些notation:</p>
+<ol>
+<li>$y$是ground truth的objects set，$\hat{y} = { \hat{y_i} }^N_{i=1}$是predicts set</li>
+<li>這邊會假設$N$是一個大於image所應應有的object數量，不過這樣後續匹配的時候就<strong>必須對ground truth去做padding才能湊到N組object</strong>，pad的方式是使用用$\varnothing$(代表沒有object)來padding</li>
+<li>$y_i$是ground truth的一組object，每一個$y_i$包含了class labe和bounding box的四個值: $y_{i}=\left(c_{i}, b_{i}\right)$(center coordinates, width, height relative to image size)</li>
+<li>對於一個$y_i$，他對應到的prediction是$\hat{y}_{\sigma(i)}$<ul>
+<li>如何找到$y_i$應該對應哪一個$\hat{y}_{\sigma(i)}$? 用前面提到的匹配演算法Hungarian algorithm</li>
+</ul>
+</li>
+</ol>
+<p>於是loss function可以寫成:</p>
+<script type="math/tex; mode=display">\mathcal{L}_{\text {Hungarian }}(y, \hat{y})= \\ \sum_{i=1}^{N}\left[-\log \hat{p}_{\hat{\sigma}(i)}\left(c_{i}\right)+1_{\left\{c_{i} \neq \varnothing\right\}} \mathcal{L}_{\mathrm{box}}\left(b_{i}, \hat{b}_{\hat{\sigma}}(i)\right)\right]</script><ul>
+<li>$-\log \hat{p}_{\hat{\sigma}(i)}\left(c_{i}\right)$是<strong>希望predict分類分的越準越好</strong><ul>
+<li>$\hat{p}_{\sigma(i)}\left(c_{i}\right)$是$\sigma (i)$被預測維class $c_i$的機率</li>
+<li>當分的正確的時候(也就是機率=1)這一項就是0</li>
+</ul>
+</li>
+<li><script type="math/tex">1_{\left\{c\_{i} \neq \varnothing\right\}} \mathcal{L}_{\mathrm{box}}\left(b_{i}, \hat{b}_{\hat{\sigma}}(i)\right)</script>則是<strong>bounding box的重合度匹配</strong><ul>
+<li>使用了L1 loss和IOU(單純用L1 loss會造成這個loss過於依賴bounding box的大小，所以加上了IOU)</li>
+</ul>
+</li>
+</ul>
+<p>Box Loss詳細的公式如下所示:</p>
+<script type="math/tex; mode=display">\mathcal{L}_{\mathrm{box}}\left(b_{i}, \hat{b}_{\sigma(i)}\right)=\lambda_{\mathrm{iou}} \mathcal{L}_{\mathrm{iou}}\left(b_{i}, \hat{b}_{\sigma(i)}\right)+\lambda_{\mathrm{L} 1}\left\|b_{i}-\hat{b}_{\sigma(i)}\right\|_{1}</script><blockquote>
+<p>These two losses are normalized by the number of objects inside the batch</p>
+</blockquote>
+<p>最後這兩個loss會根據batch內objs的數量來做normalization</p>
+<h3 id="DETR-architecture"><a href="#DETR-architecture" class="headerlink" title="DETR architecture"></a>DETR architecture</h3><p>總體架構如下:<br><img src="https://meetonfriday.com/img/lazy-loading-animation.gif" data-original="https://res.cloudinary.com/meet-on-friday/image/upload/v1591126333/blog_posts/01_jy1rvs.png" alt=""></p>
+<ol>
+<li><strong>Backbone</strong>: 先跑CNN，然後把最後一層透過Conv1d降維，得到了feature map $z_{0} \in \mathbb{R}^{d \times H \times W}$，然後轉成$(d, HW)$的shape等下準備餵進transformer</li>
+<li><strong>Transformer encoder</strong>: 然後把1.的output丟到transformer encoder上做multi-head self-attention<ul>
+<li>transformer只在一開始加了<strong>position encoding</strong>，TEDR覺得一次不夠，每一個encoder block都給你加好加滿</li>
+</ul>
+</li>
+<li><strong>Transformer decoder</strong>: 在transformer decoder的部分，使用N個d維的vector來當作object query vector<ul>
+<li>decoder也給你每層加position encoding，值得一提的是這裡的position encoding是直接用query vector</li>
+</ul>
+</li>
+<li><strong>Prediction feed-forward networks (FFNs)</strong>: 最後接FFN(feed-forward networks)產生N個prediction，前面有提到這個N會比image object數量還來的大，所以會有一個特殊的class叫做<strong>no object</strong>，可以把他想成圖片的背景</li>
+<li><strong>Auxiliary decoding losses</strong>: 他們發現在decoder加上auxiliary losses能夠得到比較好的結果</li>
+</ol>
+<p>上面2和3的部分是transfromer，可以搭配下面架構圖一同服用<br><img src="https://meetonfriday.com/img/lazy-loading-animation.gif" data-original="https://res.cloudinary.com/meet-on-friday/image/upload/v1591208708/blog_posts/01_udbffn.png" alt=""></p>
+<h2 id="Experiments"><a href="#Experiments" class="headerlink" title="Experiments"></a>Experiments</h2><p>呼…講了這麼多，終於來到實驗章節了…我要準備加速了唷，請綁好安全帶…</p>
+<p>在COCO 2017 dataset上實驗，然後和Faster RCNN比。CNN架構採用了ResNet，同時比較了ResNet50/101和有沒有用dilation的結果</p>
+<p><img src="https://meetonfriday.com/img/lazy-loading-animation.gif" data-original="https://res.cloudinary.com/meet-on-friday/image/upload/v1591210153/blog_posts/%E6%93%B7%E5%8F%96_pm70fe.png" alt=""></p>
+<h3 id="Ablations"><a href="#Ablations" class="headerlink" title="Ablations"></a>Ablations</h3><blockquote>
+<p>In Figure 3, we visualize the attention maps of the last encoder layer of a trained model, focusing on a few points in the image. The encoder seems to separate instances already, which likely simplifies object extraction and localization for the decoder.</p>
+</blockquote>
+<p>首先來看encoder最後一層的attention maps拿來做visualization，可以看到<strong>其實encoder已經可以分辨出不同的instance了</strong>，作者認為這可以幫助減輕後面decoder的工作<br><img src="https://meetonfriday.com/img/lazy-loading-animation.gif" data-original="https://res.cloudinary.com/meet-on-friday/image/upload/v1591210343/blog_posts/01_zvxvt0.png" alt=""></p>
+<blockquote>
+<p>Similarly to visualizing encoder attention, we visualize decoder attentions in Fig. 6, coloring attention maps for each predicted object in different colors. We observe that decoder attention is fairly local, meaning that it mostly attends to object extremities such as heads or legs. We hypothesise that after the encoder has separated instances via global attention, the decoder only needs to attend to the extremities to extract the class and object boundaries.</p>
+</blockquote>
+<p>接下來看decoder最後一層的attention maps，可以發現此時的attention集中在一些動物的腳r、鼻子r、頭阿…他們認為，<strong>在decoder階段模型只需要去注意這些動物的肢體來決定他們的bounding box</strong><br><img src="https://meetonfriday.com/img/lazy-loading-animation.gif" data-original="https://res.cloudinary.com/meet-on-friday/image/upload/v1591210561/blog_posts/01_jx8gdo.png" alt=""></p>
+<h3 id="Analysis"><a href="#Analysis" class="headerlink" title="Analysis"></a>Analysis</h3><p>下面這張圖可視化了N=100中的20個object query和他們查到的bounding box。可以看到不同的query vector具有不同的分布(有些總是注重左下角，有些總是注重右邊…)，可以想成: 有N個不同的人用不同的角度來詢問模型<br><img src="https://meetonfriday.com/img/lazy-loading-animation.gif" data-original="https://res.cloudinary.com/meet-on-friday/image/upload/v1591211328/blog_posts/01_hmwkoa.png" alt=""></p>
+<p>然後來看一個例子:下面這張長頸鹿圖。他想說的是在training中沒有一張圖是同時有超過13個長頸鹿的，但是在predict的時候TEDR卻能成功分辨這24隻長頸鹿。<br><img src="https://meetonfriday.com/img/lazy-loading-animation.gif" data-original="https://res.cloudinary.com/meet-on-friday/image/upload/v1591211067/blog_posts/01_ac5x9h.png" alt=""></p>
+<h4 id="DETR-for-panoptic-segmentation"><a href="#DETR-for-panoptic-segmentation" class="headerlink" title="DETR for panoptic segmentation"></a>DETR for panoptic segmentation</h4><p>DETR可以透過在decoder後面加一些mask head來達到全景分割…細節有興趣的自己看…我累了…</p>
+<p><img src="https://meetonfriday.com/img/lazy-loading-animation.gif" data-original="https://res.cloudinary.com/meet-on-friday/image/upload/v1591211707/blog_posts/01_mgzmxh.png" alt=""></p>
+<h2 id="心得"><a href="#心得" class="headerlink" title="心得"></a>心得</h2><p>TEDR把NLP上很紅的transformer搬過來CV領域了…</p>
+<p>想當初transfromer一出，NLP所有論文都被刷過一輪，未來CV會不會也走上這條道路呢xD</p>
+<p>不過用image做self-attention的想法蠻有意思的，看了某個視頻分享後，覺得其實他背後的概念很符合CV上的注意力概念，我覺得後續可以另外開一篇來進一步介紹。</p>
+<h2 id="References"><a href="#References" class="headerlink" title="References"></a>References</h2><ul>
+<li><a href="https://ai.facebook.com/blog/end-to-end-object-detection-with-transformers" target="_blank" rel="noopener">End-to-end object detection with Transformers</a></li>
+<li><a href="https://github.com/facebookresearch/detr" target="_blank" rel="noopener">(github)facebookresearch/detr</a></li>
+<li><a href="https://www.zhihu.com/question/397624847/answer/1250073418" target="_blank" rel="noopener">如何看待End-to-End Object Detection with Transformers？</a></li>
+<li><a href="https://www.bilibili.com/s/video/BV1Qg4y1B7rL" target="_blank" rel="noopener">DETR: End-to-End Object Detection with Transformers论文解读</a></li>
+<li><a href="https://blog.csdn.net/u014754127/article/details/78086014" target="_blank" rel="noopener">Hungarian Algorithm匈牙利算法</a></li>
+</ul>
+
+                <hr>
+                <!-- Pager -->
+                <ul class="pager">
+    
+    <li class="previous">
+        <a href="/posts/5a78c86/" data-toggle="tooltip" data-placement="top" title="新竹租屋經驗談">&larr; Newer Post</a>
+    </li>
+    
+    
+    <li class="next">
+        <a href="/posts/18392404/" data-toggle="tooltip" data-placement="top" title="[Pytorch]zero_grad()和backward()使用技巧">Older Post &rarr;</a>
+    </li>
+    
+</ul>
+
+                <!-- tip start -->
+                
+
+                
+                <!-- tip end -->
+
+                <!-- Sharing -->
+                
+                <!-- Sharing -->
+
+                <!-- gitment start -->
+                
+                <!-- gitment end -->
+
+                <!-- 来必力City版安装代码 -->
+                
+                <!-- City版安装代码已完成 -->
+
+                <!-- disqus comment start -->
+                
+                <div class="comment">
+                    <div id="disqus_thread" class="disqus-thread"></div>
+                </div>
+                
+                <!-- disqus comment end -->
+            </div>
+            
+            <!-- Tabe of Content -->
+            <!-- Table of Contents -->
+
+    
+      
+        <aside id="sidebar">
+          <div id="toc" class="toc-article">
+          <strong class="toc-title">Contents</strong>
+          
+            <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Abstract"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">Abstract</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Introduction"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">Introduction</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Related-work"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">Related work</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Set-Prediction"><span class="toc-nav-number">3.1.</span> <span class="toc-nav-text">Set Prediction</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Transformers-and-Parallel-Decoding"><span class="toc-nav-number">3.2.</span> <span class="toc-nav-text">Transformers and Parallel Decoding</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Object-detection"><span class="toc-nav-number">3.3.</span> <span class="toc-nav-text">Object detection</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#The-DETR-model"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">The DETR model</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Object-detection-set-prediction-loss"><span class="toc-nav-number">4.1.</span> <span class="toc-nav-text">Object detection set prediction loss</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#DETR-architecture"><span class="toc-nav-number">4.2.</span> <span class="toc-nav-text">DETR architecture</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Experiments"><span class="toc-nav-number">5.</span> <span class="toc-nav-text">Experiments</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Ablations"><span class="toc-nav-number">5.1.</span> <span class="toc-nav-text">Ablations</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Analysis"><span class="toc-nav-number">5.2.</span> <span class="toc-nav-text">Analysis</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#DETR-for-panoptic-segmentation"><span class="toc-nav-number">5.2.1.</span> <span class="toc-nav-text">DETR for panoptic segmentation</span></a></li></ol></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#心得"><span class="toc-nav-number">6.</span> <span class="toc-nav-text">心得</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#References"><span class="toc-nav-number">7.</span> <span class="toc-nav-text">References</span></a></li></ol>
+          
+          </div>
+        </aside>
+      
+    
+
+        </div>
+    </div>
+</article>
+
+	
+    <!-- disqus embedded js code start (one page only need to embed once) -->	
+    <script type="text/javascript">	
+        /* * * CONFIGURATION VARIABLES * * */	
+        var disqus_shortname = "meetonfriday";	
+        var disqus_identifier = "https://meetonfriday.com/posts/2e56b772/";	
+        var disqus_url = "https://meetonfriday.com/posts/2e56b772/";	
+        (function() {	
+            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;	
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';	
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);	
+        })();	
+    </script>	
+    <!-- disqus embedded js code start end -->	
+    
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/john850512">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://www.linkedin.com/in/john85051232">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                
+                    <li>
+                        <a target="_blank" href="https://www.facebook.com/meetonfridayyy">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+                
+                    <li>
+                        <a target="_blank"  href="https://mail.google.com/mail/?view=cm&fs=1&to=john85051232@gmail.com">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-envelope-o fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+                
+                
+
+                
+
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; John 2025 
+                    <br>
+                    Powered by 
+                    <a href="https://github.com/john850512/hexo-theme-jiji" target="_blank" rel="noopener">
+                        <i>hexo-theme-jiji</i>
+                    </a> | 
+                    <iframe name="star" style="margin-left: 2px; margin-bottom:-5px;" frameborder="0" scrolling="0"
+                        width="100px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=john850512&repo=hexo-theme-jiji&type=star&count=true">
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+
+</footer>
+
+<!-- jQuery -->
+
+<script src="/js/jquery.min.js"></script>
+
+
+<!-- Bootstrap Core JavaScript -->
+
+<script src="/js/bootstrap.min.js"></script>
+
+
+<!-- Custom Theme JavaScript -->
+
+<script src="/js/hux-blog.min.js"></script>
+
+
+<!-- Search -->
+
+<script src="/js/search.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("https://meetonfriday.com/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+<!-- Search -->
+
+    <script type="text/javascript">      
+        var search_path = "search.xml";
+        if (search_path.length == 0) {
+            search_path = "search.xml";
+        }
+    var path = "/" + search_path;
+    searchFunc(path, 'local-search-input', 'local-search-result');
+    </script>
+
+
+<!-- busuanzi -->
+<!--<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>-->
+<script async src="//cdn.jsdelivr.net/npm/busuanzi@2.3.0"></script>
+
+
+
+
+	<a id="rocket" href="#top" class=""></a>
+	<script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script>
+    <script type="text/javascript" src="/js/toc.js?v=1.0.0" async=""></script>
+
+    
+        <!-- background effects line -->
+        
+        <!-- background effects end -->
+    
+    
+    <!-- background animation-->>
+    <!--<script size="50" alpha='0.3' zIndex="-999" src="/js/ribbonStatic.js"></script>-->
+    
+        <script src="/js/ribbonDynamic.js"></script>
+    
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script>
+            window.imageLazyLoadSetting = {
+                isSPA: false,
+                processImages: null,
+            };
+        </script><script>window.addEventListener("load",function(){var t=/\.(gif|jpg|jpeg|tiff|png)$/i,r=/^data:image\/[a-z]+;base64,/;Array.prototype.slice.call(document.querySelectorAll("img[data-original]")).forEach(function(a){var e=a.parentNode;"A"===e.tagName&&(e.href.match(t)||e.href.match(r))&&(e.href=a.dataset.original)})});</script><script>!function(n){n.imageLazyLoadSetting.processImages=o;var i=n.imageLazyLoadSetting.isSPA,r=Array.prototype.slice.call(document.querySelectorAll("img[data-original]"));function o(){i&&(r=Array.prototype.slice.call(document.querySelectorAll("img[data-original]")));for(var t,e,a=0;a<r.length;a++)t=r[a],0<=(e=t.getBoundingClientRect()).bottom&&0<=e.left&&e.top<=(n.innerHeight||document.documentElement.clientHeight)&&function(){var t,e,n,i,o=r[a];t=o,e=function(){r=r.filter(function(t){return o!==t})},n=new Image,i=t.getAttribute("data-original"),n.onload=function(){t.src=i,e&&e()},n.src=i}()}o(),n.addEventListener("scroll",function(){var t,e;t=o,e=n,clearTimeout(t.tId),t.tId=setTimeout(function(){t.call(e)},500)})}(this);</script></body>
+
+</html>

@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<!-- Head tag -->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="baidu-site-verification" content="093lY4ziMu" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="keyword"  content="programming, study, daily, entertainment">
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="星期五。見面">
+    <meta property="og:locale" content="zh-TW" />
+    
+    <meta property="og:title" content="Google從Android 15 (Android-V)開始將淘汰NNAPI改推LiteRT (TensorFlow Lite)" />
+    
+    
+    <meta property="og:description" content="Google在最新的NNAPI文檔中宣布隨著Android 15(V)的推出即將淘汰NNAPI，未來將改推LiteRT(TensorFlow Lite)，本文從相關文檔中進行整理並做個介紹。" />
+    <meta name="description" content="Google在最新的NNAPI文檔中宣布隨著Android 15(V)的推出即將淘汰NNAPI，未來將改推LiteRT(TensorFlow Lite)，本文從相關文檔中進行整理並做個介紹。">
+    
+    
+    <meta property="og:image" content="https://res.cloudinary.com/meet-on-friday/image/upload/v1741590305/blog_posts_2025/litert_rtrlrj.png" />
+    
+
+    <link rel="shortcut icon" href="/img/avatar.jpg">
+    <!-- Place this tag in your head or just before your close body tag. -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <!--<link href='http://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>-->
+    <title>
+        
+          Google從Android 15 (Android-V)開始將淘汰NNAPI改推LiteRT (TensorFlow Lite) - MeetonFriday
+        
+    </title>
+    <!-- canonical -->
+    
+    
+      <link rel="canonical" href="https://meetonfriday.com/posts/666bbf67/">
+    
+
+    <!-- Bootstrap Core CSS -->
+    
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+
+
+    <!-- Custom CSS --> 
+    
+<link rel="stylesheet" href="/css/dusign-dark.css">
+
+    
+<link rel="stylesheet" href="/css/dusign-common-dark.css">
+
+    <!-- 
+<link rel="stylesheet" href="/css/font-awesome.css">
+ -->
+    
+<link rel="stylesheet" href="/css/toc.css">
+
+
+    
+    <!-- Pygments Highlight CSS -->
+    
+<link rel="stylesheet" href="/css/highlight.css">
+
+
+    
+<link rel="stylesheet" href="/css/widget.css">
+
+
+    
+<link rel="stylesheet" href="/css/rocket.css">
+
+
+    
+<link rel="stylesheet" href="/css/signature.css">
+
+
+    
+<link rel="stylesheet" href="/css/fonts.googleapis.css">
+
+
+    <!-- <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.3.0/css/font-awesome.min.css">-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.min.css">
+    
+    <!-- Google Analytics -->
+    
+      <!-- <script>
+          // dynamic User by Hux
+          var _gaId = 'UA-163346001-1';
+          var _gaDomain = 'auto';
+      
+          // Originial
+          (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+          (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+          })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+      
+          ga('create', _gaId, _gaDomain);
+          ga('send', 'pageview');
+      </script> -->
+      
+      <!-- Global site tag (gtag.js) - Google Analytics -->
+      <script async src="https://www.googletagmanager.com/gtag/js?id=UA-163346001-1"></script>
+      <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+      
+        gtag('config', 'UA-163346001-1');
+      </script>
+      
+    <!-- google ad sense-->
+    <script data-ad-client="ca-pub-9561340457908416" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<meta name="generator" content="Hexo 4.2.1"><link rel="alternate" href="/atom.xml" title="星期五。見面" type="application/atom+xml">
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+	<!-- Modified by Yu-Hsuan Yen -->
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        
+            
+                background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.5)), url('/img/header_img/header-bg.jpg')
+            
+        
+    }
+    
+</style>
+
+<header class="intro-header" >
+    <!-- Signature -->
+    <div id="signature">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                
+                    <div class="post-heading">
+                        <div class="tags">
+                            
+                              <a class="tag" href="/tags/#deep learning" title="deep learning">deep learning</a>
+                            
+                        </div>
+                        <h1>Google從Android 15 (Android-V)開始將淘汰NNAPI改推LiteRT (TensorFlow Lite)</h1>
+                        <h2 class="subheading"></h2>
+                        <span class="meta">
+                            Posted by John on
+                            2025-03-10
+                        </span>
+
+                        
+                            <div class="blank_box"></div>
+                            <span class="meta">
+                                Words <span class="post-count">1.6k</span> and
+                                Reading Time <span class="post-count">6</span> Minutes
+                            </span>
+                            <div class="blank_box"></div>
+                            <!-- 不蒜子统计 start -->
+                            <span class="meta">
+                                Viewed <span id="busuanzi_value_page_pv"><i class="fa fa-spinner fa-spin"></i></span> Times
+                            </span>
+                            <!-- 不蒜子统计 end -->
+                        
+
+                    </div>
+                
+
+                </div>
+            </div>
+        </div>      
+    </div>
+
+    
+        
+            <div class="waveWrapper">
+                <div class="wave wave_before" style="background-image: url('/img/wave-dark.png')"></div>
+                <div class="wave wave_after" style="background-image: url('/img/wave-dark.png')"></div>
+            </div>
+        
+    
+</header>
+
+	
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">星期五。見面</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archive/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/categories/">Categories</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/reading/">Reading</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+    
+    <!-- Main Content -->
+    <!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+            <!-- Post Container -->
+
+    
+        
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+        
+    
+
+                <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>在幾年前的文章中曾經介紹過關於如何使用NNAPI來在設備上運行AI模型</p>
+<ul>
+<li>延伸閱讀: <a href="https://meetonfriday.com/posts/668f0de1/">Neural Networks API Introduction: Android APP背後是如何執行一個神經網路模型的?</a></li>
+</ul>
+<p>在Google在最新的<a href="https://developer.android.com/ndk/guides/neuralnetworks" target="_blank" rel="noopener">NNAPI文檔</a>中宣布隨著Android 15(V)的推出即將淘汰NNAPI，未來將主推LiteRT (TensorFlow Lite)。本文摘要整理相關資料並描述Google這麼做的原因為何。</p>
+<h2 id="NNAPI-will-be-Deprecated-with-the-release-of-Android-15-Android-V"><a href="#NNAPI-will-be-Deprecated-with-the-release-of-Android-15-Android-V" class="headerlink" title="NNAPI will be Deprecated with the release of Android 15 (Android-V)"></a>NNAPI will be Deprecated with the release of Android 15 (Android-V)</h2><p>根據NNAPI的google最新document描述到:</p>
+<blockquote>
+<p>Warning: With the release of Android 15, NNAPI will be deprecated. While you can continue to use NNAPI, we expect the majority of devices in the future to use the CPU backend, and therefore for performance critical workloads, we recommend migrating to alternative solutions, for example the TF Lite GPU runtime.</p>
+<p>For more information, see the <a href="https://developer.android.com/ndk/guides/neuralnetworks/migration-guide" target="_blank" rel="noopener">NNAPI Migration Guide</a>.</p>
+</blockquote>
+<p><img src="https://meetonfriday.com/img/lazy-loading-animation.gif" data-original="https://res.cloudinary.com/meet-on-friday/image/upload/v1741587911/blog_posts_2025/nnapi_is_decrepted_iifmh6.png" alt=""></p>
+<p>而在NNAPI migration guide中則說明了原因:</p>
+<ol>
+<li>自從NNAPI release後, 由於ODML (On Device Machine Learning)的快革新, 如transformer, diffusion等model的快速進版, 開發者需要頻繁的更新基礎工具和開發工具</li>
+<li>為了滿足這些需求, Google提供了TensorFlow Lite (LiteRT) in Play Services, 為這些AI模型提供了可更新的TensorFlow runtime服務</li>
+</ol>
+<p>並且提及<strong>在Android 15 (Android-V)後, NNAPI將被標記為棄用(deprecated)並建議開發者改採用TensorFlow Lite (LiteRT) in Play Services</strong></p>
+<h2 id="LiteRT-TensorFlow-Lite-Runtime"><a href="#LiteRT-TensorFlow-Lite-Runtime" class="headerlink" title="LiteRT = TensorFlow Lite Runtime"></a>LiteRT = TensorFlow Lite Runtime</h2><p><img src="https://meetonfriday.com/img/lazy-loading-animation.gif" data-original="https://res.cloudinary.com/meet-on-friday/image/upload/v1741590305/blog_posts_2025/litert_rtrlrj.png" alt=""><br>LiteRT (TensorFlow Lite RunTime) 其實就是大家熟悉的TensorFlow Lite, 只是改名了</p>
+<a id="more"></a>
+<p>LiteRT，或TensorFlow Lite，是Google專為設備上的AI設計的執行環境。支援將常用的AI訓練框架 (TensorFlow, Pytorch, JAX…)轉換成tflite格式並執行。</p>
+<p>主要的一些key feature有:</p>
+<ol>
+<li><strong>Optimized for on-device machine learning</strong>: 針對ODML的一些限制進行了優化<ol>
+<li>Latency: 資料不須來回server的時間</li>
+<li>Privacy: 資料不離開終端設備</li>
+<li>Connectivity: 不須連網</li>
+<li>Size: 模型會被縮小 &amp; 用二進位儲存</li>
+<li>Power consumption: 更有效率的inference</li>
+</ol>
+</li>
+<li><strong>Multi-platform support</strong>: 相容Android, iOS, embedded Linux &amp; MCU等平台</li>
+<li><strong>Multi-framework model options</strong>: 支援將多種模型格式轉換成FlatBuffers格式(.tflite)</li>
+<li><strong>Diverse language support</strong>: 支援多種語言的開發SDK(Java/Kotlin, Swift, Objective-C, C++, Python)</li>
+<li><strong>High performance</strong>: 支援HW delegates, 能夠將AI模型跑在GPU or NPU上</li>
+</ol>
+<h2 id="Hardware-Acceleration-of-LiteRT"><a href="#Hardware-Acceleration-of-LiteRT" class="headerlink" title="Hardware Acceleration of LiteRT"></a>Hardware Acceleration of LiteRT</h2><p>LiteRT的主要用途是用在終端設備，那對於搭載特殊HW可以用來加速AI運算的平台是如何做到加速的?</p>
+<p>在document中有一個section就在針對hardware acceleration這件事提供了幾個topic，下面簡單整理一下。</p>
+<h3 id="LiteRT-Delegates"><a href="#LiteRT-Delegates" class="headerlink" title="LiteRT Delegates"></a>LiteRT Delegates</h3><p>Delegates，中文譯成代理，在LiteRT上的意思是讓平台上的AI acceleration hardware可以被用來做AI運算的加速，如GPU, TPU, NPU…然而，考慮到以下諸多面向，工程師在終端平台上要有效率的應用hardware進行AI運算加速變得棘手:</p>
+<ol>
+<li>儘管預設LiteRT是使用ARM Neon的指令集來加速CPU，但CPU本質上仍然不是適合做AI運算的hardware。</li>
+<li>對於GPU / NPU這種hardware來說，雖然因為硬體特性適合進行AI加速運算，但你可能需要根據其硬體的特性來撰寫相對應的kernel (e.g. OpenCL / OpenGL for GPU)</li>
+<li>再來不同hardware的特性不同，不是所有OP都適合放在同一個hardware上運行，此時要如何進行相關的資源分派就變成一個很困難的問題</li>
+</ol>
+<p><strong>TensorFlow Lite’s Delegate API可以幫助工程師簡化這些問題，他的角色就是做為TFlite runtime &lt;-&gt; low-level APIs之間的橋樑</strong></p>
+<ol>
+<li>如果你是AI developer: 你不用管底層hardware的特性，你只需要透過LiteRT去撰寫你的AI應用，如果vendor有支援對應的hardware delegate，你就可以使用到該硬體的加速性能</li>
+<li>如果你是hardware vendor: 你有自己的NPU，你可以透過相關API根據你hardware的特性實作出OP kernel，然後接上LiteRT給developer使用你的硬體</li>
+</ol>
+<p><img src="https://meetonfriday.com/img/lazy-loading-animation.gif" data-original="https://res.cloudinary.com/meet-on-friday/image/upload/v1741598941/blog_posts_2025/tflite_delegate_yutnwf.png" alt=""></p>
+<p>(目前LiteRT官網上支援比較全面的就只有GPU delegate，但針對<a href="./#NPU-delegates">Android平台Qualcomm® AI Engine Direct Delegate也已經Ready</a>，後面會稍微帶到。)</p>
+<h3 id="How-to-Implement-Your-Hardware-Delegrate"><a href="#How-to-Implement-Your-Hardware-Delegrate" class="headerlink" title="How to Implement Your Hardware Delegrate?"></a>How to Implement Your Hardware Delegrate?</h3><p>Document有一頁講到可以如何實作自己的delegate，但什麼時候會需要建立一個custom delegate?</p>
+<ol>
+<li>你想要整合一個新的 ML 推論引擎，而該引擎不受任何現有委派的支持</li>
+<li>你擁有一個自訂硬體加速器 (例如你是hardware vendor)，可以改善已知情況下的執行時間</li>
+<li>你正在開發 CPU 優化（例如OP fusion），可以加速某些模型</li>
+</ol>
+<p>以下圖為例，你可以透過delegate來將AI computing graph的部分sub-graph dispatch到特定的accelerator上進行加速<br><img src="https://meetonfriday.com/img/lazy-loading-animation.gif" data-original="https://res.cloudinary.com/meet-on-friday/image/upload/v1741599377/blog_posts_2025/tflite_delegate_diagram_xhpdjr.png" alt=""></p>
+<h4 id="How-do-delegates-work"><a href="#How-do-delegates-work" class="headerlink" title="How do delegates work?"></a>How do delegates work?</h4><p>假設你原本有一張computing graph如下:<br><img src="https://meetonfriday.com/img/lazy-loading-animation.gif" data-original="https://res.cloudinary.com/meet-on-friday/image/upload/v1741600772/blog_posts_2025/delegrate_example_1_xca2qe.png" alt=""></p>
+<p>然後你有一個hardware accelerator (或是你想要做CPU OP fusion)，可以將這兩個OP同時處理，你可以把這兩個OP變成一個delegate node一起處理，於是computing graph就變成了</p>
+<p><img src="https://meetonfriday.com/img/lazy-loading-animation.gif" data-original="https://res.cloudinary.com/meet-on-friday/image/upload/v1741600772/blog_posts_2025/delegrate_example_2_z1p2gi.png" alt=""></p>
+<p>更多細節可以參考document中的<a href="https://ai.google.dev/edge/litert/performance/implementing_delegate#example" target="_blank" rel="noopener">example</a>告訴你可以怎麼做。</p>
+<p>到此為止，文件中提及了可以怎麼銜接LiteRT跟hardware的low-level implement，至於hardware要如何針對不同的情境, OP做實作就是hardware vendor的工作了。</p>
+<h2 id="Hardware-Acceleration-on-Android"><a href="#Hardware-Acceleration-on-Android" class="headerlink" title="Hardware Acceleration on Android"></a>Hardware Acceleration on Android</h2><h3 id="Acceleration-service"><a href="#Acceleration-service" class="headerlink" title="Acceleration service"></a>Acceleration service</h3><p>對於Android，LiteRT提供了一個名為<strong>Acceleration Service for Android API</strong>，他會在一開始先用你的LiteRT model跑過internal inference benchmarks (x-seconds level)</p>
+<p>只要準備好model, data sample &amp; golden, acceleration service就會幫你跑完並提供你建議使用的hardware，然後你就可以使用該hardware來進行加速</p>
+<ul>
+<li>根據document，目前僅支援GPU / CPU，其他的hardware還在未來的規劃中<ol>
+<li><code>GpuAccelerationConfig</code>: converted to GPU delegate during the execution time</li>
+<li><code>CpuAccelerationConfig</code></li>
+</ol>
+</li>
+</ul>
+<p><img src="https://meetonfriday.com/img/lazy-loading-animation.gif" data-original="https://res.cloudinary.com/meet-on-friday/image/upload/v1741597893/blog_posts_2025/acceleration_service_blovcq.png" alt=""></p>
+<h3 id="GPU-delegates"><a href="#GPU-delegates" class="headerlink" title="GPU delegates"></a>GPU delegates</h3><p>目前有兩種方式可以使用GPU delegates</p>
+<ol>
+<li><a href="https://ai.google.dev/edge/litert/android/gpu" target="_blank" rel="noopener">Interpreter API</a></li>
+<li><a href="https://ai.google.dev/edge/litert/android/gpu_native" target="_blank" rel="noopener">Native (C/C++) API</a></li>
+</ol>
+<p>有興趣的可以再去進一步了解。</p>
+<h3 id="NPU-delegates"><a href="#NPU-delegates" class="headerlink" title="NPU delegates"></a>NPU delegates</h3><p>根據文件描述，目前只有Qualcomm的AI Engine Direct Delegate有對接上LiteRT。</p>
+<p>Qualcomm的<a href="https://docs.qualcomm.com/bundle/publicresource/topics/80-63442-50/introduction.html?product=1601111740009302" target="_blank" rel="noopener">AI Engine Direct SDK</a>是一個新提出的SDK，用於針對高通的hardware提供一個unified  API, modular and extensible per-accelerator libraries, which form a reusable basis for full stack AI solutions.</p>
+<ul>
+<li>特地提一下他和Qualcomm的 QPNS (<a href="https://docs.qualcomm.com/bundle/publicresource/topics/80-63442-2/introduction.html?product=1601111740010412" target="_blank" rel="noopener">Qualcomm Neural Processing SDK</a>)是不同的東西，QNPS是產生一個可移植的.dlc binary file用於在高通平台上運行AI運算。AI Engine Direct SDK則是封裝了QNPS和其他的開發介面提供了一個更完整的AI solutions，下圖可以看到整個AI Engine Direct SDK的software stack</li>
+</ul>
+<p><img src="https://meetonfriday.com/img/lazy-loading-animation.gif" data-original="https://res.cloudinary.com/meet-on-friday/image/upload/v1741601770/blog_posts_2025/Qcom_ai_engine_direct_SDK_xmeosw.png" alt=""></p>
+<p>其他家廠商預計在未來也會support (coming soon)。</p>
+<hr>
+<h2 id="References"><a href="#References" class="headerlink" title="References"></a>References</h2><ul>
+<li><a href="https://meetonfriday.com/posts/668f0de1/">Neural Networks API Introduction: Android APP背後是如何執行一個神經網路模型的?</a></li>
+<li><a href="https://ai.google.dev/edge/litert#next-steps" target="_blank" rel="noopener">LiteRT overview</a></li>
+<li><a href="https://docs.qualcomm.com/bundle/publicresource/topics/80-63442-50/introduction.html?product=1601111740009302" target="_blank" rel="noopener">Qualcomm AI Engine Direct SDK</a></li>
+<li><a href="https://docs.qualcomm.com/bundle/publicresource/topics/80-63442-2/introduction.html?product=1601111740010412" target="_blank" rel="noopener">Qualcomm Neural Processing SDK for AI</a></li>
+</ul>
+
+                <hr>
+                <!-- Pager -->
+                <ul class="pager">
+    
+    
+    <li class="next">
+        <a href="/posts/edcd30e6/" data-toggle="tooltip" data-placement="top" title="[課程筆記]Linux Driver正點原子課程筆記5 - 新字元設備驅動實驗">Older Post &rarr;</a>
+    </li>
+    
+</ul>
+
+                <!-- tip start -->
+                
+
+                
+                <!-- tip end -->
+
+                <!-- Sharing -->
+                
+                <!-- Sharing -->
+
+                <!-- gitment start -->
+                
+                <!-- gitment end -->
+
+                <!-- 来必力City版安装代码 -->
+                
+                <!-- City版安装代码已完成 -->
+
+                <!-- disqus comment start -->
+                
+                <div class="comment">
+                    <div id="disqus_thread" class="disqus-thread"></div>
+                </div>
+                
+                <!-- disqus comment end -->
+            </div>
+            
+            <!-- Tabe of Content -->
+            <!-- Table of Contents -->
+
+    
+      
+        <aside id="sidebar">
+          <div id="toc" class="toc-article">
+          <strong class="toc-title">Contents</strong>
+          
+            <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#前言"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">前言</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#NNAPI-will-be-Deprecated-with-the-release-of-Android-15-Android-V"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">NNAPI will be Deprecated with the release of Android 15 (Android-V)</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#LiteRT-TensorFlow-Lite-Runtime"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">LiteRT &#x3D; TensorFlow Lite Runtime</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Hardware-Acceleration-of-LiteRT"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">Hardware Acceleration of LiteRT</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#LiteRT-Delegates"><span class="toc-nav-number">4.1.</span> <span class="toc-nav-text">LiteRT Delegates</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#How-to-Implement-Your-Hardware-Delegrate"><span class="toc-nav-number">4.2.</span> <span class="toc-nav-text">How to Implement Your Hardware Delegrate?</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#How-do-delegates-work"><span class="toc-nav-number">4.2.1.</span> <span class="toc-nav-text">How do delegates work?</span></a></li></ol></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Hardware-Acceleration-on-Android"><span class="toc-nav-number">5.</span> <span class="toc-nav-text">Hardware Acceleration on Android</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Acceleration-service"><span class="toc-nav-number">5.1.</span> <span class="toc-nav-text">Acceleration service</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#GPU-delegates"><span class="toc-nav-number">5.2.</span> <span class="toc-nav-text">GPU delegates</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#NPU-delegates"><span class="toc-nav-number">5.3.</span> <span class="toc-nav-text">NPU delegates</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#References"><span class="toc-nav-number">6.</span> <span class="toc-nav-text">References</span></a></li></ol>
+          
+          </div>
+        </aside>
+      
+    
+
+        </div>
+    </div>
+</article>
+
+	
+    <!-- disqus embedded js code start (one page only need to embed once) -->	
+    <script type="text/javascript">	
+        /* * * CONFIGURATION VARIABLES * * */	
+        var disqus_shortname = "meetonfriday";	
+        var disqus_identifier = "https://meetonfriday.com/posts/666bbf67/";	
+        var disqus_url = "https://meetonfriday.com/posts/666bbf67/";	
+        (function() {	
+            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;	
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';	
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);	
+        })();	
+    </script>	
+    <!-- disqus embedded js code start end -->	
+    
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/john850512">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://www.linkedin.com/in/john85051232">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                
+                    <li>
+                        <a target="_blank" href="https://www.facebook.com/meetonfridayyy">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+                
+                    <li>
+                        <a target="_blank"  href="https://mail.google.com/mail/?view=cm&fs=1&to=john85051232@gmail.com">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-envelope-o fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+                
+                
+
+                
+
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; John 2025 
+                    <br>
+                    Powered by 
+                    <a href="https://github.com/john850512/hexo-theme-jiji" target="_blank" rel="noopener">
+                        <i>hexo-theme-jiji</i>
+                    </a> | 
+                    <iframe name="star" style="margin-left: 2px; margin-bottom:-5px;" frameborder="0" scrolling="0"
+                        width="100px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=john850512&repo=hexo-theme-jiji&type=star&count=true">
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+
+</footer>
+
+<!-- jQuery -->
+
+<script src="/js/jquery.min.js"></script>
+
+
+<!-- Bootstrap Core JavaScript -->
+
+<script src="/js/bootstrap.min.js"></script>
+
+
+<!-- Custom Theme JavaScript -->
+
+<script src="/js/hux-blog.min.js"></script>
+
+
+<!-- Search -->
+
+<script src="/js/search.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("https://meetonfriday.com/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+<!-- Search -->
+
+    <script type="text/javascript">      
+        var search_path = "search.xml";
+        if (search_path.length == 0) {
+            search_path = "search.xml";
+        }
+    var path = "/" + search_path;
+    searchFunc(path, 'local-search-input', 'local-search-result');
+    </script>
+
+
+<!-- busuanzi -->
+<!--<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>-->
+<script async src="//cdn.jsdelivr.net/npm/busuanzi@2.3.0"></script>
+
+
+
+
+	<a id="rocket" href="#top" class=""></a>
+	<script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script>
+    <script type="text/javascript" src="/js/toc.js?v=1.0.0" async=""></script>
+
+    
+        <!-- background effects line -->
+        
+        <!-- background effects end -->
+    
+    
+    <!-- background animation-->>
+    <!--<script size="50" alpha='0.3' zIndex="-999" src="/js/ribbonStatic.js"></script>-->
+    
+        <script src="/js/ribbonDynamic.js"></script>
+    
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script>
+            window.imageLazyLoadSetting = {
+                isSPA: false,
+                processImages: null,
+            };
+        </script><script>window.addEventListener("load",function(){var t=/\.(gif|jpg|jpeg|tiff|png)$/i,r=/^data:image\/[a-z]+;base64,/;Array.prototype.slice.call(document.querySelectorAll("img[data-original]")).forEach(function(a){var e=a.parentNode;"A"===e.tagName&&(e.href.match(t)||e.href.match(r))&&(e.href=a.dataset.original)})});</script><script>!function(n){n.imageLazyLoadSetting.processImages=o;var i=n.imageLazyLoadSetting.isSPA,r=Array.prototype.slice.call(document.querySelectorAll("img[data-original]"));function o(){i&&(r=Array.prototype.slice.call(document.querySelectorAll("img[data-original]")));for(var t,e,a=0;a<r.length;a++)t=r[a],0<=(e=t.getBoundingClientRect()).bottom&&0<=e.left&&e.top<=(n.innerHeight||document.documentElement.clientHeight)&&function(){var t,e,n,i,o=r[a];t=o,e=function(){r=r.filter(function(t){return o!==t})},n=new Image,i=t.getAttribute("data-original"),n.onload=function(){t.src=i,e&&e()},n.src=i}()}o(),n.addEventListener("scroll",function(){var t,e;t=o,e=n,clearTimeout(t.tId),t.tId=setTimeout(function(){t.call(e)},500)})}(this);</script></body>
+
+</html>

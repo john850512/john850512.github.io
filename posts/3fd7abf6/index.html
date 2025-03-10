@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<!-- Head tag -->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="baidu-site-verification" content="093lY4ziMu" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="keyword"  content="programming, study, daily, entertainment">
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="星期五。見面">
+    <meta property="og:locale" content="zh-TW" />
+    
+    <meta property="og:title" content="CPE考試心得" />
+    
+    
+    <meta property="og:description" content="(最後更新時間: 20160322)我在大一的下學期開始考CPE，在此之前我並沒有任何經驗(參加CPE的時間點比我接觸競技程式更早)所以我也不知道該往什麼方向準備，就這樣懵懵懂懂的上了，然後當然就被電慘了xD   
+現在雖然也是很不起眼，但多少有點心得:  CPE的題目是按造難易度去分的，簡單的都會在前面，但也沒有一定，有時候有些簡單題也會出現在後半段的題目，所以還是可以大致瀏覽後再開始動工。一般來說有一題一定是[一顆星選題]" />
+    <meta name="description" content="(最後更新時間: 20160322)我在大一的下學期開始考CPE，在此之前我並沒有任何經驗(參加CPE的時間點比我接觸競技程式更早)所以我也不知道該往什麼方向準備，就這樣懵懵懂懂的上了，然後當然就被電慘了xD   
+現在雖然也是很不起眼，但多少有點心得:  CPE的題目是按造難易度去分的，簡單的都會在前面，但也沒有一定，有時候有些簡單題也會出現在後半段的題目，所以還是可以大致瀏覽後再開始動工。一般來說有一題一定是[一顆星選題]">
+    
+    
+    <meta property="og:image" content="/img/avatar.jpg" />
+    
+
+    <link rel="shortcut icon" href="/img/avatar.jpg">
+    <!-- Place this tag in your head or just before your close body tag. -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <!--<link href='http://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>-->
+    <title>
+        
+          CPE考試心得 - MeetonFriday
+        
+    </title>
+    <!-- canonical -->
+    
+    
+      <link rel="canonical" href="https://meetonfriday.com/posts/3fd7abf6/">
+    
+
+    <!-- Bootstrap Core CSS -->
+    
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+
+
+    <!-- Custom CSS --> 
+    
+<link rel="stylesheet" href="/css/dusign-dark.css">
+
+    
+<link rel="stylesheet" href="/css/dusign-common-dark.css">
+
+    <!-- 
+<link rel="stylesheet" href="/css/font-awesome.css">
+ -->
+    
+<link rel="stylesheet" href="/css/toc.css">
+
+
+    
+    <!-- Pygments Highlight CSS -->
+    
+<link rel="stylesheet" href="/css/highlight.css">
+
+
+    
+<link rel="stylesheet" href="/css/widget.css">
+
+
+    
+<link rel="stylesheet" href="/css/rocket.css">
+
+
+    
+<link rel="stylesheet" href="/css/signature.css">
+
+
+    
+<link rel="stylesheet" href="/css/fonts.googleapis.css">
+
+
+    <!-- <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.3.0/css/font-awesome.min.css">-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.min.css">
+    
+    <!-- Google Analytics -->
+    
+      <!-- <script>
+          // dynamic User by Hux
+          var _gaId = 'UA-163346001-1';
+          var _gaDomain = 'auto';
+      
+          // Originial
+          (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+          (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+          })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+      
+          ga('create', _gaId, _gaDomain);
+          ga('send', 'pageview');
+      </script> -->
+      
+      <!-- Global site tag (gtag.js) - Google Analytics -->
+      <script async src="https://www.googletagmanager.com/gtag/js?id=UA-163346001-1"></script>
+      <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+      
+        gtag('config', 'UA-163346001-1');
+      </script>
+      
+    <!-- google ad sense-->
+    <script data-ad-client="ca-pub-9561340457908416" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<meta name="generator" content="Hexo 4.2.1"><link rel="alternate" href="/atom.xml" title="星期五。見面" type="application/atom+xml">
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+	<!-- Modified by Yu-Hsuan Yen -->
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        
+            
+                background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.5)), url('/img/header_img/header-bg.jpg')
+            
+        
+    }
+    
+</style>
+
+<header class="intro-header" >
+    <!-- Signature -->
+    <div id="signature">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                
+                    <div class="post-heading">
+                        <div class="tags">
+                            
+                              <a class="tag" href="/tags/#competitive programming" title="competitive programming">competitive programming</a>
+                            
+                        </div>
+                        <h1>CPE考試心得</h1>
+                        <h2 class="subheading"></h2>
+                        <span class="meta">
+                            Posted by John on
+                            2016-01-14
+                        </span>
+
+                        
+                            <div class="blank_box"></div>
+                            <span class="meta">
+                                Words <span class="post-count">2k</span> and
+                                Reading Time <span class="post-count">6</span> Minutes
+                            </span>
+                            <div class="blank_box"></div>
+                            <!-- 不蒜子统计 start -->
+                            <span class="meta">
+                                Viewed <span id="busuanzi_value_page_pv"><i class="fa fa-spinner fa-spin"></i></span> Times
+                            </span>
+                            <!-- 不蒜子统计 end -->
+                        
+
+                    </div>
+                
+
+                </div>
+            </div>
+        </div>      
+    </div>
+
+    
+        
+            <div class="waveWrapper">
+                <div class="wave wave_before" style="background-image: url('/img/wave-dark.png')"></div>
+                <div class="wave wave_after" style="background-image: url('/img/wave-dark.png')"></div>
+            </div>
+        
+    
+</header>
+
+	
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">星期五。見面</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archive/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/categories/">Categories</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/reading/">Reading</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+    
+    <!-- Main Content -->
+    <!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+            <!-- Post Container -->
+
+    
+        
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+        
+    
+
+                <p>(最後更新時間: 20160322)</p>
+<h2 id="CPE考試心得-3-22更新"><a href="#CPE考試心得-3-22更新" class="headerlink" title="[CPE考試心得] - 3/22更新"></a>[CPE考試心得] - 3/22更新</h2><p><img src="https://meetonfriday.com/img/lazy-loading-animation.gif" data-original="https://john850512.files.wordpress.com/2016/01/e693b7e58f964.png" alt="擷取"> </p>
+<p>我在大一的下學期開始考CPE，在此之前我並沒有任何經驗(參加CPE的時間點比我接觸競技程式更早)所以我也不知道該往什麼方向準備，就這樣懵懵懂懂的上了，然後當然就被電慘了xD   </p>
+<p>現在雖然也是很不起眼，但多少有點心得:  CPE的題目是按造難易度去分的，簡單的都會在前面，但也沒有一定，有時候有些簡單題也會出現在後半段的題目，所以還是可以大致瀏覽後再開始動工。一般來說有一題一定是<a href="https://cpe.cse.nsysu.edu.tw/environment.php#starList" target="_blank" rel="noopener">一顆星選題</a>，也就是說，把題目都做過一次後理論上應該是可以對一題以上的。 </p>
+<a id="more"></a>
+<p>按照題目敘述打就可以解決的問題大約是前兩題，第三題開始就是要稍微思考一些寫法了(資料結構、演算法……)所以就開始有困難度了。   </p>
+<p>考試的時候，由於題目是全英文，如果又遇到很長的題目常常會卡很多時間在讀題，所以有時候先看題目的範例輸入跟輸出來判斷這是在做什麼，能節省蠻多的時間。   </p>
+<p>然後CPE有一些怪怪(?)的功能，像電子辭典、C++函示庫……有時候還蠻方便的。   </p>
+<p>剩下的說明我之前在巴哈上有看到一位寫的<a href="http://home.gamer.com.tw/creationDetail.php?sn=2192261" target="_blank" rel="noopener">心得文章</a>，覺得很詳細 考試前該準備、注意的都有了，可以參考看看</p>
+<h3 id="第一次考試-3-24"><a href="#第一次考試-3-24" class="headerlink" title="第一次考試(3/24)"></a>第一次考試(3/24)</h3><p>雖然說有題會從一星選題中出，但考的時候還是沒全部寫完 抱著「沒這麼雖吧」的心態去考了，結果還真的出我沒做過的題目…  </p>
+<p>考試前的練習 看到第一題Hello World還愣了一下 然後花了30秒把它寫出來還蠻有信心的，誰知之後的時間角度跟DNA-Sorting就卡住了。 </p>
+<p>考試開始後雖然沒看過，但是第一題還是在不知道「degree是什麼意思」(題目好像是9’s….)的情況下努力做出來了，並且預設測資都過了，但暗中測資就是過不了哀哀。 </p>
+<p>第二題忘記是什麼，不過也是測資都過了暗中測資卻過不了，當下真的很沮喪阿，第一次的3小時就這樣無功而返。 </p>
+<h3 id="第二次考試-5-26"><a href="#第二次考試-5-26" class="headerlink" title="第二次考試(5/26)"></a>第二次考試(5/26)</h3><p>第一次考完後，抱著一定要再把一星題做完的心態度過了這三個月，但最終還是沒做完(不~~)。</p>
+<p>不過出乎意料的，這次的題目難度似乎沒有上次那麼難，第一題是很簡單的loop。 </p>
+<p>第二題的時候手太急沒按到看題就直接解了，一度還看不懂題目再說甚麼，後來才知道是單純的排序找答案，解完花了不少時間。 </p>
+<p>第三題是陣列比對，只要換個角度去想，用對角線來找大小就能解出來，覺得題意了解是很重要的。 </p>
+<p>寫完三題才花了8X分鐘整個很興奮，看了第四題，要用Linked List去模擬佇列，但我沒有實際實作過，最後就在部分測資過的了部分過不了的情況下放棄了。 </p>
+<p>最後看了看成績，44名，耶~通過畢業門檻了! </p>
+<h3 id="第三次考試-10-6"><a href="#第三次考試-10-6" class="headerlink" title="第三次考試(10/6)"></a>第三次考試(10/6)</h3><p>這次考試原本是頗有信心的，畢竟暑假也稍微特訓過了，結果……。 </p>
+<p>題外話，這是考試的時候，系統一堆問題，搞得無法準時開始，有點糟糕。 </p>
+<p>不得不說這次的第一題難度真的比二、三題難: 找一個字串的最大子字串，這題以前做過，是被歸類為兩顆星難度的題目，第二題的字串反轉還簡單多了。第三題則是數學問題，求最大效益的加班費分配方式，我當下一直想到Greedy……</p>
+<p>後來看到解法只需要兩個Sort時超不甘心的，不然就三題了。 第四題就真的沒辦法了，雖然看得懂題目但完全沒想法。 </p>
+<p>之前暑訓交到的中正同學這次四題，真的覺得他好猛……。</p>
+<h3 id="第四次考試-12-22"><a href="#第四次考試-12-22" class="headerlink" title="第四次考試(12/22)"></a>第四次考試(12/22)</h3><p>這次考試…先說總結，幹，超幹的。 </p>
+<p>學校的考試環境真的爛到一個爆炸，上次被雷過連這次也被雷，正式開始的第一題是很簡單的題目，把所有位數加起來直到位數等於一就是答案了，然後我居然卡了40分鐘!!一TLE，不斷的Debug到最後只剩一行gets()也無法過，最後很不耐煩地把所有可能都試了，弄成cin才能過(回家後自己重寫了一遍，確定我當下的寫法是可行的)。 </p>
+<p>第二題枚舉所有的可能再作排序即可，當時覺得數量太多可能會爆炸，好險沒有。 </p>
+<p>第三題是要模擬七段顯示器，這題當時真的卡到我了，想不出辦法只好用最笨的方法，不斷的去switch所有情形…但是前面的時間卡太多了，判斷沒時間做完就放棄了。 </p>
+<p>第六題則是先透過線性篩法+DP先把資料存完，然後再比對即可，但這題當時只剩15分鐘，可能太緊張所以有哪部分寫錯了並沒有過。 </p>
+<p>最後只過兩題，真的很不甘心……哀哀下次可能要換學校考了。 </p>
+<h3 id="第五次考試-3-22"><a href="#第五次考試-3-22" class="headerlink" title="第五次考試(3/22)"></a>第五次考試(3/22)</h3><p>這次仍舊選了在自己學校考，抱著沒有那麼雷吧?的心態，但是仍然還是被小雷了一下(測試環境期間整間教室的系統是死當的，所以根本沒有寫道練習題也無法測試環境，還好環境是可以正常使用的)，然後第二題的時候系統又當了一次，又花了些許時間重寫第二題不過後面就沒雷我這點十分慶幸。 </p>
+<p>這次總共過了五題，很開心自己的題數有所進步外，也覺得這次的難易度有點偏易: </p>
+<p>第一題根本水題，要算馬力歐總共往上跳了幾次往下跳了幾次，設兩個變數去存值即可。 </p>
+<p>第二題字串轉換，按照鍵盤上的格式往左移一個輸出該字元，一開始先把表建好去做Search即可。 </p>
+<p>第三題要找Ascii出現的頻率，建個表去存每個字出現的次數以及頻率最大值，然後由後往前搜並依序印出與最大值相同的值即可。 </p>
+<p>第四題質數問題，已經好幾次考試都有出質數問題了，看了一下N的範圍感覺一般做法也不會爆，不過我還是覺得線性塞法學起來後真的很方便，寫法也很容易上手。</p>
+<p>這題稍微再邏輯上卡了一下，想說要如何依據奇數和偶數的長度去找中心點……當下先用DP做了一次長度計算，再去找prime[長度/2] 就會是中心點，把往前跟後面各c個輸出即可。 </p>
+<p>第五題大數運算(大數擺第五題??)就大數…每次看到這種題目都會好想去學java，根本秒殺。不會用java的我在這題上debug了不少時間(太久沒寫大數了..)，所以後面沒什麼時間做其他題了。   </p>
+<p>總結起來這次的難度真的降低不少，不過答對這麼多題還是很開心的，繼續努力演算法或許之後可以有更好的成績。</p>
+
+                <hr>
+                <!-- Pager -->
+                <ul class="pager">
+    
+    <li class="previous">
+        <a href="/posts/c350afbc/" data-toggle="tooltip" data-placement="top" title="[UVA10487]Closest Sums">&larr; Newer Post</a>
+    </li>
+    
+    
+    <li class="next">
+        <a href="/posts/3b0c2151/" data-toggle="tooltip" data-placement="top" title="[UVA11389]The Bus Driver Problem">Older Post &rarr;</a>
+    </li>
+    
+</ul>
+
+                <!-- tip start -->
+                
+
+                
+                <!-- tip end -->
+
+                <!-- Sharing -->
+                
+                <!-- Sharing -->
+
+                <!-- gitment start -->
+                
+                <!-- gitment end -->
+
+                <!-- 来必力City版安装代码 -->
+                
+                <!-- City版安装代码已完成 -->
+
+                <!-- disqus comment start -->
+                
+                <div class="comment">
+                    <div id="disqus_thread" class="disqus-thread"></div>
+                </div>
+                
+                <!-- disqus comment end -->
+            </div>
+            
+            <!-- Tabe of Content -->
+            <!-- Table of Contents -->
+
+    
+      
+        <aside id="sidebar">
+          <div id="toc" class="toc-article">
+          <strong class="toc-title">Contents</strong>
+          
+            <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#CPE考試心得-3-22更新"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">[CPE考試心得] - 3&#x2F;22更新</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#第一次考試-3-24"><span class="toc-nav-number">1.1.</span> <span class="toc-nav-text">第一次考試(3&#x2F;24)</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#第二次考試-5-26"><span class="toc-nav-number">1.2.</span> <span class="toc-nav-text">第二次考試(5&#x2F;26)</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#第三次考試-10-6"><span class="toc-nav-number">1.3.</span> <span class="toc-nav-text">第三次考試(10&#x2F;6)</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#第四次考試-12-22"><span class="toc-nav-number">1.4.</span> <span class="toc-nav-text">第四次考試(12&#x2F;22)</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#第五次考試-3-22"><span class="toc-nav-number">1.5.</span> <span class="toc-nav-text">第五次考試(3&#x2F;22)</span></a></li></ol></li></ol>
+          
+          </div>
+        </aside>
+      
+    
+
+        </div>
+    </div>
+</article>
+
+	
+    <!-- disqus embedded js code start (one page only need to embed once) -->	
+    <script type="text/javascript">	
+        /* * * CONFIGURATION VARIABLES * * */	
+        var disqus_shortname = "meetonfriday";	
+        var disqus_identifier = "https://meetonfriday.com/posts/3fd7abf6/";	
+        var disqus_url = "https://meetonfriday.com/posts/3fd7abf6/";	
+        (function() {	
+            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;	
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';	
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);	
+        })();	
+    </script>	
+    <!-- disqus embedded js code start end -->	
+    
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/john850512">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://www.linkedin.com/in/john85051232">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                
+                    <li>
+                        <a target="_blank" href="https://www.facebook.com/meetonfridayyy">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+                
+                    <li>
+                        <a target="_blank"  href="https://mail.google.com/mail/?view=cm&fs=1&to=john85051232@gmail.com">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-envelope-o fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+                
+                
+
+                
+
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; John 2025 
+                    <br>
+                    Powered by 
+                    <a href="https://github.com/john850512/hexo-theme-jiji" target="_blank" rel="noopener">
+                        <i>hexo-theme-jiji</i>
+                    </a> | 
+                    <iframe name="star" style="margin-left: 2px; margin-bottom:-5px;" frameborder="0" scrolling="0"
+                        width="100px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=john850512&repo=hexo-theme-jiji&type=star&count=true">
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+
+</footer>
+
+<!-- jQuery -->
+
+<script src="/js/jquery.min.js"></script>
+
+
+<!-- Bootstrap Core JavaScript -->
+
+<script src="/js/bootstrap.min.js"></script>
+
+
+<!-- Custom Theme JavaScript -->
+
+<script src="/js/hux-blog.min.js"></script>
+
+
+<!-- Search -->
+
+<script src="/js/search.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("https://meetonfriday.com/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+<!-- Search -->
+
+    <script type="text/javascript">      
+        var search_path = "search.xml";
+        if (search_path.length == 0) {
+            search_path = "search.xml";
+        }
+    var path = "/" + search_path;
+    searchFunc(path, 'local-search-input', 'local-search-result');
+    </script>
+
+
+<!-- busuanzi -->
+<!--<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>-->
+<script async src="//cdn.jsdelivr.net/npm/busuanzi@2.3.0"></script>
+
+
+
+
+	<a id="rocket" href="#top" class=""></a>
+	<script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script>
+    <script type="text/javascript" src="/js/toc.js?v=1.0.0" async=""></script>
+
+    
+        <!-- background effects line -->
+        
+        <!-- background effects end -->
+    
+    
+    <!-- background animation-->>
+    <!--<script size="50" alpha='0.3' zIndex="-999" src="/js/ribbonStatic.js"></script>-->
+    
+        <script src="/js/ribbonDynamic.js"></script>
+    
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script>
+            window.imageLazyLoadSetting = {
+                isSPA: false,
+                processImages: null,
+            };
+        </script><script>window.addEventListener("load",function(){var t=/\.(gif|jpg|jpeg|tiff|png)$/i,r=/^data:image\/[a-z]+;base64,/;Array.prototype.slice.call(document.querySelectorAll("img[data-original]")).forEach(function(a){var e=a.parentNode;"A"===e.tagName&&(e.href.match(t)||e.href.match(r))&&(e.href=a.dataset.original)})});</script><script>!function(n){n.imageLazyLoadSetting.processImages=o;var i=n.imageLazyLoadSetting.isSPA,r=Array.prototype.slice.call(document.querySelectorAll("img[data-original]"));function o(){i&&(r=Array.prototype.slice.call(document.querySelectorAll("img[data-original]")));for(var t,e,a=0;a<r.length;a++)t=r[a],0<=(e=t.getBoundingClientRect()).bottom&&0<=e.left&&e.top<=(n.innerHeight||document.documentElement.clientHeight)&&function(){var t,e,n,i,o=r[a];t=o,e=function(){r=r.filter(function(t){return o!==t})},n=new Image,i=t.getAttribute("data-original"),n.onload=function(){t.src=i,e&&e()},n.src=i}()}o(),n.addEventListener("scroll",function(){var t,e;t=o,e=n,clearTimeout(t.tId),t.tId=setTimeout(function(){t.call(e)},500)})}(this);</script></body>
+
+</html>

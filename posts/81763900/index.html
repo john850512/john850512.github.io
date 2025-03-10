@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<!-- Head tag -->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="baidu-site-verification" content="093lY4ziMu" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="keyword"  content="programming, study, daily, entertainment">
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="星期五。見面">
+    <meta property="og:locale" content="zh-TW" />
+    
+    <meta property="og:title" content="[課程筆記]Linux Driver正點原子課程筆記1 &amp; 2 - Linux驅動開發 &amp; 字符設備驅動開發基礎實驗" />
+    
+    
+    <meta property="og:description" content="驅動開發思維。為何需要Linux driver? 1.直接在Linux下操作register不現實，太複雜也不安全2.Linux具有各種驅動框架(driver framework)，使得各種設置能夠依照一訂的規範進行開發。Linux下一切皆文件，而所有的driver都放置在/dev/xxx下，可以透過fops(file operation)來操作(打開、關閉、讀寫)，新版的Linux下supoort device tree，是一個.dts，記錄devices information，kernel會去分析.dts文件了解有哪些設備..." />
+    <meta name="description" content="驅動開發思維。為何需要Linux driver? 1.直接在Linux下操作register不現實，太複雜也不安全2.Linux具有各種驅動框架(driver framework)，使得各種設置能夠依照一訂的規範進行開發。Linux下一切皆文件，而所有的driver都放置在/dev/xxx下，可以透過fops(file operation)來操作(打開、關閉、讀寫)，新版的Linux下supoort device tree，是一個.dts，記錄devices information，kernel會去分析.dts文件了解有哪些設備...">
+    
+    
+    <meta property="og:image" content="/img/avatar.jpg" />
+    
+
+    <link rel="shortcut icon" href="/img/avatar.jpg">
+    <!-- Place this tag in your head or just before your close body tag. -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <!--<link href='http://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>-->
+    <title>
+        
+          [課程筆記]Linux Driver正點原子課程筆記1 &amp; 2 - Linux驅動開發 &amp; 字符設備驅動開發基礎實驗 - MeetonFriday
+        
+    </title>
+    <!-- canonical -->
+    
+    
+      <link rel="canonical" href="https://meetonfriday.com/posts/81763900/">
+    
+
+    <!-- Bootstrap Core CSS -->
+    
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+
+
+    <!-- Custom CSS --> 
+    
+<link rel="stylesheet" href="/css/dusign-dark.css">
+
+    
+<link rel="stylesheet" href="/css/dusign-common-dark.css">
+
+    <!-- 
+<link rel="stylesheet" href="/css/font-awesome.css">
+ -->
+    
+<link rel="stylesheet" href="/css/toc.css">
+
+
+    
+    <!-- Pygments Highlight CSS -->
+    
+<link rel="stylesheet" href="/css/highlight.css">
+
+
+    
+<link rel="stylesheet" href="/css/widget.css">
+
+
+    
+<link rel="stylesheet" href="/css/rocket.css">
+
+
+    
+<link rel="stylesheet" href="/css/signature.css">
+
+
+    
+<link rel="stylesheet" href="/css/fonts.googleapis.css">
+
+
+    <!-- <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.3.0/css/font-awesome.min.css">-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.min.css">
+    
+    <!-- Google Analytics -->
+    
+      <!-- <script>
+          // dynamic User by Hux
+          var _gaId = 'UA-163346001-1';
+          var _gaDomain = 'auto';
+      
+          // Originial
+          (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+          (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+          })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+      
+          ga('create', _gaId, _gaDomain);
+          ga('send', 'pageview');
+      </script> -->
+      
+      <!-- Global site tag (gtag.js) - Google Analytics -->
+      <script async src="https://www.googletagmanager.com/gtag/js?id=UA-163346001-1"></script>
+      <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+      
+        gtag('config', 'UA-163346001-1');
+      </script>
+      
+    <!-- google ad sense-->
+    <script data-ad-client="ca-pub-9561340457908416" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<meta name="generator" content="Hexo 4.2.1"><link rel="alternate" href="/atom.xml" title="星期五。見面" type="application/atom+xml">
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+	<!-- Modified by Yu-Hsuan Yen -->
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        
+            
+                background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.5)), url('/img/header_img/header-bg.jpg')
+            
+        
+    }
+    
+</style>
+
+<header class="intro-header" >
+    <!-- Signature -->
+    <div id="signature">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                
+                    <div class="post-heading">
+                        <div class="tags">
+                            
+                              <a class="tag" href="/tags/#linux kernel" title="linux kernel">linux kernel</a>
+                            
+                              <a class="tag" href="/tags/#study" title="study">study</a>
+                            
+                        </div>
+                        <h1>[課程筆記]Linux Driver正點原子課程筆記1 &amp; 2 - Linux驅動開發 &amp; 字符設備驅動開發基礎實驗</h1>
+                        <h2 class="subheading"></h2>
+                        <span class="meta">
+                            Posted by John on
+                            2021-01-24
+                        </span>
+
+                        
+                            <div class="blank_box"></div>
+                            <span class="meta">
+                                Words <span class="post-count">903</span> and
+                                Reading Time <span class="post-count">3</span> Minutes
+                            </span>
+                            <div class="blank_box"></div>
+                            <!-- 不蒜子统计 start -->
+                            <span class="meta">
+                                Viewed <span id="busuanzi_value_page_pv"><i class="fa fa-spinner fa-spin"></i></span> Times
+                            </span>
+                            <!-- 不蒜子统计 end -->
+                        
+
+                    </div>
+                
+
+                </div>
+            </div>
+        </div>      
+    </div>
+
+    
+        
+            <div class="waveWrapper">
+                <div class="wave wave_before" style="background-image: url('/img/wave-dark.png')"></div>
+                <div class="wave wave_after" style="background-image: url('/img/wave-dark.png')"></div>
+            </div>
+        
+    
+</header>
+
+	
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">星期五。見面</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archive/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/categories/">Categories</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/reading/">Reading</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+    
+    <!-- Main Content -->
+    <!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+            <!-- Post Container -->
+
+    
+        
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+        
+    
+
+                <p>〖想觀看更多課程筆記，至<a href="https://meetonfriday.com/posts/85f1c2a/">[課程筆記]課程筆記系列總覽</a>可以看到目前已發布的所有文章！〗</p>
+<h2 id="Course-1-Linux驅動開發"><a href="#Course-1-Linux驅動開發" class="headerlink" title="Course 1 - Linux驅動開發"></a>Course 1 - Linux驅動開發</h2><h3 id="驅動開發思維"><a href="#驅動開發思維" class="headerlink" title="驅動開發思維"></a>驅動開發思維</h3><p>為何需要Linux driver?</p>
+<ul>
+<li>直接在Linux下操作register不現實，太複雜也不安全</li>
+<li>Linux具有各種驅動框架(driver framework)，使得各種設置能夠依照一訂的規範進行開發</li>
+</ul>
+<p>Linux下一切皆文件，而所有的driver都放置在/dev/xxx下，可以透過fops(file operation)來操作(打開、關閉、讀寫)</p>
+<p>新版的Linux下supoort device tree，是一個.dts，記錄devices information，kernel會去分析.dts文件了解有哪些設備</p>
+<h3 id="驅動開發分類"><a href="#驅動開發分類" class="headerlink" title="驅動開發分類"></a>驅動開發分類</h3><p>linux 驅動分成三大類</p>
+<ol>
+<li>char device driver: 字符設備驅動，按照字符依序存取，大部分的驅動都是這種，e.g. i2c</li>
+<li>block device driver: 能以固定大小長度傳送和轉移，可以不需要按照順序操作，e.g. SD card</li>
+<li>network device driver: 網路設備驅動，e.g. wifi</li>
+</ol>
+<a id="more"></a>
+<p>一個設備可以同時是不同類型的驅動，例如USB WIFI, SDIO WIFI是network device driver但同時也是char device driver</p>
+<h2 id="Course-2-字符設備驅動開發基礎實驗"><a href="#Course-2-字符設備驅動開發基礎實驗" class="headerlink" title="Course 2 - 字符設備驅動開發基礎實驗"></a>Course 2 - 字符設備驅動開發基礎實驗</h2><h3 id="應用程序和驅動的交互原理"><a href="#應用程序和驅動的交互原理" class="headerlink" title="應用程序和驅動的交互原理"></a>應用程序和驅動的交互原理</h3><p>驅動就是用來和device溝通的程式。Linux驅動編譯除了要編寫一個driver外，還要編寫一個測試應用程式(application)</p>
+<ul>
+<li>單晶片機下驅動和應用是放在一個文件內</li>
+<li>Linux下驅動和應用是完全分開的，所以此時就牽扯到user space &amp; kernel space</li>
+</ul>
+<p>以下部分內容引用自<a href="https://blog.csdn.net/liujianfei526/article/details/77824639" target="_blank" rel="noopener">linux内存管理—用户空间和内核空间</a></p>
+<blockquote>
+<p>关于虚拟内存有三点需要注意：</p>
+<ul>
+<li>4G的进程地址空间被人为的分为两个部分—用户空间与内核空间。用户空间从0到3G（0xc0000000）,内核空间占据3G到4G。用户进程通常情况下只能访问用户空间的虚拟地址，不能访问内核空间的虚拟地址。例外情况只有用户进程进行系统调用（代表用户进程在内核态执行）等时刻可以访问到内核空间。</li>
+<li>用户空间对应进程，所以每当进程切换，用户空间就会跟着变化；而内核空间是由内核负责映射，它并不会跟着进程变化，是固定的。内核空间地址有自己对应的页表，用户进程各自有不同的页表。</li>
+<li>每个进程的用户空间都是完全独立、互不相干的。<br><img src="https://meetonfriday.com/img/lazy-loading-animation.gif" data-original="https://res.cloudinary.com/meet-on-friday/image/upload/c_scale,w_500/v1611393582/blog_posts_2021/2021_01/%E6%88%AA%E5%9C%96_2021-01-23_%E4%B8%8B%E5%8D%885.18.36_ylx316.png" alt=""></li>
+</ul>
+</blockquote>
+<p>user space &amp; kernel space: 為了安全性而做的區隔</p>
+<ul>
+<li>linux kernel &amp; driver在kernel space執行</li>
+<li>application跑在user space</li>
+</ul>
+<p>因此當app要access kernel resource時有三種方式</p>
+<ul>
+<li>system call: 可以透過API來間接調用system call，例如POSIX &amp; C Lib</li>
+<li>interrupt </li>
+<li>trap: software interrupt</li>
+</ul>
+<p>每個system call會有一個id，例如在<a href="https://elixir.bootlin.com/linux/v4.19/source/arch/arm64/include/asm/unistd32.h" target="_blank" rel="noopener">/arch/arm64/include/asm/unistd32.h</a>中可以看到system call和對應的id</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">0</span><br><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* /arch/arm64/include/asm/unistd32.h */</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifndef</span> __SYSCALL</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> __SYSCALL(x, y)</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> __NR_restart_syscall 0</span></span><br><span class="line">__SYSCALL(__NR_restart_syscall, sys_restart_syscall)</span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> __NR_exit 1</span></span><br><span class="line">__SYSCALL(__NR_exit, sys_exit)</span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> __NR_fork 2</span></span><br><span class="line">__SYSCALL(__NR_fork, sys_fork)</span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> __NR_read 3</span></span><br><span class="line">__SYSCALL(__NR_read, sys_read)</span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> __NR_write 4</span></span><br><span class="line">__SYSCALL(__NR_write, sys_write)</span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> __NR_open 5</span></span><br><span class="line">__SYSCALL(__NR_open, compat_sys_open)</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+<p>要使用system call，必須要先透過trap觸發軟體中斷進入kernel mode，然後還需要指定system call id，然後整個流程大致如下圖:</p>
+<p><img src="https://meetonfriday.com/img/lazy-loading-animation.gif" data-original="https://res.cloudinary.com/meet-on-friday/image/upload/c_scale,w_500/v1611393636/blog_posts_2021/2021_01/zEXqLKH_baes0s.png" alt=""></p>
+<h3 id="字符設備驅動開發流程"><a href="#字符設備驅動開發流程" class="headerlink" title="字符設備驅動開發流程"></a>字符設備驅動開發流程</h3><p>Linux下一切皆文件(/dev/xxx)，application可以透過<code>open()</code>來打開設備，並透過<code>read()</code>, <code>write()</code>來存取設備, 並透過<code>close()</code>來關閉</p>
+<p>因此在設計驅動的時候，需要撰寫對應的<code>open()</code>, <code>close()</code>, <code>write()</code>… function，這些被記錄在file_operations的struct內向外提供</p>
+
+                <hr>
+                <!-- Pager -->
+                <ul class="pager">
+    
+    <li class="previous">
+        <a href="/posts/15ad89ab/" data-toggle="tooltip" data-placement="top" title="[讀書心得]富爸爸商學院">&larr; Newer Post</a>
+    </li>
+    
+    
+    <li class="next">
+        <a href="/posts/85f1c2a/" data-toggle="tooltip" data-placement="top" title="[課程筆記]課程筆記系列總覽">Older Post &rarr;</a>
+    </li>
+    
+</ul>
+
+                <!-- tip start -->
+                
+
+                
+                <!-- tip end -->
+
+                <!-- Sharing -->
+                
+                <!-- Sharing -->
+
+                <!-- gitment start -->
+                
+                <!-- gitment end -->
+
+                <!-- 来必力City版安装代码 -->
+                
+                <!-- City版安装代码已完成 -->
+
+                <!-- disqus comment start -->
+                
+                <div class="comment">
+                    <div id="disqus_thread" class="disqus-thread"></div>
+                </div>
+                
+                <!-- disqus comment end -->
+            </div>
+            
+            <!-- Tabe of Content -->
+            <!-- Table of Contents -->
+
+    
+      
+        <aside id="sidebar">
+          <div id="toc" class="toc-article">
+          <strong class="toc-title">Contents</strong>
+          
+            <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Course-1-Linux驅動開發"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">Course 1 - Linux驅動開發</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#驅動開發思維"><span class="toc-nav-number">1.1.</span> <span class="toc-nav-text">驅動開發思維</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#驅動開發分類"><span class="toc-nav-number">1.2.</span> <span class="toc-nav-text">驅動開發分類</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Course-2-字符設備驅動開發基礎實驗"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">Course 2 - 字符設備驅動開發基礎實驗</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#應用程序和驅動的交互原理"><span class="toc-nav-number">2.1.</span> <span class="toc-nav-text">應用程序和驅動的交互原理</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#字符設備驅動開發流程"><span class="toc-nav-number">2.2.</span> <span class="toc-nav-text">字符設備驅動開發流程</span></a></li></ol></li></ol>
+          
+          </div>
+        </aside>
+      
+    
+
+        </div>
+    </div>
+</article>
+
+	
+    <!-- disqus embedded js code start (one page only need to embed once) -->	
+    <script type="text/javascript">	
+        /* * * CONFIGURATION VARIABLES * * */	
+        var disqus_shortname = "meetonfriday";	
+        var disqus_identifier = "https://meetonfriday.com/posts/81763900/";	
+        var disqus_url = "https://meetonfriday.com/posts/81763900/";	
+        (function() {	
+            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;	
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';	
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);	
+        })();	
+    </script>	
+    <!-- disqus embedded js code start end -->	
+    
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/john850512">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://www.linkedin.com/in/john85051232">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                
+                    <li>
+                        <a target="_blank" href="https://www.facebook.com/meetonfridayyy">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+                
+                    <li>
+                        <a target="_blank"  href="https://mail.google.com/mail/?view=cm&fs=1&to=john85051232@gmail.com">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-envelope-o fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+                
+                
+
+                
+
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; John 2025 
+                    <br>
+                    Powered by 
+                    <a href="https://github.com/john850512/hexo-theme-jiji" target="_blank" rel="noopener">
+                        <i>hexo-theme-jiji</i>
+                    </a> | 
+                    <iframe name="star" style="margin-left: 2px; margin-bottom:-5px;" frameborder="0" scrolling="0"
+                        width="100px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=john850512&repo=hexo-theme-jiji&type=star&count=true">
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+
+</footer>
+
+<!-- jQuery -->
+
+<script src="/js/jquery.min.js"></script>
+
+
+<!-- Bootstrap Core JavaScript -->
+
+<script src="/js/bootstrap.min.js"></script>
+
+
+<!-- Custom Theme JavaScript -->
+
+<script src="/js/hux-blog.min.js"></script>
+
+
+<!-- Search -->
+
+<script src="/js/search.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("https://meetonfriday.com/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+<!-- Search -->
+
+    <script type="text/javascript">      
+        var search_path = "search.xml";
+        if (search_path.length == 0) {
+            search_path = "search.xml";
+        }
+    var path = "/" + search_path;
+    searchFunc(path, 'local-search-input', 'local-search-result');
+    </script>
+
+
+<!-- busuanzi -->
+<!--<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>-->
+<script async src="//cdn.jsdelivr.net/npm/busuanzi@2.3.0"></script>
+
+
+
+
+	<a id="rocket" href="#top" class=""></a>
+	<script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script>
+    <script type="text/javascript" src="/js/toc.js?v=1.0.0" async=""></script>
+
+    
+        <!-- background effects line -->
+        
+        <!-- background effects end -->
+    
+    
+    <!-- background animation-->>
+    <!--<script size="50" alpha='0.3' zIndex="-999" src="/js/ribbonStatic.js"></script>-->
+    
+        <script src="/js/ribbonDynamic.js"></script>
+    
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script>
+            window.imageLazyLoadSetting = {
+                isSPA: false,
+                processImages: null,
+            };
+        </script><script>window.addEventListener("load",function(){var t=/\.(gif|jpg|jpeg|tiff|png)$/i,r=/^data:image\/[a-z]+;base64,/;Array.prototype.slice.call(document.querySelectorAll("img[data-original]")).forEach(function(a){var e=a.parentNode;"A"===e.tagName&&(e.href.match(t)||e.href.match(r))&&(e.href=a.dataset.original)})});</script><script>!function(n){n.imageLazyLoadSetting.processImages=o;var i=n.imageLazyLoadSetting.isSPA,r=Array.prototype.slice.call(document.querySelectorAll("img[data-original]"));function o(){i&&(r=Array.prototype.slice.call(document.querySelectorAll("img[data-original]")));for(var t,e,a=0;a<r.length;a++)t=r[a],0<=(e=t.getBoundingClientRect()).bottom&&0<=e.left&&e.top<=(n.innerHeight||document.documentElement.clientHeight)&&function(){var t,e,n,i,o=r[a];t=o,e=function(){r=r.filter(function(t){return o!==t})},n=new Image,i=t.getAttribute("data-original"),n.onload=function(){t.src=i,e&&e()},n.src=i}()}o(),n.addEventListener("scroll",function(){var t,e;t=o,e=n,clearTimeout(t.tId),t.tId=setTimeout(function(){t.call(e)},500)})}(this);</script></body>
+
+</html>

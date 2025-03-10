@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<!-- Head tag -->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="baidu-site-verification" content="093lY4ziMu" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="keyword"  content="programming, study, daily, entertainment">
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="星期五。見面">
+    <meta property="og:locale" content="zh-TW" />
+    
+    <meta property="og:title" content="[Pytorch]zero_grad()和backward()使用技巧" />
+    
+    
+    <meta property="og:description" content="今天來聊聊Pytorch的gradient update這個寫法。對Pytorch不陌生的朋友應該知道，一個pytorch model training的起手式大概長這個樣子，這段code看似簡單，實際上他做了下列這些事情: 1. 將data傳入model進行forward propagation 2. 計算loss 3. 清空前一次的gradient 4. 根據loss進行back propagation，計算gradient 5. 做gradient descent" />
+    <meta name="description" content="今天來聊聊Pytorch的gradient update這個寫法。對Pytorch不陌生的朋友應該知道，一個pytorch model training的起手式大概長這個樣子，這段code看似簡單，實際上他做了下列這些事情: 1. 將data傳入model進行forward propagation 2. 計算loss 3. 清空前一次的gradient 4. 根據loss進行back propagation，計算gradient 5. 做gradient descent">
+    
+    
+    <meta property="og:image" content="/img/avatar.jpg" />
+    
+
+    <link rel="shortcut icon" href="/img/avatar.jpg">
+    <!-- Place this tag in your head or just before your close body tag. -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <!--<link href='http://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>-->
+    <title>
+        
+          [Pytorch]zero_grad()和backward()使用技巧 - MeetonFriday
+        
+    </title>
+    <!-- canonical -->
+    
+    
+      <link rel="canonical" href="https://meetonfriday.com/posts/18392404/">
+    
+
+    <!-- Bootstrap Core CSS -->
+    
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+
+
+    <!-- Custom CSS --> 
+    
+<link rel="stylesheet" href="/css/dusign-dark.css">
+
+    
+<link rel="stylesheet" href="/css/dusign-common-dark.css">
+
+    <!-- 
+<link rel="stylesheet" href="/css/font-awesome.css">
+ -->
+    
+<link rel="stylesheet" href="/css/toc.css">
+
+
+    
+    <!-- Pygments Highlight CSS -->
+    
+<link rel="stylesheet" href="/css/highlight.css">
+
+
+    
+<link rel="stylesheet" href="/css/widget.css">
+
+
+    
+<link rel="stylesheet" href="/css/rocket.css">
+
+
+    
+<link rel="stylesheet" href="/css/signature.css">
+
+
+    
+<link rel="stylesheet" href="/css/fonts.googleapis.css">
+
+
+    <!-- <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.3.0/css/font-awesome.min.css">-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.min.css">
+    
+    <!-- Google Analytics -->
+    
+      <!-- <script>
+          // dynamic User by Hux
+          var _gaId = 'UA-163346001-1';
+          var _gaDomain = 'auto';
+      
+          // Originial
+          (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+          (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+          })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+      
+          ga('create', _gaId, _gaDomain);
+          ga('send', 'pageview');
+      </script> -->
+      
+      <!-- Global site tag (gtag.js) - Google Analytics -->
+      <script async src="https://www.googletagmanager.com/gtag/js?id=UA-163346001-1"></script>
+      <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+      
+        gtag('config', 'UA-163346001-1');
+      </script>
+      
+    <!-- google ad sense-->
+    <script data-ad-client="ca-pub-9561340457908416" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<meta name="generator" content="Hexo 4.2.1"><link rel="alternate" href="/atom.xml" title="星期五。見面" type="application/atom+xml">
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+	<!-- Modified by Yu-Hsuan Yen -->
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        
+            
+                background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.5)), url('/img/header_img/header-bg.jpg')
+            
+        
+    }
+    
+</style>
+
+<header class="intro-header" >
+    <!-- Signature -->
+    <div id="signature">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                
+                    <div class="post-heading">
+                        <div class="tags">
+                            
+                              <a class="tag" href="/tags/#deep learning" title="deep learning">deep learning</a>
+                            
+                              <a class="tag" href="/tags/#python" title="python">python</a>
+                            
+                              <a class="tag" href="/tags/#pytorch" title="pytorch">pytorch</a>
+                            
+                        </div>
+                        <h1>[Pytorch]zero_grad()和backward()使用技巧</h1>
+                        <h2 class="subheading"></h2>
+                        <span class="meta">
+                            Posted by John on
+                            2020-05-28
+                        </span>
+
+                        
+                            <div class="blank_box"></div>
+                            <span class="meta">
+                                Words <span class="post-count">1.6k</span> and
+                                Reading Time <span class="post-count">6</span> Minutes
+                            </span>
+                            <div class="blank_box"></div>
+                            <!-- 不蒜子统计 start -->
+                            <span class="meta">
+                                Viewed <span id="busuanzi_value_page_pv"><i class="fa fa-spinner fa-spin"></i></span> Times
+                            </span>
+                            <!-- 不蒜子统计 end -->
+                        
+
+                    </div>
+                
+
+                </div>
+            </div>
+        </div>      
+    </div>
+
+    
+        
+            <div class="waveWrapper">
+                <div class="wave wave_before" style="background-image: url('/img/wave-dark.png')"></div>
+                <div class="wave wave_after" style="background-image: url('/img/wave-dark.png')"></div>
+            </div>
+        
+    
+</header>
+
+	
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">星期五。見面</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archive/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/categories/">Categories</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/reading/">Reading</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+    
+    <!-- Main Content -->
+    <!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+            <!-- Post Container -->
+
+    
+        
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+        
+    
+
+                <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>今天來聊聊Pytorch的gradient update這個寫法。對Pytorch不陌生的朋友應該知道，一個pytorch model training的起手式大概長這個樣子:<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> idx, (batch_x, batch_y) <span class="keyword">in</span> enumerate(data_loader):</span><br><span class="line">    output = model(batch_x)</span><br><span class="line">    loss = criterion(output, batch_y)</span><br><span class="line">    optimizer.zero_grad()</span><br><span class="line">    loss.backward()</span><br><span class="line">    optimizer.step()</span><br></pre></td></tr></table></figure></p>
+<p>這段code看似簡單，實際上他做了下列這些事情:</p>
+<ol>
+<li>將data傳入model進行forward propagation</li>
+<li>計算loss</li>
+<li>清空前一次的gradient</li>
+<li>根據loss進行back propagation，計算gradient</li>
+<li>做gradient descent</li>
+</ol>
+<p>如果用numpy純刻forward/backward是一件很累的事情，所以deep learning framework如Pytorch, tensorflow都幫你做完了，大感恩。</p>
+<p>這篇文章主要是針對上面這個起手式來討論一些有的沒的，在往下看之前也可以先想想看這些問題:</p>
+<ul>
+<li>Pytorch為什麼要手動將gradient清空(<code>optimizer.zero_grad()</code>)，不能把這一步自動化嗎?</li>
+<li>同理，為什麼gradient也要手動計算(<code>loss.backward()</code>)，不能每一次forward做完就自動算出對應的gradient嗎?</li>
+</ul>
+<a id="more"></a>
+<h2 id="Gradient-accumulation"><a href="#Gradient-accumulation" class="headerlink" title="Gradient accumulation"></a>Gradient accumulation</h2><p>Pytorch不幫你自動清空gradient，而是要你呼叫<code>optimizer.zero_grad()</code>來做這件事是因為，這樣子你可以有更大的彈性去做一些<del>黑魔法</del>，畢竟，<strong>誰規定每一次iteration都要清空gradient?</strong></p>
+<p>試想你今天GPU的資源就那麼小，可是你一定要訓練一個很大的model，然後如果batch size不大又train不起來，那這時候該怎麼辦? </p>
+<p>雖然沒有課金解決不了的事情，如果有，那就多課一點…不是，這邊提供另外一種設計思維:</p>
+<p><strong>你可以將你的model每次都用小的batch size去做forward/backward，但是在update的時候是多做幾個iteration在做一次。</strong></p>
+<p>這個想法就是梯度累加(<strong>gradient accumulation</strong>)，也就是說我們透過多次的iteration累積backward的loss，然後只對應做了一次update，間接的做到了大batch size時候的效果。</p>
+<p>gradient accumulation寫起來也不難，我們來看一下大概的寫法:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> idx, (batch_x, batch_y) <span class="keyword">in</span> enumerate(data_loader):</span><br><span class="line">    output = model(batch_x)</span><br><span class="line">    loss = criterion(output, batch_y)</span><br><span class="line">    </span><br><span class="line">    loss = loss / accumulation_step</span><br><span class="line">    loss.backward()</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">if</span> (idx % accumulation_step) == <span class="number">0</span>:</span><br><span class="line">        optimizer.step() <span class="comment"># update</span></span><br><span class="line">        optimizer.zero_grad() <span class="comment"># reset</span></span><br></pre></td></tr></table></figure>
+<p>簡單吧? 當我執行了accumulation_step次之後，才進行gradient descent然後清空gradient。</p>
+<p>注意這邊每一次iteration都還是有呼叫<code>loss.backward()</code>，所以每一次迭代的時候gradient都會一直被累加，直到最後被呼叫了<code>optimizer.zero_grad()</code>才將他們清空。</p>
+<ul>
+<li>不過要注意的是，在進行這個trick的時候，learning rate也要對應的做出調整。</li>
+</ul>
+<p>現在我們來找一些source code看看這個技巧唄! 知名頂頂的BERT裡面也有用到這一個技巧，有用過的就知道他有一個<code>gradient_accumulation_steps</code>參數，那在code裡面怎麼寫呢? 我們來看一下<a href="https://github.com/huggingface/transformers/blob/6a17688021268fe429e78c66ea0932cb55cd03b1/src/transformers/trainer.py#L473" target="_blank" rel="noopener">transformers/src/transformers/trainer.py</a></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">473</span><br><span class="line">474</span><br><span class="line">475</span><br><span class="line">476</span><br><span class="line">477</span><br><span class="line">478</span><br><span class="line">479</span><br><span class="line">480</span><br><span class="line">481</span><br><span class="line">482</span><br><span class="line">483</span><br><span class="line">484</span><br><span class="line">485</span><br><span class="line">486</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (step + <span class="number">1</span>) % self.args.gradient_accumulation_steps == <span class="number">0</span> <span class="keyword">or</span> (</span><br><span class="line">    <span class="comment"># last step in epoch but step is always smaller than gradient_accumulation_steps</span></span><br><span class="line">    len(epoch_iterator) &lt;= self.args.gradient_accumulation_steps</span><br><span class="line">    <span class="keyword">and</span> (step + <span class="number">1</span>) == len(epoch_iterator)</span><br><span class="line">):</span><br><span class="line">    <span class="keyword">if</span> self.args.fp16:</span><br><span class="line">        torch.nn.utils.clip_grad_norm_(amp.master_params(optimizer), self.args.max_grad_norm)</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        torch.nn.utils.clip_grad_norm_(model.parameters(), self.args.max_grad_norm)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> is_tpu_available():</span><br><span class="line">        xm.optimizer_step(optimizer)</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        optimizer.step()</span><br></pre></td></tr></table></figure>
+<h2 id="Gradient-accumulation-in-multi-task-training"><a href="#Gradient-accumulation-in-multi-task-training" class="headerlink" title="Gradient accumulation in multi-task training"></a>Gradient accumulation in multi-task training</h2><p>接下來我們看另一個情境，假設我們今天在做一個multi-task的訓練，那不同的task我們就會有不同的loss，於是乎我們想把這些loss加起來一起做然後得到最後的loss，在去做backward。</p>
+<p>這樣的話，寫法大概會是下面這樣:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">for idx, (batch_x, batch_y) in enumerate(data_loader):</span><br><span class="line">    output1 &#x3D; model1(batch_x)</span><br><span class="line">    loss1 &#x3D; criterion(output1, batch_y)</span><br><span class="line">    </span><br><span class="line">    output2 &#x3D; model2(batch_x)</span><br><span class="line">    loss2 &#x3D; criterion(output2, batch_y)</span><br><span class="line">    </span><br><span class="line">    loss &#x3D; loss1 + loss2</span><br><span class="line">    </span><br><span class="line">    optimizer.zero_grad()</span><br><span class="line">    loss.backward()</span><br><span class="line">    optimizer.step()</span><br></pre></td></tr></table></figure></p>
+<p>要記得在變數計算的時候背後都是有著一張graph的，所以在第2行loss1計算的背後會得到一張graph，在第5行loss2也會有一張graph，直到第8行才將這兩張graph進行了合併成一張，然後在<code>backward()</code>的時候將梯度更新並釋放掉graph。</p>
+<p>於是，<strong>在6行到第8行中間，device同時儲存了兩張graph</strong>，那如果loss一多，這樣對於memory的消耗就很大了。</p>
+<p>但是套用gradient accumulation的概念，我們可以只存一張graph就完成這些計算，考慮以下程式碼:<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> idx, (batch_x, batch_y) <span class="keyword">in</span> enumerate(data_loader):</span><br><span class="line">    optimizer.zero_grad()</span><br><span class="line">    </span><br><span class="line">    output1 = model1(batch_x)</span><br><span class="line">    loss1 = criterion(output1, batch_y)</span><br><span class="line">    loss1.backward() </span><br><span class="line">    </span><br><span class="line">    output2 = model2(batch_x)</span><br><span class="line">    loss2 = criterion(output2, batch_y)</span><br><span class="line">    loss2.backward()</span><br><span class="line">    </span><br><span class="line">    optimizer.step()</span><br></pre></td></tr></table></figure></p>
+<p>我們先針對loss1去進行backward，然後算完後就將graph釋放掉然後將gradient存在變數中，之後再去計算loss2，所以從頭到尾device同個時間上最多只會有一張graph的memory。</p>
+<p>如果這樣看不懂為什麼可以work的話，我們來看一下數學公式QQ</p>
+<script type="math/tex; mode=display">\frac{\partial (loss_1+loss_2)}{\partial x} = \frac{\partial (loss_1)}{\partial x}+\frac{\partial (loss_2)}{\partial x}</script><p>把loss相加在去算gradient跟兩個分開來做是等價的，然後要記得我們在前一節提過的，<strong>沒做<code>optimizer.zero_grad()</code>前gradient是會被累加的</strong>，所以在第12行我們只需要呼叫一次<code>optimizer.step()</code>就可以做到同時update兩個loss。</p>
+<h2 id="Truncated-Back-Propagation-Through-Time-in-RNN"><a href="#Truncated-Back-Propagation-Through-Time-in-RNN" class="headerlink" title="Truncated Back Propagation Through Time in RNN"></a>Truncated Back Propagation Through Time in RNN</h2><p>(這一段其實自己也不太熟，如果有錯誤再麻煩指正~)<br>在RNN訓練中，back propagation的方法叫做Back Propagation Through Time(BPTT)，因為backward會牽涉到前一個時間的hidden state。</p>
+<p>並且，由於每一個hidden state都跟前一個時刻有關，RNN在input過長的時候會出現gradient vanish/explosion的問題，解決方法向是LSTM或是GRU等具有gated mechanism的模型。</p>
+<p>不過在訓練的技巧上有另外一種可以幫助解決這個問題的方法，那就是<strong>Truncated Back Propagation Through Time(TBPTT)</strong>，其實他有很多種case，細節可以參閱<a href="https://machinelearningmastery.com/gentle-introduction-backpropagation-time/" target="_blank" rel="noopener">A Gentle Introduction to Backpropagation Through Time</a>。</p>
+<p>不過這裡講的是其中一種case: 也就是為了避免input過長造成上述的問題，我們不將所有的input都用來計算gradient，也就是，對於某個長度之後的gradient我們都捨棄掉不理他。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># non-truncated</span></span><br><span class="line"><span class="keyword">for</span> t <span class="keyword">in</span> range(T):</span><br><span class="line">    out = model(out)</span><br><span class="line">    out.backward()</span><br><span class="line">    </span><br><span class="line"><span class="comment"># truncated to the last K timesteps</span></span><br><span class="line"><span class="keyword">for</span> t <span class="keyword">in</span> range(T):</span><br><span class="line">    out = model(out)</span><br><span class="line">    <span class="keyword">if</span> T - t == K:</span><br><span class="line">        out.backward()</span><br><span class="line">        out.detach()</span><br><span class="line">out.backward()</span><br></pre></td></tr></table></figure>
+<p><code>out.detach()</code>會在K timestamp的時候截斷graph，然後後面就從該變數之後就不會在做backward了，所以就實現了TBPTT</p>
+<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><ul>
+<li><a href="https://www.zhihu.com/question/303070254" target="_blank" rel="noopener">PyTorch中在反向传播前为什么要手动将梯度清零？</a></li>
+<li><a href="https://www.cnblogs.com/shiyublog/p/10542682.html" target="_blank" rel="noopener">[NLP] RNN 前向传播、延时间反向传播 BPTT 、延时间截断反向传播 TBTT</a></li>
+<li><a href="https://machinelearningmastery.com/gentle-introduction-backpropagation-time/" target="_blank" rel="noopener">A Gentle Introduction to Backpropagation Through Time</a></li>
+<li><a href="https://discuss.pytorch.org/t/correct-way-to-do-backpropagation-through-time/11701" target="_blank" rel="noopener">Correct way to do backpropagation through time?
+</a></li>
+</ul>
+
+                <hr>
+                <!-- Pager -->
+                <ul class="pager">
+    
+    <li class="previous">
+        <a href="/posts/2e56b772/" data-toggle="tooltip" data-placement="top" title="[論文速速讀]End-to-end object detection with Transformers">&larr; Newer Post</a>
+    </li>
+    
+    
+    <li class="next">
+        <a href="/posts/6a169efb/" data-toggle="tooltip" data-placement="top" title="[論文速速讀]Attention-based LSTM for Aspect-level Sentiment Classification">Older Post &rarr;</a>
+    </li>
+    
+</ul>
+
+                <!-- tip start -->
+                
+
+                
+                <!-- tip end -->
+
+                <!-- Sharing -->
+                
+                <!-- Sharing -->
+
+                <!-- gitment start -->
+                
+                <!-- gitment end -->
+
+                <!-- 来必力City版安装代码 -->
+                
+                <!-- City版安装代码已完成 -->
+
+                <!-- disqus comment start -->
+                
+                <div class="comment">
+                    <div id="disqus_thread" class="disqus-thread"></div>
+                </div>
+                
+                <!-- disqus comment end -->
+            </div>
+            
+            <!-- Tabe of Content -->
+            <!-- Table of Contents -->
+
+    
+      
+        <aside id="sidebar">
+          <div id="toc" class="toc-article">
+          <strong class="toc-title">Contents</strong>
+          
+            <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#前言"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">前言</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Gradient-accumulation"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">Gradient accumulation</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Gradient-accumulation-in-multi-task-training"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">Gradient accumulation in multi-task training</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Truncated-Back-Propagation-Through-Time-in-RNN"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">Truncated Back Propagation Through Time in RNN</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Reference"><span class="toc-nav-number">5.</span> <span class="toc-nav-text">Reference</span></a></li></ol>
+          
+          </div>
+        </aside>
+      
+    
+
+        </div>
+    </div>
+</article>
+
+	
+    <!-- disqus embedded js code start (one page only need to embed once) -->	
+    <script type="text/javascript">	
+        /* * * CONFIGURATION VARIABLES * * */	
+        var disqus_shortname = "meetonfriday";	
+        var disqus_identifier = "https://meetonfriday.com/posts/18392404/";	
+        var disqus_url = "https://meetonfriday.com/posts/18392404/";	
+        (function() {	
+            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;	
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';	
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);	
+        })();	
+    </script>	
+    <!-- disqus embedded js code start end -->	
+    
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/john850512">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://www.linkedin.com/in/john85051232">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                
+                    <li>
+                        <a target="_blank" href="https://www.facebook.com/meetonfridayyy">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+                
+                    <li>
+                        <a target="_blank"  href="https://mail.google.com/mail/?view=cm&fs=1&to=john85051232@gmail.com">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-envelope-o fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+                
+                
+
+                
+
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; John 2025 
+                    <br>
+                    Powered by 
+                    <a href="https://github.com/john850512/hexo-theme-jiji" target="_blank" rel="noopener">
+                        <i>hexo-theme-jiji</i>
+                    </a> | 
+                    <iframe name="star" style="margin-left: 2px; margin-bottom:-5px;" frameborder="0" scrolling="0"
+                        width="100px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=john850512&repo=hexo-theme-jiji&type=star&count=true">
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+
+</footer>
+
+<!-- jQuery -->
+
+<script src="/js/jquery.min.js"></script>
+
+
+<!-- Bootstrap Core JavaScript -->
+
+<script src="/js/bootstrap.min.js"></script>
+
+
+<!-- Custom Theme JavaScript -->
+
+<script src="/js/hux-blog.min.js"></script>
+
+
+<!-- Search -->
+
+<script src="/js/search.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("https://meetonfriday.com/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+<!-- Search -->
+
+    <script type="text/javascript">      
+        var search_path = "search.xml";
+        if (search_path.length == 0) {
+            search_path = "search.xml";
+        }
+    var path = "/" + search_path;
+    searchFunc(path, 'local-search-input', 'local-search-result');
+    </script>
+
+
+<!-- busuanzi -->
+<!--<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>-->
+<script async src="//cdn.jsdelivr.net/npm/busuanzi@2.3.0"></script>
+
+
+
+
+	<a id="rocket" href="#top" class=""></a>
+	<script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script>
+    <script type="text/javascript" src="/js/toc.js?v=1.0.0" async=""></script>
+
+    
+        <!-- background effects line -->
+        
+        <!-- background effects end -->
+    
+    
+    <!-- background animation-->>
+    <!--<script size="50" alpha='0.3' zIndex="-999" src="/js/ribbonStatic.js"></script>-->
+    
+        <script src="/js/ribbonDynamic.js"></script>
+    
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script>
+            window.imageLazyLoadSetting = {
+                isSPA: false,
+                processImages: null,
+            };
+        </script><script>window.addEventListener("load",function(){var t=/\.(gif|jpg|jpeg|tiff|png)$/i,r=/^data:image\/[a-z]+;base64,/;Array.prototype.slice.call(document.querySelectorAll("img[data-original]")).forEach(function(a){var e=a.parentNode;"A"===e.tagName&&(e.href.match(t)||e.href.match(r))&&(e.href=a.dataset.original)})});</script><script>!function(n){n.imageLazyLoadSetting.processImages=o;var i=n.imageLazyLoadSetting.isSPA,r=Array.prototype.slice.call(document.querySelectorAll("img[data-original]"));function o(){i&&(r=Array.prototype.slice.call(document.querySelectorAll("img[data-original]")));for(var t,e,a=0;a<r.length;a++)t=r[a],0<=(e=t.getBoundingClientRect()).bottom&&0<=e.left&&e.top<=(n.innerHeight||document.documentElement.clientHeight)&&function(){var t,e,n,i,o=r[a];t=o,e=function(){r=r.filter(function(t){return o!==t})},n=new Image,i=t.getAttribute("data-original"),n.onload=function(){t.src=i,e&&e()},n.src=i}()}o(),n.addEventListener("scroll",function(){var t,e;t=o,e=n,clearTimeout(t.tId),t.tId=setTimeout(function(){t.call(e)},500)})}(this);</script></body>
+
+</html>

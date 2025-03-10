@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<!-- Head tag -->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="baidu-site-verification" content="093lY4ziMu" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="keyword"  content="programming, study, daily, entertainment">
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="星期五。見面">
+    <meta property="og:locale" content="zh-TW" />
+    
+    <meta property="og:title" content="[Tensorflow]從Pytorch到TF2的學習之路 - Custom Model &amp; Custom training" />
+    
+    
+    <meta property="og:description" content="TF2.0中採用了和Pytorch相同的Eager Mode，並且使用了大量的Keras API，使得我們可以像Pytorch一樣透過建立動態圖來操作我們的運算的同時，能夠更有效率地來設計&amp;訓練我們的深度學習模型。但在寫法上，Pytorch和TF2的到底有著什麼樣的差異呢? 這篇文章針對客製化模型和訓練的起手式這兩個部分來撰寫，分別介紹使用Pytorch和TF2的不同，期望讓大家能夠快速地切換到不同的深度學習框架上。" />
+    <meta name="description" content="TF2.0中採用了和Pytorch相同的Eager Mode，並且使用了大量的Keras API，使得我們可以像Pytorch一樣透過建立動態圖來操作我們的運算的同時，能夠更有效率地來設計&amp;訓練我們的深度學習模型。但在寫法上，Pytorch和TF2的到底有著什麼樣的差異呢? 這篇文章針對客製化模型和訓練的起手式這兩個部分來撰寫，分別介紹使用Pytorch和TF2的不同，期望讓大家能夠快速地切換到不同的深度學習框架上。">
+    
+    
+    <meta property="og:image" content="/img/avatar.jpg" />
+    
+
+    <link rel="shortcut icon" href="/img/avatar.jpg">
+    <!-- Place this tag in your head or just before your close body tag. -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <!--<link href='http://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>-->
+    <title>
+        
+          [Tensorflow]從Pytorch到TF2的學習之路 - Custom Model &amp; Custom training - MeetonFriday
+        
+    </title>
+    <!-- canonical -->
+    
+    
+      <link rel="canonical" href="https://meetonfriday.com/posts/3e428c8a/">
+    
+
+    <!-- Bootstrap Core CSS -->
+    
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+
+
+    <!-- Custom CSS --> 
+    
+<link rel="stylesheet" href="/css/dusign-dark.css">
+
+    
+<link rel="stylesheet" href="/css/dusign-common-dark.css">
+
+    <!-- 
+<link rel="stylesheet" href="/css/font-awesome.css">
+ -->
+    
+<link rel="stylesheet" href="/css/toc.css">
+
+
+    
+    <!-- Pygments Highlight CSS -->
+    
+<link rel="stylesheet" href="/css/highlight.css">
+
+
+    
+<link rel="stylesheet" href="/css/widget.css">
+
+
+    
+<link rel="stylesheet" href="/css/rocket.css">
+
+
+    
+<link rel="stylesheet" href="/css/signature.css">
+
+
+    
+<link rel="stylesheet" href="/css/fonts.googleapis.css">
+
+
+    <!-- <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.3.0/css/font-awesome.min.css">-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.min.css">
+    
+    <!-- Google Analytics -->
+    
+      <!-- <script>
+          // dynamic User by Hux
+          var _gaId = 'UA-163346001-1';
+          var _gaDomain = 'auto';
+      
+          // Originial
+          (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+          (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+          })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+      
+          ga('create', _gaId, _gaDomain);
+          ga('send', 'pageview');
+      </script> -->
+      
+      <!-- Global site tag (gtag.js) - Google Analytics -->
+      <script async src="https://www.googletagmanager.com/gtag/js?id=UA-163346001-1"></script>
+      <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+      
+        gtag('config', 'UA-163346001-1');
+      </script>
+      
+    <!-- google ad sense-->
+    <script data-ad-client="ca-pub-9561340457908416" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<meta name="generator" content="Hexo 4.2.1"><link rel="alternate" href="/atom.xml" title="星期五。見面" type="application/atom+xml">
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+	<!-- Modified by Yu-Hsuan Yen -->
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        
+            
+                background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.5)), url('/img/header_img/header-bg.jpg')
+            
+        
+    }
+    
+</style>
+
+<header class="intro-header" >
+    <!-- Signature -->
+    <div id="signature">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                
+                    <div class="post-heading">
+                        <div class="tags">
+                            
+                              <a class="tag" href="/tags/#deep learning" title="deep learning">deep learning</a>
+                            
+                              <a class="tag" href="/tags/#pytorch" title="pytorch">pytorch</a>
+                            
+                              <a class="tag" href="/tags/#tensorflow" title="tensorflow">tensorflow</a>
+                            
+                        </div>
+                        <h1>[Tensorflow]從Pytorch到TF2的學習之路 - Custom Model &amp; Custom training</h1>
+                        <h2 class="subheading"></h2>
+                        <span class="meta">
+                            Posted by John on
+                            2020-08-19
+                        </span>
+
+                        
+                            <div class="blank_box"></div>
+                            <span class="meta">
+                                Words <span class="post-count">1.4k</span> and
+                                Reading Time <span class="post-count">5</span> Minutes
+                            </span>
+                            <div class="blank_box"></div>
+                            <!-- 不蒜子统计 start -->
+                            <span class="meta">
+                                Viewed <span id="busuanzi_value_page_pv"><i class="fa fa-spinner fa-spin"></i></span> Times
+                            </span>
+                            <!-- 不蒜子统计 end -->
+                        
+
+                    </div>
+                
+
+                </div>
+            </div>
+        </div>      
+    </div>
+
+    
+        
+            <div class="waveWrapper">
+                <div class="wave wave_before" style="background-image: url('/img/wave-dark.png')"></div>
+                <div class="wave wave_after" style="background-image: url('/img/wave-dark.png')"></div>
+            </div>
+        
+    
+</header>
+
+	
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">星期五。見面</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archive/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/categories/">Categories</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/reading/">Reading</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+    
+    <!-- Main Content -->
+    <!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+            <!-- Post Container -->
+
+    
+        
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+        
+    
+
+                <p>【[Tensorflow]從Pytorch到TF2的學習之路】所有文章:</p>
+<ul>
+<li><a href="https://meetonfriday.com/posts/1244cf1f/">[Tensorflow]從Pytorch到TF2的學習之路 - Different Padding Algorithms</a></li>
+<li><a href="https://meetonfriday.com/posts/877f4063/">[Tensorflow]從Pytorch到TF2的學習之路 - Training mode v.s. Inference mode</a></li>
+<li><a href="https://meetonfriday.com/posts/3e428c8a/">[Tensorflow]從Pytorch到TF2的學習之路 - Custom Model &amp; Custom training</a></li>
+</ul>
+<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>TF2.0中採用了和Pytorch相同的<strong>Eager Mode</strong>，並且使用了大量的Keras API，使得我們可以像Pytorch一樣透過建立動態圖來操作我們的運算的同時，能夠更有效率地來設計&amp;訓練我們的深度學習模型。但在寫法上，Pytorch和TF2的到底有著什麼樣的差異呢? </p>
+<p>這篇文章針對<strong>客製化模型</strong>和<strong>自定義訓練循環</strong>這兩個部分來撰寫，分別介紹使用Pytorch和TF2的不同，期望讓大家能夠快速地切換到不同的深度學習框架上。</p>
+<a id="more"></a>
+<h2 id="客製化模型的不同之處"><a href="#客製化模型的不同之處" class="headerlink" title="客製化模型的不同之處"></a>客製化模型的不同之處</h2><p>不囉So，咱們直接上code，先看一下兩個版本的程式碼，然後一併介紹他們的差異</p>
+<p>首先先看Pytorch版本</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">0</span><br><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">CustomModel</span><span class="params">(torch.nn.Module)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self)</span>:</span></span><br><span class="line">        super(self).__init__()</span><br><span class="line">        <span class="comment"># define your layer</span></span><br><span class="line">        self.fc1 = torch.nn.Linear(...)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">forward</span><span class="params">(self, x)</span>:</span></span><br><span class="line">        output = self.fc1(x)</span><br><span class="line">        <span class="keyword">return</span> output</span><br></pre></td></tr></table></figure>
+<p>再來看TF2版本</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">0</span><br><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">CustomModel</span><span class="params">(tf.keras.Model)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self)</span>:</span></span><br><span class="line">        super(self).__init__()</span><br><span class="line">        <span class="comment"># define your layer</span></span><br><span class="line">        self.fc1 = tf.keras.layers.Dense(...)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">call</span><span class="params">(self, x)</span>:</span></span><br><span class="line">        output = self.fc1(x)</span><br><span class="line">        <span class="keyword">return</span> output</span><br></pre></td></tr></table></figure>
+<p>這邊簡單介紹一下差異的部分:</p>
+<ul>
+<li>Pytorch<ol>
+<li>在Pytorch中，如果要自定義一個模型，必須要繼承<code>torch.nn.Module</code>，然後實作<code>__init__(self)</code>和<code>forward(self)</code>兩個function</li>
+<li>layer的定義是透過<code>torch.nn</code>來宣告</li>
+</ol>
+</li>
+<li>TF2<ol>
+<li>而在TF2中，則是透過了Keras Model API來實作，因此必須繼承<code>tf.keras.Model</code>並且實作<code>__init__(self)</code>和<code>call(self)</code>兩個function<ul>
+<li>實際上<code>tf.keras.Model</code>是繼承自<code>tf.Module</code>，所以也可以直接繼承<code>tf.Module</code>來實作自己的Model</li>
+<li>不過繼承<code>tf.keras.Model</code>還可以使用<code>Model.fit()</code>, <code>Model.evaluate()</code>和<code>Model.save()</code>這些操作，比方說<a href="https://www.tensorflow.org/guide/keras/custom_layers_and_models#the_model_class" target="_blank" rel="noopener">官方文件的範例code</a>，繼承<code>tf.Module</code>的話就要自己寫訓練循環</li>
+</ul>
+</li>
+<li>layer的定義是透過<code>tf.keras.layers</code>來宣告</li>
+<li><code>tf.Module</code>以及被他繼承的類別皆提供很方便的properties: <strong>variables</strong> and <strong>trainable_variables</strong>，使得我們能夠很好的管理模型的參數</li>
+</ol>
+</li>
+</ul>
+<p>最後，在一篇<a href="https://tf.wiki/zh_hans/basic/models.html#keras" target="_blank" rel="noopener">教學文章</a>中看到了下面一個問題: <strong>为什么模型类是重载 call() 方法而不是 __call__() 方法？</strong>，覺得這個觀念也值得一提，所以把內容直接複製上來</p>
+<blockquote>
+<p>在 Python 中，对类的实例 myClass 进行形如 myClass() 的调用等价于 myClass.__call__() （具体请见本章初 “前置知识” 的 __call__() 部分）。那么看起来，为了使用 y<em>pred = model(X) 的形式调用模型类，应该重写 \</em>_call<em>_() 方法才对呀？原因是 Keras 在模型调用的前后还需要有一些自己的内部操作，所以暴露出一个专门用于重载的 call() 方法。 tf.keras.Model 这一父类已经包含 \</em>_call__() 的定义。 __call__() 中主要调用了 call() 方法，同时还需要在进行一些 keras 的内部操作。这里，我们通过继承 tf.keras.Model 并重载 call() 方法，即可在保持 keras 结构的同时加入模型调用的代码。</p>
+</blockquote>
+<h2 id="自定義訓練循環的不同之處"><a href="#自定義訓練循環的不同之處" class="headerlink" title="自定義訓練循環的不同之處"></a>自定義訓練循環的不同之處</h2><p>再來來看一下一個訓練的起手式寫法上，兩者有著什麼樣的差異:</p>
+<p>首先從Pytorch看起，在<a href="https://meetonfriday.com/posts/18392404/">[Pytorch]zero_grad()和backward()使用技巧</a>中，我們提到了Pytorch訓練的起手式:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">0</span><br><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> idx, (batch_x, batch_y) <span class="keyword">in</span> enumerate(data_loader):</span><br><span class="line">    output = model(batch_x)</span><br><span class="line">    loss = criterion(output, batch_y)</span><br><span class="line">    optimizer.zero_grad()</span><br><span class="line">    loss.backward()</span><br><span class="line">    optimizer.step()</span><br></pre></td></tr></table></figure>
+<p>短短幾行裡面做了很多事情:</p>
+<ol>
+<li>將data傳入model進行forward propagation</li>
+<li>計算loss</li>
+<li>清空前一次的gradient</li>
+<li>根據loss進行back propagation，計算gradient</li>
+<li>做gradient descent</li>
+</ol>
+<p>接下來我們來看一下TF2.0是如何撰寫的，儘管繼承<code>tf.keras.Model</code>的Model可以無腦<code>model.fit()</code>和<code>model.predict()</code>，但我們先看如果要自己寫訓練循環時應該怎麼做:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">0</span><br><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> batch_idx <span class="keyword">in</span> range(batch_num):</span><br><span class="line">    <span class="comment"># 由於我還不太熟Pytorch的dataloader在TF2要怎麼寫，所以這裡寫得跟上面有點不同</span></span><br><span class="line">    <span class="comment"># 主要就是取出資料的意思</span></span><br><span class="line">    batch_X, batch_y = data_loader.get_batch(batch_size)</span><br><span class="line">    <span class="keyword">with</span> tf.GradientTape() <span class="keyword">as</span> tape:</span><br><span class="line">        output = model(batch_X)</span><br><span class="line">        loss = criterion(batch_y, output) <span class="comment"># calculate loss</span></span><br><span class="line">    grads = tape.gradient(loss, model.variables)</span><br><span class="line">    optimizer.apply_gradients(grad_and_vars=zip(grads, model.variables))</span><br></pre></td></tr></table></figure>
+<p>TF2做了以下的事情:</p>
+<ol>
+<li>透過<code>tf.GradientTape()</code>紀錄並建構正向傳播的計算圖被包覆的操作</li>
+<li>將data傳入model進行forward propagation</li>
+<li>計算loss</li>
+<li>根據loss計算對model.variables的梯度(使用<code>tf.GradientTape()</code>)</li>
+<li>做gradient descent更新梯度<ul>
+<li>透過<code>tf.keras.optimizer</code>更新，並且<code>apply_gradients</code>需要接收grad_and_vars參數(需要將gradient和參數用zip包起來餵進去)</li>
+</ul>
+</li>
+</ol>
+<p>對於<code>tf.GradientTape()</code>，我覺得知乎上面這篇文章: <a href="https://zhuanlan.zhihu.com/p/102207302" target="_blank" rel="noopener">tensorflow计算图与自动求导——tf.GradientTape</a>寫得很詳細，以下節錄幾個重點:</p>
+<ol>
+<li>預設watch_accessed_variables=True，也就是會記錄所有可訓練變數(trainable=True的tf.Variable)</li>
+<li>也可以用<code>tape.watch()</code>來觀測特定的變數，即使他trainable=False</li>
+<li>預設persistent = False，也就是<strong>和Pytorch一樣，計算圖一但執行完就會銷毀</strong>(為了節省記憶體)，如果需要保留計算圖可以設置persistent = True</li>
+<li>在用<code>tape.gradient()</code>計算梯度時，如果計算失敗(例如計算圖中兩個點根本沒有連接)，預設會返回None，但其實也可以指定參數unconnected_gradients=tf.UnconnectedGradients.ZERO來設置返回0</li>
+</ol>
+<p>到這裡，了解了模型的寫法和起手式的寫法後，原本對於Pytorch較熟悉的人應該就能較輕鬆的寫出一個可以跑的TF2程式(也希望對於TF2的使用者這篇能夠幫助你快速熟悉Pytorch的寫法)。</p>
+<h2 id="References"><a href="#References" class="headerlink" title="References"></a>References</h2><ul>
+<li><a href="https://www.tensorflow.org/guide/keras/custom_layers_and_models?hl=en" target="_blank" rel="noopener">Making new Layers &amp; Models via subclassing</a></li>
+<li><a href="https://tf.wiki/zh_hans/basic/models.html#keras" target="_blank" rel="noopener">简单粗暴 TensorFlow 2</a></li>
+<li><a href="https://meetonfriday.com/posts/18392404/">[Pytorch]zero_grad()和backward()使用技巧</a></li>
+<li><a href="https://zhuanlan.zhihu.com/p/102207302" target="_blank" rel="noopener">tensorflow计算图与自动求导——tf.GradientTape</a></li>
+</ul>
+
+                <hr>
+                <!-- Pager -->
+                <ul class="pager">
+    
+    <li class="previous">
+        <a href="/posts/5f745d96/" data-toggle="tooltip" data-placement="top" title="[論文速速讀]Very Deep Convolutional Networks For Large-Scale Image Recognition">&larr; Newer Post</a>
+    </li>
+    
+    
+    <li class="next">
+        <a href="/posts/877f4063/" data-toggle="tooltip" data-placement="top" title="[Tensorflow]從Pytorch到TF2的學習之路 - Training mode v.s. Inference mode">Older Post &rarr;</a>
+    </li>
+    
+</ul>
+
+                <!-- tip start -->
+                
+
+                
+                <!-- tip end -->
+
+                <!-- Sharing -->
+                
+                <!-- Sharing -->
+
+                <!-- gitment start -->
+                
+                <!-- gitment end -->
+
+                <!-- 来必力City版安装代码 -->
+                
+                <!-- City版安装代码已完成 -->
+
+                <!-- disqus comment start -->
+                
+                <div class="comment">
+                    <div id="disqus_thread" class="disqus-thread"></div>
+                </div>
+                
+                <!-- disqus comment end -->
+            </div>
+            
+            <!-- Tabe of Content -->
+            <!-- Table of Contents -->
+
+    
+      
+        <aside id="sidebar">
+          <div id="toc" class="toc-article">
+          <strong class="toc-title">Contents</strong>
+          
+            <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#前言"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">前言</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#客製化模型的不同之處"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">客製化模型的不同之處</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#自定義訓練循環的不同之處"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">自定義訓練循環的不同之處</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#References"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">References</span></a></li></ol>
+          
+          </div>
+        </aside>
+      
+    
+
+        </div>
+    </div>
+</article>
+
+	
+    <!-- disqus embedded js code start (one page only need to embed once) -->	
+    <script type="text/javascript">	
+        /* * * CONFIGURATION VARIABLES * * */	
+        var disqus_shortname = "meetonfriday";	
+        var disqus_identifier = "https://meetonfriday.com/posts/3e428c8a/";	
+        var disqus_url = "https://meetonfriday.com/posts/3e428c8a/";	
+        (function() {	
+            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;	
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';	
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);	
+        })();	
+    </script>	
+    <!-- disqus embedded js code start end -->	
+    
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/john850512">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://www.linkedin.com/in/john85051232">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                
+                    <li>
+                        <a target="_blank" href="https://www.facebook.com/meetonfridayyy">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+                
+                    <li>
+                        <a target="_blank"  href="https://mail.google.com/mail/?view=cm&fs=1&to=john85051232@gmail.com">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-envelope-o fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+                
+                
+
+                
+
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; John 2025 
+                    <br>
+                    Powered by 
+                    <a href="https://github.com/john850512/hexo-theme-jiji" target="_blank" rel="noopener">
+                        <i>hexo-theme-jiji</i>
+                    </a> | 
+                    <iframe name="star" style="margin-left: 2px; margin-bottom:-5px;" frameborder="0" scrolling="0"
+                        width="100px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=john850512&repo=hexo-theme-jiji&type=star&count=true">
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+
+</footer>
+
+<!-- jQuery -->
+
+<script src="/js/jquery.min.js"></script>
+
+
+<!-- Bootstrap Core JavaScript -->
+
+<script src="/js/bootstrap.min.js"></script>
+
+
+<!-- Custom Theme JavaScript -->
+
+<script src="/js/hux-blog.min.js"></script>
+
+
+<!-- Search -->
+
+<script src="/js/search.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("https://meetonfriday.com/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+<!-- Search -->
+
+    <script type="text/javascript">      
+        var search_path = "search.xml";
+        if (search_path.length == 0) {
+            search_path = "search.xml";
+        }
+    var path = "/" + search_path;
+    searchFunc(path, 'local-search-input', 'local-search-result');
+    </script>
+
+
+<!-- busuanzi -->
+<!--<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>-->
+<script async src="//cdn.jsdelivr.net/npm/busuanzi@2.3.0"></script>
+
+
+
+
+	<a id="rocket" href="#top" class=""></a>
+	<script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script>
+    <script type="text/javascript" src="/js/toc.js?v=1.0.0" async=""></script>
+
+    
+        <!-- background effects line -->
+        
+        <!-- background effects end -->
+    
+    
+    <!-- background animation-->>
+    <!--<script size="50" alpha='0.3' zIndex="-999" src="/js/ribbonStatic.js"></script>-->
+    
+        <script src="/js/ribbonDynamic.js"></script>
+    
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script>
+            window.imageLazyLoadSetting = {
+                isSPA: false,
+                processImages: null,
+            };
+        </script><script>window.addEventListener("load",function(){var t=/\.(gif|jpg|jpeg|tiff|png)$/i,r=/^data:image\/[a-z]+;base64,/;Array.prototype.slice.call(document.querySelectorAll("img[data-original]")).forEach(function(a){var e=a.parentNode;"A"===e.tagName&&(e.href.match(t)||e.href.match(r))&&(e.href=a.dataset.original)})});</script><script>!function(n){n.imageLazyLoadSetting.processImages=o;var i=n.imageLazyLoadSetting.isSPA,r=Array.prototype.slice.call(document.querySelectorAll("img[data-original]"));function o(){i&&(r=Array.prototype.slice.call(document.querySelectorAll("img[data-original]")));for(var t,e,a=0;a<r.length;a++)t=r[a],0<=(e=t.getBoundingClientRect()).bottom&&0<=e.left&&e.top<=(n.innerHeight||document.documentElement.clientHeight)&&function(){var t,e,n,i,o=r[a];t=o,e=function(){r=r.filter(function(t){return o!==t})},n=new Image,i=t.getAttribute("data-original"),n.onload=function(){t.src=i,e&&e()},n.src=i}()}o(),n.addEventListener("scroll",function(){var t,e;t=o,e=n,clearTimeout(t.tId),t.tId=setTimeout(function(){t.call(e)},500)})}(this);</script></body>
+
+</html>

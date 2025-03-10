@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<!-- Head tag -->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="baidu-site-verification" content="093lY4ziMu" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="keyword"  content="programming, study, daily, entertainment">
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="星期五。見面">
+    <meta property="og:locale" content="zh-TW" />
+    
+    <meta property="og:title" content="2019 SecBuzzer AI UP!人工智慧資安挑戰賽參賽心得" />
+    
+    
+    <meta property="og:description" content="在去年11月底的時候，因緣際會下有位學長通知我去參加這個由資策會資安所舉辦的[惡意程式分類競賽](https://competition.secbuzzer.co/competition/1)，這是一個為期一個月的競賽，以競賽時程來說算是相對小品的競賽。以下擷取活動網站的競賽內容： 本次競賽中的每一筆惡意程式 (malware) 均有一組可獨立辨識的 md5 編碼，競賽者須透過人工智慧訓練、推論技術，對每一筆惡意程式進行類別 (class) 可能性的歸屬判定。總之就是要透過ML/DL的方式來進行惡意程式的分類，期間只有一個月，而**資料的大小又蠻大的(train + test ~ 60G)**所以其實沒有什麼太多時間做無謂的嘗試，整個時程大約被我分成三個階段，就我自己來說，我覺得所有資料科學競賽的規劃其實都是大同小異的：" />
+    <meta name="description" content="在去年11月底的時候，因緣際會下有位學長通知我去參加這個由資策會資安所舉辦的[惡意程式分類競賽](https://competition.secbuzzer.co/competition/1)，這是一個為期一個月的競賽，以競賽時程來說算是相對小品的競賽。以下擷取活動網站的競賽內容： 本次競賽中的每一筆惡意程式 (malware) 均有一組可獨立辨識的 md5 編碼，競賽者須透過人工智慧訓練、推論技術，對每一筆惡意程式進行類別 (class) 可能性的歸屬判定。總之就是要透過ML/DL的方式來進行惡意程式的分類，期間只有一個月，而**資料的大小又蠻大的(train + test ~ 60G)**所以其實沒有什麼太多時間做無謂的嘗試，整個時程大約被我分成三個階段，就我自己來說，我覺得所有資料科學競賽的規劃其實都是大同小異的：">
+    
+    
+    <meta property="og:image" content="/img/avatar.jpg" />
+    
+
+    <link rel="shortcut icon" href="/img/avatar.jpg">
+    <!-- Place this tag in your head or just before your close body tag. -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <!--<link href='http://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>-->
+    <title>
+        
+          2019 SecBuzzer AI UP!人工智慧資安挑戰賽參賽心得 - MeetonFriday
+        
+    </title>
+    <!-- canonical -->
+    
+    
+      <link rel="canonical" href="https://meetonfriday.com/posts/33e680bb/">
+    
+
+    <!-- Bootstrap Core CSS -->
+    
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+
+
+    <!-- Custom CSS --> 
+    
+<link rel="stylesheet" href="/css/dusign-dark.css">
+
+    
+<link rel="stylesheet" href="/css/dusign-common-dark.css">
+
+    <!-- 
+<link rel="stylesheet" href="/css/font-awesome.css">
+ -->
+    
+<link rel="stylesheet" href="/css/toc.css">
+
+
+    
+    <!-- Pygments Highlight CSS -->
+    
+<link rel="stylesheet" href="/css/highlight.css">
+
+
+    
+<link rel="stylesheet" href="/css/widget.css">
+
+
+    
+<link rel="stylesheet" href="/css/rocket.css">
+
+
+    
+<link rel="stylesheet" href="/css/signature.css">
+
+
+    
+<link rel="stylesheet" href="/css/fonts.googleapis.css">
+
+
+    <!-- <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.3.0/css/font-awesome.min.css">-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.min.css">
+    
+    <!-- Google Analytics -->
+    
+      <!-- <script>
+          // dynamic User by Hux
+          var _gaId = 'UA-163346001-1';
+          var _gaDomain = 'auto';
+      
+          // Originial
+          (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+          (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+          })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+      
+          ga('create', _gaId, _gaDomain);
+          ga('send', 'pageview');
+      </script> -->
+      
+      <!-- Global site tag (gtag.js) - Google Analytics -->
+      <script async src="https://www.googletagmanager.com/gtag/js?id=UA-163346001-1"></script>
+      <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+      
+        gtag('config', 'UA-163346001-1');
+      </script>
+      
+    <!-- google ad sense-->
+    <script data-ad-client="ca-pub-9561340457908416" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<meta name="generator" content="Hexo 4.2.1"><link rel="alternate" href="/atom.xml" title="星期五。見面" type="application/atom+xml">
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+	<!-- Modified by Yu-Hsuan Yen -->
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        
+            
+                background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.5)), url('/img/header_img/header-bg.jpg')
+            
+        
+    }
+    
+</style>
+
+<header class="intro-header" >
+    <!-- Signature -->
+    <div id="signature">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                
+                    <div class="post-heading">
+                        <div class="tags">
+                            
+                              <a class="tag" href="/tags/#competition" title="competition">competition</a>
+                            
+                        </div>
+                        <h1>2019 SecBuzzer AI UP!人工智慧資安挑戰賽參賽心得</h1>
+                        <h2 class="subheading"></h2>
+                        <span class="meta">
+                            Posted by John on
+                            2020-01-06
+                        </span>
+
+                        
+                            <div class="blank_box"></div>
+                            <span class="meta">
+                                Words <span class="post-count">1.4k</span> and
+                                Reading Time <span class="post-count">4</span> Minutes
+                            </span>
+                            <div class="blank_box"></div>
+                            <!-- 不蒜子统计 start -->
+                            <span class="meta">
+                                Viewed <span id="busuanzi_value_page_pv"><i class="fa fa-spinner fa-spin"></i></span> Times
+                            </span>
+                            <!-- 不蒜子统计 end -->
+                        
+
+                    </div>
+                
+
+                </div>
+            </div>
+        </div>      
+    </div>
+
+    
+        
+            <div class="waveWrapper">
+                <div class="wave wave_before" style="background-image: url('/img/wave-dark.png')"></div>
+                <div class="wave wave_after" style="background-image: url('/img/wave-dark.png')"></div>
+            </div>
+        
+    
+</header>
+
+	
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">星期五。見面</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archive/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/categories/">Categories</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/reading/">Reading</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+    
+    <!-- Main Content -->
+    <!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+            <!-- Post Container -->
+
+    
+        
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+        
+    
+
+                <p><img src="https://meetonfriday.com/img/lazy-loading-animation.gif" data-original="https://john850512.files.wordpress.com/2020/01/e693b7e58f961.png" alt="擷取1.PNG"></p>
+<p>在去年11月底的時候，因緣際會下有位學長通知我去參加這個由資策會資安所舉辦的<a href="https://competition.secbuzzer.co/competition/1" target="_blank" rel="noopener">惡意程式分類競賽</a>，這是一個為期一個月的競賽，以競賽時程來說算是相對小品的競賽。以下擷取活動網站的競賽內容：</p>
+<blockquote>
+<p>本次競賽中的每一筆惡意程式 (malware) 均有一組可獨立辨識的 md5 編碼，競賽者須透過人工智慧訓練、推論技術，對每一筆惡意程式進行類別 (class) 可能性的歸屬判定。</p>
+</blockquote>
+<p>總之就是要透過ML/DL的方式來進行惡意程式的分類，期間只有一個月，而<strong>資料的大小又蠻大的(train + test ~ 60G)</strong>所以其實沒有什麼太多時間做無謂的嘗試，整個時程大約被我分成三個階段，就我自己來說，我覺得所有資料科學競賽的規劃其實都是大同小異的：</p>
+<ol>
+<li><strong>資料前處理，做一些基本的特徵萃取和建立base line</strong></li>
+<li><strong>基於baseline開始嘗試一些額外的不同方式</strong></li>
+<li><strong>大約最後一個禮拜，開始就現有最好的模型版本進行進一步的調參</strong></li>
+</ol>
+<p>下面會簡述整個比賽的規劃、心路歷程以及一些分享：<br><a id="more"></a></p>
+<h2 id="建立base-line"><a href="#建立base-line" class="headerlink" title="建立base line"></a>建立base line</h2><p><strong>一開始建立base line是很重要的一件事，這可以讓你的其他模型有了比較的依據</strong>，如何建立base line?有很多方法，最簡單的就是亂猜：</p>
+<ul>
+<li>全部都猜某一類別</li>
+<li>按照類別數量猜機率</li>
+</ul>
+<p>如果你的模型分數比上述亂猜得還爛，那就知道一定哪裡有問題，可以立即轉換其他策略。其他建立baseline的方法如透過簡單的ML model(SVM, Regression, RandomForest…)快速得到一個結果都是不錯的方式。</p>
+<h2 id="特徵萃取"><a href="#特徵萃取" class="headerlink" title="特徵萃取"></a>特徵萃取</h2><p>接下來就是資料前處理，可以上網去看有沒有類似的資訊可以做為萃取特徵的參考。其實找一下就可以發現這次競賽和2016年的微軟惡意程式競賽類型非常相似。於是在此次的競賽我使用了基本的language model - N-gram來做特徵萃取，在資料量龐大N又很大的情況下這一步驟其實花了我不少的時間，不過其實有還不錯的結果。最後使用了N = 1, 3, 4, 7, 10的N-gram模型作為特徵。此外，檔案的壓縮率和檔案大小也有被我納入作為特徵。</p>
+<h2 id="進一步的嘗試"><a href="#進一步的嘗試" class="headerlink" title="進一步的嘗試"></a>進一步的嘗試</h2><p>透過了基本的特徵取得了一定程度的結果後，中間大約一個禮拜開始嘗試一些比較不同的方式看看是否能取得出乎意料的結果，像是：DL-based的CNN/RNN、其他的feature…不過這個部分最後並沒有提升分數，所以沒有被採用。儘管如此，<strong>就競賽的規劃來說這個階段還是必要的，有時候可以發現意想不到的特徵而一舉贏過其他參賽者</strong>。</p>
+<h2 id="模型調參"><a href="#模型調參" class="headerlink" title="模型調參"></a>模型調參</h2><p>在競賽結束大約剩下一個禮拜的時刻，算算時間差不多該停手了，<strong>這時候要做的不應該事繼續探索未知的新特徵，而是在自己的模型下如何讓分數變得更好，有參加過競賽的都知道，分數差個0.01都會影響排名，這時候模型參數的好壞就顯得很重要</strong>。最後一個禮拜都花grid search在調整xgboost和lightgbm的參數(其實時間來說還非常不夠用，並沒有將模型調到最好)，並將兩個模型的結果進行ensemble。</p>
+<h2 id="進階處理"><a href="#進階處理" class="headerlink" title="進階處理"></a>進階處理</h2><p>這我把它獨立出來說，因為我覺得這個部分其實蠻tricky的，根據不同的競賽、資料集會有不同的應對策略。 比方說這次競賽是以<strong>logloss作為評分依據(logloss就是cross entropy)，所以這裡就要知道你用accuracy來做的話會很慘</strong>(自己就中槍過一次QQ)。 此外log有個特性就是你猜到狠準的時候(越接近1)其實分數就不會影響太多；<strong>相對來說猜很不準的時候(很接近0)分數的變動幅度會很可怕，所以就可以想辦法去做probability clip</strong>來避免這個問題。 再來，<strong>資料有imbalanced的問題時，一定程度會影響模型的預測結果</strong>，所以這時候就有兩種方式可以來應對：over-sampling 和 down-sampling，不同方式適用不同的場景。 接下來，模型預測的結果可以<strong>透過confusion matrix來看到底分類得狀況如何，如果有某幾類怎麼分都分不好，也可以試著單獨針對那幾類做一些特別的處理</strong>。  </p>
+<hr>
+<p>整個一個月的時間雖然看似很長，但其實非常的短，每個步驟都花了相對大的時間和精力，訓練模型訓練到懷疑人生、調整參數調到懷疑人生、每天12點還要上去看排名看到懷疑人生…</p>
+<p>最後，我的public score /private score都在第三名的排名，也有這個榮幸在頒獎典禮上和其他參賽者進行交流和經驗分享，感謝資策會資安所舉辦了這個活動，讓我們可以對資安有更進一步的認識外，也可以認識台灣其他的Data scientist。下面就放個幾張頒獎典禮上的照片當作這篇文章的結尾～</p>
+<p><img src="https://meetonfriday.com/img/lazy-loading-animation.gif" data-original="https://john850512.files.wordpress.com/2020/01/82117127_2482054501905859_1557123917670252544_o.jpg" alt="82117127_2482054501905859_1557123917670252544_o.jpg"></p>
+
+                <hr>
+                <!-- Pager -->
+                <ul class="pager">
+    
+    <li class="previous">
+        <a href="/posts/1e9914bf/" data-toggle="tooltip" data-placement="top" title="[Python]json.load() v.s. json.loads()">&larr; Newer Post</a>
+    </li>
+    
+    
+    <li class="next">
+        <a href="/posts/224202e2/" data-toggle="tooltip" data-placement="top" title="LINE TAIWAN TECHPULSE 2019參加心得">Older Post &rarr;</a>
+    </li>
+    
+</ul>
+
+                <!-- tip start -->
+                
+
+                
+                <!-- tip end -->
+
+                <!-- Sharing -->
+                
+                <!-- Sharing -->
+
+                <!-- gitment start -->
+                
+                <!-- gitment end -->
+
+                <!-- 来必力City版安装代码 -->
+                
+                <!-- City版安装代码已完成 -->
+
+                <!-- disqus comment start -->
+                
+                <div class="comment">
+                    <div id="disqus_thread" class="disqus-thread"></div>
+                </div>
+                
+                <!-- disqus comment end -->
+            </div>
+            
+            <!-- Tabe of Content -->
+            <!-- Table of Contents -->
+
+    
+      
+        <aside id="sidebar">
+          <div id="toc" class="toc-article">
+          <strong class="toc-title">Contents</strong>
+          
+            <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#建立base-line"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">建立base line</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#特徵萃取"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">特徵萃取</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#進一步的嘗試"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">進一步的嘗試</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#模型調參"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">模型調參</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#進階處理"><span class="toc-nav-number">5.</span> <span class="toc-nav-text">進階處理</span></a></li></ol>
+          
+          </div>
+        </aside>
+      
+    
+
+        </div>
+    </div>
+</article>
+
+	
+    <!-- disqus embedded js code start (one page only need to embed once) -->	
+    <script type="text/javascript">	
+        /* * * CONFIGURATION VARIABLES * * */	
+        var disqus_shortname = "meetonfriday";	
+        var disqus_identifier = "https://meetonfriday.com/posts/33e680bb/";	
+        var disqus_url = "https://meetonfriday.com/posts/33e680bb/";	
+        (function() {	
+            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;	
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';	
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);	
+        })();	
+    </script>	
+    <!-- disqus embedded js code start end -->	
+    
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/john850512">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://www.linkedin.com/in/john85051232">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                
+                    <li>
+                        <a target="_blank" href="https://www.facebook.com/meetonfridayyy">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+                
+                    <li>
+                        <a target="_blank"  href="https://mail.google.com/mail/?view=cm&fs=1&to=john85051232@gmail.com">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-envelope-o fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+                
+                
+
+                
+
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; John 2025 
+                    <br>
+                    Powered by 
+                    <a href="https://github.com/john850512/hexo-theme-jiji" target="_blank" rel="noopener">
+                        <i>hexo-theme-jiji</i>
+                    </a> | 
+                    <iframe name="star" style="margin-left: 2px; margin-bottom:-5px;" frameborder="0" scrolling="0"
+                        width="100px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=john850512&repo=hexo-theme-jiji&type=star&count=true">
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+
+</footer>
+
+<!-- jQuery -->
+
+<script src="/js/jquery.min.js"></script>
+
+
+<!-- Bootstrap Core JavaScript -->
+
+<script src="/js/bootstrap.min.js"></script>
+
+
+<!-- Custom Theme JavaScript -->
+
+<script src="/js/hux-blog.min.js"></script>
+
+
+<!-- Search -->
+
+<script src="/js/search.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("https://meetonfriday.com/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+<!-- Search -->
+
+    <script type="text/javascript">      
+        var search_path = "search.xml";
+        if (search_path.length == 0) {
+            search_path = "search.xml";
+        }
+    var path = "/" + search_path;
+    searchFunc(path, 'local-search-input', 'local-search-result');
+    </script>
+
+
+<!-- busuanzi -->
+<!--<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>-->
+<script async src="//cdn.jsdelivr.net/npm/busuanzi@2.3.0"></script>
+
+
+
+
+	<a id="rocket" href="#top" class=""></a>
+	<script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script>
+    <script type="text/javascript" src="/js/toc.js?v=1.0.0" async=""></script>
+
+    
+        <!-- background effects line -->
+        
+        <!-- background effects end -->
+    
+    
+    <!-- background animation-->>
+    <!--<script size="50" alpha='0.3' zIndex="-999" src="/js/ribbonStatic.js"></script>-->
+    
+        <script src="/js/ribbonDynamic.js"></script>
+    
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script>
+            window.imageLazyLoadSetting = {
+                isSPA: false,
+                processImages: null,
+            };
+        </script><script>window.addEventListener("load",function(){var t=/\.(gif|jpg|jpeg|tiff|png)$/i,r=/^data:image\/[a-z]+;base64,/;Array.prototype.slice.call(document.querySelectorAll("img[data-original]")).forEach(function(a){var e=a.parentNode;"A"===e.tagName&&(e.href.match(t)||e.href.match(r))&&(e.href=a.dataset.original)})});</script><script>!function(n){n.imageLazyLoadSetting.processImages=o;var i=n.imageLazyLoadSetting.isSPA,r=Array.prototype.slice.call(document.querySelectorAll("img[data-original]"));function o(){i&&(r=Array.prototype.slice.call(document.querySelectorAll("img[data-original]")));for(var t,e,a=0;a<r.length;a++)t=r[a],0<=(e=t.getBoundingClientRect()).bottom&&0<=e.left&&e.top<=(n.innerHeight||document.documentElement.clientHeight)&&function(){var t,e,n,i,o=r[a];t=o,e=function(){r=r.filter(function(t){return o!==t})},n=new Image,i=t.getAttribute("data-original"),n.onload=function(){t.src=i,e&&e()},n.src=i}()}o(),n.addEventListener("scroll",function(){var t,e;t=o,e=n,clearTimeout(t.tId),t.tId=setTimeout(function(){t.call(e)},500)})}(this);</script></body>
+
+</html>

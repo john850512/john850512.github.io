@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<!-- Head tag -->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="baidu-site-verification" content="093lY4ziMu" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="keyword"  content="programming, study, daily, entertainment">
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="星期五。見面">
+    <meta property="og:locale" content="zh-TW" />
+    
+    <meta property="og:title" content="[OpenCV]Optical Flow介紹" />
+    
+    
+    <meta property="og:description" content="以下介紹來自OpenCV的官方文獻，這份文章是我在閱讀完畢後使用中文整理的筆記。光流(Optical Flow)，是透過物體或照相機的移動而造成連續兩幀之間圖像的移動過程，他是一個二維的向量場(vector field)，其中每一個vector都是從前一幀到下一幀的移動向量。光流可以被應用在以下領域:1. Structure from Motion 2. Video Compression 3. Video Stabilization" />
+    <meta name="description" content="以下介紹來自OpenCV的官方文獻，這份文章是我在閱讀完畢後使用中文整理的筆記。光流(Optical Flow)，是透過物體或照相機的移動而造成連續兩幀之間圖像的移動過程，他是一個二維的向量場(vector field)，其中每一個vector都是從前一幀到下一幀的移動向量。光流可以被應用在以下領域:1. Structure from Motion 2. Video Compression 3. Video Stabilization">
+    
+    
+    <meta property="og:image" content="https://res.cloudinary.com/meet-on-friday/image/upload/v1597222796/blog_posts/opticalflow_lk_jxl1as.jpg" />
+    
+
+    <link rel="shortcut icon" href="/img/avatar.jpg">
+    <!-- Place this tag in your head or just before your close body tag. -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <!--<link href='http://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>-->
+    <title>
+        
+          [OpenCV]Optical Flow介紹 - MeetonFriday
+        
+    </title>
+    <!-- canonical -->
+    
+    
+      <link rel="canonical" href="https://meetonfriday.com/posts/e2795e5a/">
+    
+
+    <!-- Bootstrap Core CSS -->
+    
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+
+
+    <!-- Custom CSS --> 
+    
+<link rel="stylesheet" href="/css/dusign-dark.css">
+
+    
+<link rel="stylesheet" href="/css/dusign-common-dark.css">
+
+    <!-- 
+<link rel="stylesheet" href="/css/font-awesome.css">
+ -->
+    
+<link rel="stylesheet" href="/css/toc.css">
+
+
+    
+    <!-- Pygments Highlight CSS -->
+    
+<link rel="stylesheet" href="/css/highlight.css">
+
+
+    
+<link rel="stylesheet" href="/css/widget.css">
+
+
+    
+<link rel="stylesheet" href="/css/rocket.css">
+
+
+    
+<link rel="stylesheet" href="/css/signature.css">
+
+
+    
+<link rel="stylesheet" href="/css/fonts.googleapis.css">
+
+
+    <!-- <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.3.0/css/font-awesome.min.css">-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.min.css">
+    
+    <!-- Google Analytics -->
+    
+      <!-- <script>
+          // dynamic User by Hux
+          var _gaId = 'UA-163346001-1';
+          var _gaDomain = 'auto';
+      
+          // Originial
+          (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+          (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+          })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+      
+          ga('create', _gaId, _gaDomain);
+          ga('send', 'pageview');
+      </script> -->
+      
+      <!-- Global site tag (gtag.js) - Google Analytics -->
+      <script async src="https://www.googletagmanager.com/gtag/js?id=UA-163346001-1"></script>
+      <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+      
+        gtag('config', 'UA-163346001-1');
+      </script>
+      
+    <!-- google ad sense-->
+    <script data-ad-client="ca-pub-9561340457908416" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<meta name="generator" content="Hexo 4.2.1"><link rel="alternate" href="/atom.xml" title="星期五。見面" type="application/atom+xml">
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+	<!-- Modified by Yu-Hsuan Yen -->
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        
+            
+                background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.5)), url('/img/header_img/header-bg.jpg')
+            
+        
+    }
+    
+</style>
+
+<header class="intro-header" >
+    <!-- Signature -->
+    <div id="signature">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                
+                    <div class="post-heading">
+                        <div class="tags">
+                            
+                              <a class="tag" href="/tags/#python" title="python">python</a>
+                            
+                              <a class="tag" href="/tags/#opencv" title="opencv">opencv</a>
+                            
+                        </div>
+                        <h1>[OpenCV]Optical Flow介紹</h1>
+                        <h2 class="subheading"></h2>
+                        <span class="meta">
+                            Posted by John on
+                            2020-08-12
+                        </span>
+
+                        
+                            <div class="blank_box"></div>
+                            <span class="meta">
+                                Words <span class="post-count">1.6k</span> and
+                                Reading Time <span class="post-count">7</span> Minutes
+                            </span>
+                            <div class="blank_box"></div>
+                            <!-- 不蒜子统计 start -->
+                            <span class="meta">
+                                Viewed <span id="busuanzi_value_page_pv"><i class="fa fa-spinner fa-spin"></i></span> Times
+                            </span>
+                            <!-- 不蒜子统计 end -->
+                        
+
+                    </div>
+                
+
+                </div>
+            </div>
+        </div>      
+    </div>
+
+    
+        
+            <div class="waveWrapper">
+                <div class="wave wave_before" style="background-image: url('/img/wave-dark.png')"></div>
+                <div class="wave wave_after" style="background-image: url('/img/wave-dark.png')"></div>
+            </div>
+        
+    
+</header>
+
+	
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">星期五。見面</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archive/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/categories/">Categories</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/reading/">Reading</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+    
+    <!-- Main Content -->
+    <!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+            <!-- Post Container -->
+
+    
+        
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+        
+    
+
+                <p>以下介紹來自<a href="https://docs.opencv.org/3.4/d4/dee/tutorial_optical_flow.html" target="_blank" rel="noopener">OpenCV的官方文獻</a>，這份文章是我在閱讀完畢後使用中文整理的筆記。</p>
+<h2 id="Goal"><a href="#Goal" class="headerlink" title="Goal"></a>Goal</h2><ol>
+<li>了解Optical Flow的概念，以及如何使用<a href="https://zh.wikipedia.org/wiki/%E5%8D%A2%E5%8D%A1%E6%96%AF-%E5%8D%A1%E7%BA%B3%E5%BE%B7%E6%96%B9%E6%B3%95" target="_blank" rel="noopener">Lucas-Kanade method</a>來計算它</li>
+<li>使用<code>cv.calcOpticalFlowPyrLK()</code>來追蹤影片的特徵點</li>
+<li>使用<code>cv.calcOpticalFlowFarneback()</code>來計算稠密光流</li>
+</ol>
+<a id="more"></a>
+<h2 id="Optical-Flow"><a href="#Optical-Flow" class="headerlink" title="Optical Flow"></a>Optical Flow</h2><p>光流(Optical Flow)，是透過物體或照相機的移動而造成連續兩幀之間圖像的移動過程，他是一個二維的向量場(vector field)，其中每一個vector都是從前一幀到下一幀的移動向量。</p>
+<p>現在考慮下圖：</p>
+<p><img src="https://meetonfriday.com/img/lazy-loading-animation.gif" data-original="https://res.cloudinary.com/meet-on-friday/image/upload/v1597219299/blog_posts/optical_flow_basic1_smlqo2.jpg" alt=""></p>
+<p>圖中顯示了一顆球在連續五幀中的移動過程，白色箭頭為他的移動向量。</p>
+<p>光流可以被應用在以下領域:</p>
+<ol>
+<li>Structure from Motion</li>
+<li>Video Compression</li>
+<li>Video Stabilization</li>
+</ol>
+<p>但光流法的限制其實也蠻強的，要使用他必須滿足下列的假設條件:</p>
+<ol>
+<li><strong>連續幀之間物體的像素強度(pixel intensities)是不變的</strong></li>
+<li><strong>相鄰的像素之間具有相似的運動</strong><ul>
+<li>這點其實蠻直觀的，除非在物體邊界上，不然同一個物體的相鄰pixel運動方向應該是一致的</li>
+</ul>
+</li>
+</ol>
+<p>假設，在第t幀某個pixel我們表示為$I(x, y, t)$，在t+1幀時它移動了$(dx, dy)$，由於像素點仍然是相同的那個點，我們可以這樣表示:</p>
+<script type="math/tex; mode=display">
+I(x, y, t)=I(x+d x, y+d y, t+d t)</script><p>再來將右項透過泰勒展開，假設該移動很小，我們會得到(不考慮常數項)</p>
+<script type="math/tex; mode=display">
+I(x, y, t)=I(x, y, t)+ \frac{\partial I}{\partial x} d x+\frac{\partial I}{\partial y} d y+\frac{\partial I}{\partial t} d t</script><p>移項後再同除與$dt$</p>
+<script type="math/tex; mode=display">
+\frac{\partial I}{\partial x} \frac{d x}{d t}+\frac{\partial I}{\partial y} \frac{d y}{d t}+\frac{\partial I}{\partial t} \frac{d t}{d t}=0 \\
+\implies \frac{\partial I}{\partial x} \frac{d x}{d t}+\frac{\partial I}{\partial y} \frac{d y}{d t}+\frac{\partial I}{\partial t} =0</script><p>這個式子稱之Optical Flow equation，其中</p>
+<ul>
+<li>$\frac{\partial I}{\partial x}, \frac{\partial I}{\partial y}, \frac{\partial I}{\partial t}$分別是該pixel對於x, y以及時間的偏導，這都是已知的(只要給連續的兩幀就可以計算出來)</li>
+<li><strong>兩個未知數</strong>: $\frac{\partial x}{\partial t}, \frac{\partial y}{\partial t}$ ，也就是該pixel對於x, y方向的瞬時速度</li>
+</ul>
+<p>所以現在有兩個未知數，但只有一個方程式。雖然我的高中數學大部分在學測考完的時候還給老師了，不過我還記得這樣是解不開的呢！</p>
+<p><img src="https://meetonfriday.com/img/lazy-loading-animation.gif" data-original="http://res.cloudinary.com/meet-on-friday/image/upload/c_scale,w_300/v1597224409/blog_posts/1e90ab90fb28f177add1b76daba30b77_u0kqqj.jpg" alt=""></p>
+<p>我們需要更多的方程式來求解，為此有很多種方法被提出來解決這個問題，而其中一種就是Lucas-Kanade</p>
+<h2 id="Lucas-Kanade-method"><a href="#Lucas-Kanade-method" class="headerlink" title="Lucas-Kanade method"></a>Lucas-Kanade method</h2><p>還記得光流的前提假設: <strong>相鄰的像素之間具有相似的運動</strong>，所以我們可以透過相鄰的點來一起計算相同的兩個未知數。Lucas-Kanade對於每一個pixel都取附近的3x3 patch，如此我們就有<strong>九個方程式求解兩個未知數</strong>，可以使用Least Square Method解出來。</p>
+<p>但這樣只能處理小動作，遇到大幅的移動就失敗了，所以還結合了金字塔方法(pyramids)，使得在大尺度下大動作可以被視為小動作，小動作將會被移除。透過金字塔方法可以同時考慮到大尺度和小尺度的移動。</p>
+<p>這邊注意到使用LS的時候需要確保矩陣是可逆的，如果不可逆就解不出來了。但很巧的在角點(corner)上的矩陣大多可逆(其實不巧，我還沒研究這邊QQ)，所以corner是一個很好做光流法的特徵點。</p>
+<h2 id="Lucas-Kanade-Optical-Flow-in-OpenCV"><a href="#Lucas-Kanade-Optical-Flow-in-OpenCV" class="headerlink" title="Lucas-Kanade Optical Flow in OpenCV"></a>Lucas-Kanade Optical Flow in OpenCV</h2><p>官網中簡單的範例程式碼如下<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">0</span><br><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> cv2 <span class="keyword">as</span> cv</span><br><span class="line"><span class="keyword">import</span> argparse</span><br><span class="line">parser = argparse.ArgumentParser(description=<span class="string">'This sample demonstrates Lucas-Kanade Optical Flow calculation. \</span></span><br><span class="line"><span class="string">                                              The example file can be downloaded from: \</span></span><br><span class="line"><span class="string">                                              https://www.bogotobogo.com/python/OpenCV_Python/images/mean_shift_tracking/slow_traffic_small.mp4'</span>)</span><br><span class="line">parser.add_argument(<span class="string">'image'</span>, type=str, help=<span class="string">'path to image file'</span>)</span><br><span class="line">args = parser.parse_args()</span><br><span class="line">cap = cv.VideoCapture(args.image)</span><br><span class="line"><span class="comment"># params for ShiTomasi corner detection</span></span><br><span class="line">feature_params = dict( maxCorners = <span class="number">100</span>,</span><br><span class="line">                       qualityLevel = <span class="number">0.3</span>,</span><br><span class="line">                       minDistance = <span class="number">7</span>,</span><br><span class="line">                       blockSize = <span class="number">7</span> )</span><br><span class="line"><span class="comment"># Parameters for lucas kanade optical flow</span></span><br><span class="line">lk_params = dict( winSize  = (<span class="number">15</span>,<span class="number">15</span>),</span><br><span class="line">                  maxLevel = <span class="number">2</span>,</span><br><span class="line">                  criteria = (cv.TERM_CRITERIA_EPS | cv.TERM_CRITERIA_COUNT, <span class="number">10</span>, <span class="number">0.03</span>))</span><br><span class="line"><span class="comment"># Create some random colors</span></span><br><span class="line">color = np.random.randint(<span class="number">0</span>,<span class="number">255</span>,(<span class="number">100</span>,<span class="number">3</span>))</span><br><span class="line"><span class="comment"># Take first frame and find corners in it</span></span><br><span class="line">ret, old_frame = cap.read()</span><br><span class="line">old_gray = cv.cvtColor(old_frame, cv.COLOR_BGR2GRAY)</span><br><span class="line">p0 = cv.goodFeaturesToTrack(old_gray, mask = <span class="literal">None</span>, **feature_params)</span><br><span class="line"><span class="comment"># Create a mask image for drawing purposes</span></span><br><span class="line">mask = np.zeros_like(old_frame)</span><br><span class="line"><span class="keyword">while</span>(<span class="number">1</span>):</span><br><span class="line">    ret,frame = cap.read()</span><br><span class="line">    frame_gray = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)</span><br><span class="line">    <span class="comment"># calculate optical flow</span></span><br><span class="line">    p1, st, err = cv.calcOpticalFlowPyrLK(old_gray, frame_gray, p0, <span class="literal">None</span>, **lk_params)</span><br><span class="line">    <span class="comment"># Select good points</span></span><br><span class="line">    good_new = p1[st==<span class="number">1</span>]</span><br><span class="line">    good_old = p0[st==<span class="number">1</span>]</span><br><span class="line">    <span class="comment"># draw the tracks</span></span><br><span class="line">    <span class="keyword">for</span> i,(new,old) <span class="keyword">in</span> enumerate(zip(good_new, good_old)):</span><br><span class="line">        a,b = new.ravel()</span><br><span class="line">        c,d = old.ravel()</span><br><span class="line">        mask = cv.line(mask, (a,b),(c,d), color[i].tolist(), <span class="number">2</span>)</span><br><span class="line">        frame = cv.circle(frame,(a,b),<span class="number">5</span>,color[i].tolist(),<span class="number">-1</span>)</span><br><span class="line">    img = cv.add(frame,mask)</span><br><span class="line">    cv.imshow(<span class="string">'frame'</span>,img)</span><br><span class="line">    k = cv.waitKey(<span class="number">30</span>) &amp; <span class="number">0xff</span></span><br><span class="line">    <span class="keyword">if</span> k == <span class="number">27</span>:</span><br><span class="line">        <span class="keyword">break</span></span><br><span class="line">    <span class="comment"># Now update the previous frame and previous points</span></span><br><span class="line">    old_gray = frame_gray.copy()</span><br><span class="line">    p0 = good_new.reshape(<span class="number">-1</span>,<span class="number">1</span>,<span class="number">2</span>)</span><br></pre></td></tr></table></figure></p>
+<p>針對裡面的幾個重點來說:<br>1.<code>cv.VideoCapture()</code>來讀取影片，一開始先讀兩幀才能拿來計算前一幀跟後一幀的關係</p>
+<ol>
+<li><code>cv.goodFeaturesToTrack()</code>來找到要追蹤的特徵點，也就是角點</li>
+<li>每讀取一幀，就和上一幀的特徵點透過LK method<code>cv.calcOpticalFlowPyrLK()</code>來算出新特徵點的位置，然後繪圖</li>
+</ol>
+<p><img src="https://meetonfriday.com/img/lazy-loading-animation.gif" data-original="https://res.cloudinary.com/meet-on-friday/image/upload/v1597222796/blog_posts/opticalflow_lk_jxl1as.jpg" alt=""></p>
+<h2 id="Dense-Optical-Flow-in-OpenCV"><a href="#Dense-Optical-Flow-in-OpenCV" class="headerlink" title="Dense Optical Flow in OpenCV"></a>Dense Optical Flow in OpenCV</h2><p>LK方法適用於計算稀疏光流，而要計算稠密光流(也就是對於每一個pixel都計算他的光流)的時候就會使用Gunner Farneback’s algorithm (which is explained in “Two-Frame Motion Estimation Based on Polynomial Expansion” by Gunner Farneback in 2003)，</p>
+<p>這是一個基於多項式的求解方法，對於x, y將它轉換成一個二項式，然後去座位移估計，在文獻中並沒有做太多的介紹，有興趣的可以參考<a href="https://blog.csdn.net/xholes/article/details/79894340" target="_blank" rel="noopener">光流法：Farneback</a></p>
+<p>OpenCV文檔提供的範例code如下:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">0</span><br><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> cv2 <span class="keyword">as</span> cv</span><br><span class="line">cap = cv.VideoCapture(cv.samples.findFile(<span class="string">"vtest.avi"</span>))</span><br><span class="line">ret, frame1 = cap.read()</span><br><span class="line">prvs = cv.cvtColor(frame1,cv.COLOR_BGR2GRAY)</span><br><span class="line">hsv = np.zeros_like(frame1)</span><br><span class="line">hsv[...,<span class="number">1</span>] = <span class="number">255</span></span><br><span class="line"><span class="keyword">while</span>(<span class="number">1</span>):</span><br><span class="line">    ret, frame2 = cap.read()</span><br><span class="line">    next = cv.cvtColor(frame2,cv.COLOR_BGR2GRAY)</span><br><span class="line">    flow = cv.calcOpticalFlowFarneback(prvs,next, <span class="literal">None</span>, <span class="number">0.5</span>, <span class="number">3</span>, <span class="number">15</span>, <span class="number">3</span>, <span class="number">5</span>, <span class="number">1.2</span>, <span class="number">0</span>)</span><br><span class="line">    mag, ang = cv.cartToPolar(flow[...,<span class="number">0</span>], flow[...,<span class="number">1</span>])</span><br><span class="line">    hsv[...,<span class="number">0</span>] = ang*<span class="number">180</span>/np.pi/<span class="number">2</span></span><br><span class="line">    hsv[...,<span class="number">2</span>] = cv.normalize(mag,<span class="literal">None</span>,<span class="number">0</span>,<span class="number">255</span>,cv.NORM_MINMAX)</span><br><span class="line">    bgr = cv.cvtColor(hsv,cv.COLOR_HSV2BGR)</span><br><span class="line">    cv.imshow(<span class="string">'frame2'</span>,bgr)</span><br><span class="line">    k = cv.waitKey(<span class="number">30</span>) &amp; <span class="number">0xff</span></span><br><span class="line">    <span class="keyword">if</span> k == <span class="number">27</span>:</span><br><span class="line">        <span class="keyword">break</span></span><br><span class="line">    <span class="keyword">elif</span> k == ord(<span class="string">'s'</span>):</span><br><span class="line">        cv.imwrite(<span class="string">'opticalfb.png'</span>,frame2)</span><br><span class="line">        cv.imwrite(<span class="string">'opticalhsv.png'</span>,bgr)</span><br><span class="line">    prvs = next</span><br></pre></td></tr></table></figure>
+<ol>
+<li>一樣先連續讀取兩幀，然後呼叫<code>cv.calcOpticalFlowFarneback()</code></li>
+<li>基於HSV色彩空間來配色</li>
+</ol>
+<h2 id="References"><a href="#References" class="headerlink" title="References"></a>References</h2><ul>
+<li><a href="https://docs.opencv.org/3.4/d4/dee/tutorial_optical_flow.html" target="_blank" rel="noopener">Optical Flow</a></li>
+<li><a href="https://zhuanlan.zhihu.com/p/44859953" target="_blank" rel="noopener">Optical Flow介绍与代码实现</a></li>
+<li><a href="https://blog.csdn.net/xholes/article/details/79894340" target="_blank" rel="noopener">光流法：Farneback</a></li>
+</ul>
+
+                <hr>
+                <!-- Pager -->
+                <ul class="pager">
+    
+    <li class="previous">
+        <a href="/posts/a151bfa2/" data-toggle="tooltip" data-placement="top" title="[論文速速讀]Network In Network">&larr; Newer Post</a>
+    </li>
+    
+    
+    <li class="next">
+        <a href="/posts/4d6a906a/" data-toggle="tooltip" data-placement="top" title="[Pytorch]Pack the data to train variable length sequences">Older Post &rarr;</a>
+    </li>
+    
+</ul>
+
+                <!-- tip start -->
+                
+
+                
+                <!-- tip end -->
+
+                <!-- Sharing -->
+                
+                <!-- Sharing -->
+
+                <!-- gitment start -->
+                
+                <!-- gitment end -->
+
+                <!-- 来必力City版安装代码 -->
+                
+                <!-- City版安装代码已完成 -->
+
+                <!-- disqus comment start -->
+                
+                <div class="comment">
+                    <div id="disqus_thread" class="disqus-thread"></div>
+                </div>
+                
+                <!-- disqus comment end -->
+            </div>
+            
+            <!-- Tabe of Content -->
+            <!-- Table of Contents -->
+
+    
+      
+        <aside id="sidebar">
+          <div id="toc" class="toc-article">
+          <strong class="toc-title">Contents</strong>
+          
+            <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Goal"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">Goal</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Optical-Flow"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">Optical Flow</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Lucas-Kanade-method"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">Lucas-Kanade method</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Lucas-Kanade-Optical-Flow-in-OpenCV"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">Lucas-Kanade Optical Flow in OpenCV</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Dense-Optical-Flow-in-OpenCV"><span class="toc-nav-number">5.</span> <span class="toc-nav-text">Dense Optical Flow in OpenCV</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#References"><span class="toc-nav-number">6.</span> <span class="toc-nav-text">References</span></a></li></ol>
+          
+          </div>
+        </aside>
+      
+    
+
+        </div>
+    </div>
+</article>
+
+	
+    <!-- disqus embedded js code start (one page only need to embed once) -->	
+    <script type="text/javascript">	
+        /* * * CONFIGURATION VARIABLES * * */	
+        var disqus_shortname = "meetonfriday";	
+        var disqus_identifier = "https://meetonfriday.com/posts/e2795e5a/";	
+        var disqus_url = "https://meetonfriday.com/posts/e2795e5a/";	
+        (function() {	
+            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;	
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';	
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);	
+        })();	
+    </script>	
+    <!-- disqus embedded js code start end -->	
+    
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/john850512">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://www.linkedin.com/in/john85051232">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                
+                    <li>
+                        <a target="_blank" href="https://www.facebook.com/meetonfridayyy">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+                
+                    <li>
+                        <a target="_blank"  href="https://mail.google.com/mail/?view=cm&fs=1&to=john85051232@gmail.com">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-envelope-o fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+                
+                
+
+                
+
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; John 2025 
+                    <br>
+                    Powered by 
+                    <a href="https://github.com/john850512/hexo-theme-jiji" target="_blank" rel="noopener">
+                        <i>hexo-theme-jiji</i>
+                    </a> | 
+                    <iframe name="star" style="margin-left: 2px; margin-bottom:-5px;" frameborder="0" scrolling="0"
+                        width="100px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=john850512&repo=hexo-theme-jiji&type=star&count=true">
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+
+</footer>
+
+<!-- jQuery -->
+
+<script src="/js/jquery.min.js"></script>
+
+
+<!-- Bootstrap Core JavaScript -->
+
+<script src="/js/bootstrap.min.js"></script>
+
+
+<!-- Custom Theme JavaScript -->
+
+<script src="/js/hux-blog.min.js"></script>
+
+
+<!-- Search -->
+
+<script src="/js/search.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("https://meetonfriday.com/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+<!-- Search -->
+
+    <script type="text/javascript">      
+        var search_path = "search.xml";
+        if (search_path.length == 0) {
+            search_path = "search.xml";
+        }
+    var path = "/" + search_path;
+    searchFunc(path, 'local-search-input', 'local-search-result');
+    </script>
+
+
+<!-- busuanzi -->
+<!--<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>-->
+<script async src="//cdn.jsdelivr.net/npm/busuanzi@2.3.0"></script>
+
+
+
+
+	<a id="rocket" href="#top" class=""></a>
+	<script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script>
+    <script type="text/javascript" src="/js/toc.js?v=1.0.0" async=""></script>
+
+    
+        <!-- background effects line -->
+        
+        <!-- background effects end -->
+    
+    
+    <!-- background animation-->>
+    <!--<script size="50" alpha='0.3' zIndex="-999" src="/js/ribbonStatic.js"></script>-->
+    
+        <script src="/js/ribbonDynamic.js"></script>
+    
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script>
+            window.imageLazyLoadSetting = {
+                isSPA: false,
+                processImages: null,
+            };
+        </script><script>window.addEventListener("load",function(){var t=/\.(gif|jpg|jpeg|tiff|png)$/i,r=/^data:image\/[a-z]+;base64,/;Array.prototype.slice.call(document.querySelectorAll("img[data-original]")).forEach(function(a){var e=a.parentNode;"A"===e.tagName&&(e.href.match(t)||e.href.match(r))&&(e.href=a.dataset.original)})});</script><script>!function(n){n.imageLazyLoadSetting.processImages=o;var i=n.imageLazyLoadSetting.isSPA,r=Array.prototype.slice.call(document.querySelectorAll("img[data-original]"));function o(){i&&(r=Array.prototype.slice.call(document.querySelectorAll("img[data-original]")));for(var t,e,a=0;a<r.length;a++)t=r[a],0<=(e=t.getBoundingClientRect()).bottom&&0<=e.left&&e.top<=(n.innerHeight||document.documentElement.clientHeight)&&function(){var t,e,n,i,o=r[a];t=o,e=function(){r=r.filter(function(t){return o!==t})},n=new Image,i=t.getAttribute("data-original"),n.onload=function(){t.src=i,e&&e()},n.src=i}()}o(),n.addEventListener("scroll",function(){var t,e;t=o,e=n,clearTimeout(t.tId),t.tId=setTimeout(function(){t.call(e)},500)})}(this);</script></body>
+
+</html>

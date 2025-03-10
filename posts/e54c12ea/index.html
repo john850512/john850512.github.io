@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<!-- Head tag -->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="baidu-site-verification" content="093lY4ziMu" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="keyword"  content="programming, study, daily, entertainment">
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="星期五。見面">
+    <meta property="og:locale" content="zh-TW" />
+    
+    <meta property="og:title" content="[論文速速讀]ImageNet Classification with Deep Convolutional Neural Networks" />
+    
+    
+    <meta property="og:description" content="AlexNet，2012年的ILSVRC冠軍，也是首度使用了CNN模型屌打傳統的ML方法，讓大家開始脫離手工提取特徵的時代。摘要主要點出了幾個使用到的技術:(1)non-saturating neurons: 就是ReLU La~(2)effifient GPU implementation: 各位當時的設備很可憐阿QQ GPU的memory非常少R，所以他們把model分到兩個不同的gpu，然後再去共享data(3)使用了dropout來避免overfitting" />
+    <meta name="description" content="AlexNet，2012年的ILSVRC冠軍，也是首度使用了CNN模型屌打傳統的ML方法，讓大家開始脫離手工提取特徵的時代。摘要主要點出了幾個使用到的技術:(1)non-saturating neurons: 就是ReLU La~(2)effifient GPU implementation: 各位當時的設備很可憐阿QQ GPU的memory非常少R，所以他們把model分到兩個不同的gpu，然後再去共享data(3)使用了dropout來避免overfitting">
+    
+    
+    <meta property="og:image" content="https://res.cloudinary.com/meet-on-friday/image/upload/v1594579999/blog_posts/%E6%93%B7%E5%8F%96_woxr2t.png" />
+    
+
+    <link rel="shortcut icon" href="/img/avatar.jpg">
+    <!-- Place this tag in your head or just before your close body tag. -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <!--<link href='http://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>-->
+    <title>
+        
+          [論文速速讀]ImageNet Classification with Deep Convolutional Neural Networks - MeetonFriday
+        
+    </title>
+    <!-- canonical -->
+    
+    
+      <link rel="canonical" href="https://meetonfriday.com/posts/e54c12ea/">
+    
+
+    <!-- Bootstrap Core CSS -->
+    
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+
+
+    <!-- Custom CSS --> 
+    
+<link rel="stylesheet" href="/css/dusign-dark.css">
+
+    
+<link rel="stylesheet" href="/css/dusign-common-dark.css">
+
+    <!-- 
+<link rel="stylesheet" href="/css/font-awesome.css">
+ -->
+    
+<link rel="stylesheet" href="/css/toc.css">
+
+
+    
+    <!-- Pygments Highlight CSS -->
+    
+<link rel="stylesheet" href="/css/highlight.css">
+
+
+    
+<link rel="stylesheet" href="/css/widget.css">
+
+
+    
+<link rel="stylesheet" href="/css/rocket.css">
+
+
+    
+<link rel="stylesheet" href="/css/signature.css">
+
+
+    
+<link rel="stylesheet" href="/css/fonts.googleapis.css">
+
+
+    <!-- <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.3.0/css/font-awesome.min.css">-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.min.css">
+    
+    <!-- Google Analytics -->
+    
+      <!-- <script>
+          // dynamic User by Hux
+          var _gaId = 'UA-163346001-1';
+          var _gaDomain = 'auto';
+      
+          // Originial
+          (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+          (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+          })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+      
+          ga('create', _gaId, _gaDomain);
+          ga('send', 'pageview');
+      </script> -->
+      
+      <!-- Global site tag (gtag.js) - Google Analytics -->
+      <script async src="https://www.googletagmanager.com/gtag/js?id=UA-163346001-1"></script>
+      <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+      
+        gtag('config', 'UA-163346001-1');
+      </script>
+      
+    <!-- google ad sense-->
+    <script data-ad-client="ca-pub-9561340457908416" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<meta name="generator" content="Hexo 4.2.1"><link rel="alternate" href="/atom.xml" title="星期五。見面" type="application/atom+xml">
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+	<!-- Modified by Yu-Hsuan Yen -->
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        
+            
+                background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.5)), url('/img/header_img/header-bg.jpg')
+            
+        
+    }
+    
+</style>
+
+<header class="intro-header" >
+    <!-- Signature -->
+    <div id="signature">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                
+                    <div class="post-heading">
+                        <div class="tags">
+                            
+                              <a class="tag" href="/tags/#deep learning" title="deep learning">deep learning</a>
+                            
+                              <a class="tag" href="/tags/#paper" title="paper">paper</a>
+                            
+                        </div>
+                        <h1>[論文速速讀]ImageNet Classification with Deep Convolutional Neural Networks</h1>
+                        <h2 class="subheading"></h2>
+                        <span class="meta">
+                            Posted by John on
+                            2020-07-13
+                        </span>
+
+                        
+                            <div class="blank_box"></div>
+                            <span class="meta">
+                                Words <span class="post-count">2k</span> and
+                                Reading Time <span class="post-count">7</span> Minutes
+                            </span>
+                            <div class="blank_box"></div>
+                            <!-- 不蒜子统计 start -->
+                            <span class="meta">
+                                Viewed <span id="busuanzi_value_page_pv"><i class="fa fa-spinner fa-spin"></i></span> Times
+                            </span>
+                            <!-- 不蒜子统计 end -->
+                        
+
+                    </div>
+                
+
+                </div>
+            </div>
+        </div>      
+    </div>
+
+    
+        
+            <div class="waveWrapper">
+                <div class="wave wave_before" style="background-image: url('/img/wave-dark.png')"></div>
+                <div class="wave wave_after" style="background-image: url('/img/wave-dark.png')"></div>
+            </div>
+        
+    
+</header>
+
+	
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">星期五。見面</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archive/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/categories/">Categories</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/reading/">Reading</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+    
+    <!-- Main Content -->
+    <!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+            <!-- Post Container -->
+
+    
+        
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+        
+    
+
+                <p>〖想觀看更多中文論文導讀，至<a href="https://meetonfriday.com/posts/aa55d3f9/">[論文速速讀]系列文章介紹</a>可以看到目前已發布的所有文章！〗</p>
+<p>paper: <a href="https://papers.nips.cc/paper/4824-imagenet-classification-with-deep-convolutional-neural-networks.pdf" target="_blank" rel="noopener">https://papers.nips.cc/paper/4824-imagenet-classification-with-deep-convolutional-neural-networks.pdf</a></p>
+<p>AlexNet，2012年的ILSVRC冠軍，也是首度使用了CNN模型屌打傳統的ML方法，讓大家開始脫離手工提取特徵的時代。</p>
+<p>這一篇只有9頁，對比於上一篇LeNet，真是感激萬分。</p>
+<h2 id="Abstract"><a href="#Abstract" class="headerlink" title="Abstract"></a>Abstract</h2><blockquote>
+<p>To make training faster, we used non-saturating neurons and a very efficient GPU implementation of the convolution operation. To reduce overfitting in the fully-connected layers we employed a recently-developed regularization method called “dropout” that proved to be very effective.</p>
+</blockquote>
+<p>摘要主要點出了幾個使用到的技術:</p>
+<ul>
+<li>non-saturating neurons: 就是<strong>ReLU</strong> La~</li>
+<li>effifient GPU implementation: 各位當時的設備很可憐阿QQ GPU的memory非常少R，所以他們把model分到兩個不同的gpu，然後再去共享data</li>
+<li><strong>使用了dropout來避免overfitting</strong></li>
+</ul>
+<a id="more"></a>
+<h2 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h2><blockquote>
+<p>However, the immense complexity of the object recognition task means that this problem cannot be specified even by a dataset as large as ImageNet, so our model should also have lots of prior knowledge to compensate for all the data we don’t have. Convolutional neural networks (CNNs) constitute one such class of models…</p>
+</blockquote>
+<p>圖像識別任務的巨大複雜度(從數百萬張圖片分類數千個對象)在即使給予了很龐大的dataset，像是ImageNet也很難做得好，模型中應該需要包含大量的先驗知識來補償我們不具有的data。在此之上CNN就是一個很適合的方法。</p>
+<p>不過在當時的年代，CNN的計算量仍然是一個很大的負擔，這篇論文主要的貢獻如下:</p>
+<ul>
+<li>寫了一個使用GPU來training CNN的implementation</li>
+<li>透過一些技巧(ReLU, data augumentation)得到了更好的result</li>
+<li>加入了dropout防止overfitting</li>
+<li>AlexNet: 5層Conv layer + 3層FC layer</li>
+<li>「快…還要更快…」實驗數據表明只要有更快更強的GPU，我們結果就能夠好<br><img src="https://meetonfriday.com/img/lazy-loading-animation.gif" data-original="https://res.cloudinary.com/meet-on-friday/image/upload/v1594537508/blog_posts/UfXTSPn_u5sgr0.gif" alt=""></li>
+</ul>
+<h2 id="The-Dataset"><a href="#The-Dataset" class="headerlink" title="The Dataset"></a>The Dataset</h2><p>介紹ILSVRC和ImageNet，有興趣的可以再自己去看。主要做的前處理部分是:</p>
+<ol>
+<li>圖像的大小不同，所以統一reszie到256x256</li>
+<li>對RGB做centering，也就是說計算所有圖片在R,G,B上面的mean跟std，然後做normalization</li>
+</ol>
+<p>所以這也解釋了為什麼會在<a href="https://pytorch.org/docs/stable/torchvision/models.html" target="_blank" rel="noopener">Pytorch document</a>中看到這種神奇的數字<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">normalize = transforms.Normalize(mean=[<span class="number">0.485</span>, <span class="number">0.456</span>, <span class="number">0.406</span>],</span><br><span class="line">                                 std=[<span class="number">0.229</span>, <span class="number">0.224</span>, <span class="number">0.225</span>])</span><br></pre></td></tr></table></figure></p>
+<p><strong>[0.485, 0.456, 0.406]就是ImageNet中R, G, B的mean</strong>，後來大家習慣使用在ImageNet上pretrain的model時也會一併使用這組value來做前處理</p>
+<h2 id="The-Architecture"><a href="#The-Architecture" class="headerlink" title="The Architecture"></a>The Architecture</h2><p>接下來他們依照重要程度來介紹它們使用了那些技術，以及模型架構。</p>
+<h3 id="ReLU-Nonlinearity"><a href="#ReLU-Nonlinearity" class="headerlink" title="ReLU Nonlinearity"></a>ReLU Nonlinearity</h3><p>傳統的activation function，如sigmoid, tanh都是saturating nonlinearities，也就是說他們的值會有一個區間。而AlexNet<strong>使用了non-saturating nonlinearity的ReLU</strong>($f(x)=max(0,x)$)，使得訓練速度快了很多。</p>
+<p><img src="https://meetonfriday.com/img/lazy-loading-animation.gif" data-original="https://res.cloudinary.com/meet-on-friday/image/upload/v1594576446/blog_posts/%E6%93%B7%E5%8F%96_cm3o3x.png" alt=""></p>
+<p>這張圖是說，使用ReLU(實現)比使用tanh(虛線)的快了六倍，棒棒哒。</p>
+<h3 id="Training-on-Multiple-GPUs"><a href="#Training-on-Multiple-GPUs" class="headerlink" title="Training on Multiple GPUs"></a>Training on Multiple GPUs</h3><p>當時他們使用了兩顆GTX 580 GPU，然後分別進行訓練，只在某些layer進行交互，細節看架構圖就知道了。</p>
+<h3 id="Local-Response-Normalization"><a href="#Local-Response-Normalization" class="headerlink" title="Local Response Normalization"></a>Local Response Normalization</h3><p>儘管ReLU在positive沒有upper bound，他們卻發現對ReLU做Normalization也能提升效能，這個就是Local Response Normalization，公式如下:</p>
+<script type="math/tex; mode=display">b_{x, y}^{i}=a_{x, y}^{i} /\left(k+\alpha \sum_{j=\max (0, i-n / 2)}^{\min (N-1, i+n / 2)}\left(a_{x, y}^{j}\right)^{2}\right)^{\beta}</script><p>其中$k, \alpha, \beta$都是超參數，$a_{x,y}$是(x, y)位置經過activation function後的值，也就是說以(x, y)為中心，左右共取了$n$個值一起做Normalization(左邊取i-n/2，右邊取i+n/2)。</p>
+<p>他們發現這樣做讓testing err從13%降到11%</p>
+<p>(題外話，後來好像很少人用LRN，所以去查了一下，結果在VGG的paper中好像提到了使用LRN對他們並沒有幫助)</p>
+<h3 id="Overlapping-Pooling"><a href="#Overlapping-Pooling" class="headerlink" title="Overlapping Pooling"></a>Overlapping Pooling</h3><p>一般的pooling並不會overlap，不過這邊使用到stride&lt; width(height)的pooling，使得pooling之間取值是會重疊的，他們發現這樣可以降低overfitting。</p>
+<p>使用overlapping使得error降低了0.4%</p>
+<h3 id="Overall-Architecture"><a href="#Overall-Architecture" class="headerlink" title="Overall Architecture"></a>Overall Architecture</h3><p><img src="https://meetonfriday.com/img/lazy-loading-animation.gif" data-original="https://res.cloudinary.com/meet-on-friday/image/upload/v1594579999/blog_posts/%E6%93%B7%E5%8F%96_woxr2t.png" alt=""></p>
+<p>很久以前看到這圖還想說是不是截圖的人沒截好，這圖怎麼被切到了，今天看完paper才恍然大悟…</p>
+<p><strong>原來他本來就長的一副被切樣阿阿阿阿阿!</strong></p>
+<p>注意到這個架構雖然使用到了2張GPU，但他並不是像現在的平行處理架構，而是有特別設計過的。這個架構現在應該也沒什麼人會用了，<del>因為Nivdia乾爹威猛，區區記憶體還不夠多嗎</del></p>
+<p>值得一提的是，<strong>最後一層是使用了softmax而不是cross entropy做為activation function</strong></p>
+<p>其他架構的細節我這裡就不講了，有興趣的可以參考<a href="https://zhuanlan.zhihu.com/p/80087776" target="_blank" rel="noopener">可能是史上最全面的AlexNet 论文笔记与复现！！</a>的內容</p>
+<h2 id="Reducing-Overfitting"><a href="#Reducing-Overfitting" class="headerlink" title="Reducing Overfitting"></a>Reducing Overfitting</h2><p>介紹了兩種使用到的避免overfitting的方法</p>
+<h3 id="Data-Augmentation"><a href="#Data-Augmentation" class="headerlink" title="Data Augmentation"></a>Data Augmentation</h3><p>包含了圖像平移和水平翻轉。</p>
+<p>圖像平移的部分在256x256的圖上隨機提取224x224來當作training image，然後再搭配水平翻轉</p>
+<ul>
+<li>這樣的方法使得training data增加了2048倍(每一張圖都有32x32個不同的子圖，然後還可以水平翻轉所以共有32x32x2=2048)</li>
+<li>儘管這樣取得的圖片當然具有高度的相關性(因為可能是同一張圖片然後切成不同的子圖)，但仍然有效。</li>
+</ul>
+<p>在testing時，他們會對同一張圖片取5張224x224的子圖和水平翻轉的圖，總共10張去predict然後在用average output做softmax取得label。</p>
+<p>第二種方式是改變RGB channel的強度，透過PCA去取得RGB的principle component，然後對每張圖加上隨機量的RGB principle component:</p>
+<script type="math/tex; mode=display">\left[\mathbf{p}_{1}, \mathbf{p}_{2}, \mathbf{p}_{3}\right]\left[\alpha_{1} \lambda_{1}, \alpha_{2} \lambda_{2}, \alpha_{3} \lambda_{3}\right]^{T}</script><p>這樣的方法降低了1%的error</p>
+<h3 id="Dropout"><a href="#Dropout" class="headerlink" title="Dropout"></a>Dropout</h3><p>在training時，每個neuron有0.5的機率會被隱藏，這樣能使得模型更加的robust(有點類似ensemble model的效果)。testing時使用所有的neuron，但將結果乘上0.5。</p>
+<p>AlexNet在前兩層FC中使用到了dropout，他們也提到使用dropout會使得收斂所需要的iteration加倍。</p>
+<h2 id="Details-of-learning"><a href="#Details-of-learning" class="headerlink" title="Details of learning"></a>Details of learning</h2><p>使用SGD，然後搭配weight decay的learning rate…剩下的自己看。</p>
+<h2 id="Results"><a href="#Results" class="headerlink" title="Results"></a>Results</h2><p><img src="https://meetonfriday.com/img/lazy-loading-animation.gif" data-original="https://res.cloudinary.com/meet-on-friday/image/upload/v1594581622/blog_posts/%E6%93%B7%E5%8F%96_cwjpvj.png" alt=""></p>
+<p>7層的AlexNet效果最好，棒棒哒。</p>
+<p>然後他們也觀察了在第一層Conv的kernel長怎樣(第一層Conv有2個(48,3,11,11)，所以總共有96張(3,11,11)的視覺化圖)，然後他們發現第一個GPU都是學習到邊緣的特徵，第二個GPU都是學習到顏色的特徵比較多。</p>
+<ul>
+<li>這也是CNN可視化的開山始祖</li>
+</ul>
+<p><img src="https://meetonfriday.com/img/lazy-loading-animation.gif" data-original="https://res.cloudinary.com/meet-on-friday/image/upload/v1594585486/blog_posts/%E6%93%B7%E5%8F%96_onkpde.png" alt=""></p>
+<p>接下來他們做了另一件事情: 透過最後一層的output vector來觀察是不是距離相近的相似度也比較近(這裡用的是歐式距離)。下圖中第一欄都是testing set的圖片，然後二到五欄都是training set中與第一欄的歐式距離最小的圖片。<br><img src="https://meetonfriday.com/img/lazy-loading-animation.gif" data-original="https://res.cloudinary.com/meet-on-friday/image/upload/v1594582003/blog_posts/%E6%93%B7%E5%8F%96_cnxmlq.png" alt=""></p>
+<p>透過這個觀察可以說，<strong>模型在higher level如果距離比較小的vector是它認為比較相似的</strong>。儘管AlexNet最後一層是4096在計算上很沒有效率，不過他們也提到了這個是可以被優化的，例如train一個auto-encoder來壓縮vector長度，這在圖像檢索領域(image retrieval)上是一個很大的進展。</p>
+<h2 id="總結"><a href="#總結" class="headerlink" title="總結"></a>總結</h2><p>AlexNet作為第一個在ILSVRC告訴大家別再傻傻地人工取feature然後用SVM的人，這篇的出現導致從此ILSVRC正式CNN時代。</p>
+<p>雖然裡面的架構現在很少人在用了，不過裡面使用到的技術如ReLU, Dropout等技術仍然是現在很受用的技巧。</p>
+<p>然後這一篇只有9頁，非常簡潔有力，小弟看得很開心，希望後續要看的paper再接再厲。</p>
+<h2 id="References"><a href="#References" class="headerlink" title="References"></a>References</h2><ul>
+<li><a href="https://zhuanlan.zhihu.com/p/80087776" target="_blank" rel="noopener">可能是史上最全面的AlexNet 论文笔记与复现！！</a></li>
+<li><a href="https://pytorch.org/docs/stable/torchvision/models.html" target="_blank" rel="noopener">Pytorch document</a></li>
+<li><a href="https://zhuanlan.zhihu.com/p/32995244" target="_blank" rel="noopener">深度学习中Normalization的简介以及Batch Normalization的Alternative实现</a></li>
+<li><a href="https://zhuanlan.zhihu.com/p/22734982" target="_blank" rel="noopener">【阅读笔记】AlexNet - ImageNet Classification with Deep Convolutional Neural Networks</a></li>
+</ul>
+
+                <hr>
+                <!-- Pager -->
+                <ul class="pager">
+    
+    <li class="previous">
+        <a href="/posts/2c756e7/" data-toggle="tooltip" data-placement="top" title="碩二生活總結">&larr; Newer Post</a>
+    </li>
+    
+    
+    <li class="next">
+        <a href="/posts/d5321308/" data-toggle="tooltip" data-placement="top" title="[論文速速讀]Gradient Based Learning Applied to Document Recognition">Older Post &rarr;</a>
+    </li>
+    
+</ul>
+
+                <!-- tip start -->
+                
+
+                
+                <!-- tip end -->
+
+                <!-- Sharing -->
+                
+                <!-- Sharing -->
+
+                <!-- gitment start -->
+                
+                <!-- gitment end -->
+
+                <!-- 来必力City版安装代码 -->
+                
+                <!-- City版安装代码已完成 -->
+
+                <!-- disqus comment start -->
+                
+                <div class="comment">
+                    <div id="disqus_thread" class="disqus-thread"></div>
+                </div>
+                
+                <!-- disqus comment end -->
+            </div>
+            
+            <!-- Tabe of Content -->
+            <!-- Table of Contents -->
+
+    
+      
+        <aside id="sidebar">
+          <div id="toc" class="toc-article">
+          <strong class="toc-title">Contents</strong>
+          
+            <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Abstract"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">Abstract</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Introduction"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">Introduction</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#The-Dataset"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">The Dataset</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#The-Architecture"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">The Architecture</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#ReLU-Nonlinearity"><span class="toc-nav-number">4.1.</span> <span class="toc-nav-text">ReLU Nonlinearity</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Training-on-Multiple-GPUs"><span class="toc-nav-number">4.2.</span> <span class="toc-nav-text">Training on Multiple GPUs</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Local-Response-Normalization"><span class="toc-nav-number">4.3.</span> <span class="toc-nav-text">Local Response Normalization</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Overlapping-Pooling"><span class="toc-nav-number">4.4.</span> <span class="toc-nav-text">Overlapping Pooling</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Overall-Architecture"><span class="toc-nav-number">4.5.</span> <span class="toc-nav-text">Overall Architecture</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Reducing-Overfitting"><span class="toc-nav-number">5.</span> <span class="toc-nav-text">Reducing Overfitting</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Data-Augmentation"><span class="toc-nav-number">5.1.</span> <span class="toc-nav-text">Data Augmentation</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Dropout"><span class="toc-nav-number">5.2.</span> <span class="toc-nav-text">Dropout</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Details-of-learning"><span class="toc-nav-number">6.</span> <span class="toc-nav-text">Details of learning</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Results"><span class="toc-nav-number">7.</span> <span class="toc-nav-text">Results</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#總結"><span class="toc-nav-number">8.</span> <span class="toc-nav-text">總結</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#References"><span class="toc-nav-number">9.</span> <span class="toc-nav-text">References</span></a></li></ol>
+          
+          </div>
+        </aside>
+      
+    
+
+        </div>
+    </div>
+</article>
+
+	
+    <!-- disqus embedded js code start (one page only need to embed once) -->	
+    <script type="text/javascript">	
+        /* * * CONFIGURATION VARIABLES * * */	
+        var disqus_shortname = "meetonfriday";	
+        var disqus_identifier = "https://meetonfriday.com/posts/e54c12ea/";	
+        var disqus_url = "https://meetonfriday.com/posts/e54c12ea/";	
+        (function() {	
+            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;	
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';	
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);	
+        })();	
+    </script>	
+    <!-- disqus embedded js code start end -->	
+    
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/john850512">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://www.linkedin.com/in/john85051232">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                
+                    <li>
+                        <a target="_blank" href="https://www.facebook.com/meetonfridayyy">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+                
+                    <li>
+                        <a target="_blank"  href="https://mail.google.com/mail/?view=cm&fs=1&to=john85051232@gmail.com">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-envelope-o fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+                
+                
+
+                
+
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; John 2025 
+                    <br>
+                    Powered by 
+                    <a href="https://github.com/john850512/hexo-theme-jiji" target="_blank" rel="noopener">
+                        <i>hexo-theme-jiji</i>
+                    </a> | 
+                    <iframe name="star" style="margin-left: 2px; margin-bottom:-5px;" frameborder="0" scrolling="0"
+                        width="100px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=john850512&repo=hexo-theme-jiji&type=star&count=true">
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+
+</footer>
+
+<!-- jQuery -->
+
+<script src="/js/jquery.min.js"></script>
+
+
+<!-- Bootstrap Core JavaScript -->
+
+<script src="/js/bootstrap.min.js"></script>
+
+
+<!-- Custom Theme JavaScript -->
+
+<script src="/js/hux-blog.min.js"></script>
+
+
+<!-- Search -->
+
+<script src="/js/search.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("https://meetonfriday.com/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+<!-- Search -->
+
+    <script type="text/javascript">      
+        var search_path = "search.xml";
+        if (search_path.length == 0) {
+            search_path = "search.xml";
+        }
+    var path = "/" + search_path;
+    searchFunc(path, 'local-search-input', 'local-search-result');
+    </script>
+
+
+<!-- busuanzi -->
+<!--<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>-->
+<script async src="//cdn.jsdelivr.net/npm/busuanzi@2.3.0"></script>
+
+
+
+
+	<a id="rocket" href="#top" class=""></a>
+	<script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script>
+    <script type="text/javascript" src="/js/toc.js?v=1.0.0" async=""></script>
+
+    
+        <!-- background effects line -->
+        
+        <!-- background effects end -->
+    
+    
+    <!-- background animation-->>
+    <!--<script size="50" alpha='0.3' zIndex="-999" src="/js/ribbonStatic.js"></script>-->
+    
+        <script src="/js/ribbonDynamic.js"></script>
+    
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script>
+            window.imageLazyLoadSetting = {
+                isSPA: false,
+                processImages: null,
+            };
+        </script><script>window.addEventListener("load",function(){var t=/\.(gif|jpg|jpeg|tiff|png)$/i,r=/^data:image\/[a-z]+;base64,/;Array.prototype.slice.call(document.querySelectorAll("img[data-original]")).forEach(function(a){var e=a.parentNode;"A"===e.tagName&&(e.href.match(t)||e.href.match(r))&&(e.href=a.dataset.original)})});</script><script>!function(n){n.imageLazyLoadSetting.processImages=o;var i=n.imageLazyLoadSetting.isSPA,r=Array.prototype.slice.call(document.querySelectorAll("img[data-original]"));function o(){i&&(r=Array.prototype.slice.call(document.querySelectorAll("img[data-original]")));for(var t,e,a=0;a<r.length;a++)t=r[a],0<=(e=t.getBoundingClientRect()).bottom&&0<=e.left&&e.top<=(n.innerHeight||document.documentElement.clientHeight)&&function(){var t,e,n,i,o=r[a];t=o,e=function(){r=r.filter(function(t){return o!==t})},n=new Image,i=t.getAttribute("data-original"),n.onload=function(){t.src=i,e&&e()},n.src=i}()}o(),n.addEventListener("scroll",function(){var t,e;t=o,e=n,clearTimeout(t.tId),t.tId=setTimeout(function(){t.call(e)},500)})}(this);</script></body>
+
+</html>

@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<!-- Head tag -->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="baidu-site-verification" content="093lY4ziMu" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="keyword"  content="programming, study, daily, entertainment">
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="星期五。見面">
+    <meta property="og:locale" content="zh-TW" />
+    
+    <meta property="og:title" content="[DL]Attention Mechanism學習筆記" />
+    
+    
+    <meta property="og:description" content="這篇是之前自己在學習NLP的attention筆記，整理了網路上不少覺得不錯的資源分享給大家，會從Seq2seq開始，講述attention基本的概念，並如何利用attention融合在seq2seq，最後在講述NLP無人不知無人不曉的Attention is all you need這篇的概念(Transfromer)。" />
+    <meta name="description" content="這篇是之前自己在學習NLP的attention筆記，整理了網路上不少覺得不錯的資源分享給大家，會從Seq2seq開始，講述attention基本的概念，並如何利用attention融合在seq2seq，最後在講述NLP無人不知無人不曉的Attention is all you need這篇的概念(Transfromer)。">
+    
+    
+    <meta property="og:image" content="/img/avatar.jpg" />
+    
+
+    <link rel="shortcut icon" href="/img/avatar.jpg">
+    <!-- Place this tag in your head or just before your close body tag. -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <!--<link href='http://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>-->
+    <title>
+        
+          [DL]Attention Mechanism學習筆記 - MeetonFriday
+        
+    </title>
+    <!-- canonical -->
+    
+    
+      <link rel="canonical" href="https://meetonfriday.com/posts/e26b7840/">
+    
+
+    <!-- Bootstrap Core CSS -->
+    
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+
+
+    <!-- Custom CSS --> 
+    
+<link rel="stylesheet" href="/css/dusign-dark.css">
+
+    
+<link rel="stylesheet" href="/css/dusign-common-dark.css">
+
+    <!-- 
+<link rel="stylesheet" href="/css/font-awesome.css">
+ -->
+    
+<link rel="stylesheet" href="/css/toc.css">
+
+
+    
+    <!-- Pygments Highlight CSS -->
+    
+<link rel="stylesheet" href="/css/highlight.css">
+
+
+    
+<link rel="stylesheet" href="/css/widget.css">
+
+
+    
+<link rel="stylesheet" href="/css/rocket.css">
+
+
+    
+<link rel="stylesheet" href="/css/signature.css">
+
+
+    
+<link rel="stylesheet" href="/css/fonts.googleapis.css">
+
+
+    <!-- <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.3.0/css/font-awesome.min.css">-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.min.css">
+    
+    <!-- Google Analytics -->
+    
+      <!-- <script>
+          // dynamic User by Hux
+          var _gaId = 'UA-163346001-1';
+          var _gaDomain = 'auto';
+      
+          // Originial
+          (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+          (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+          })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+      
+          ga('create', _gaId, _gaDomain);
+          ga('send', 'pageview');
+      </script> -->
+      
+      <!-- Global site tag (gtag.js) - Google Analytics -->
+      <script async src="https://www.googletagmanager.com/gtag/js?id=UA-163346001-1"></script>
+      <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+      
+        gtag('config', 'UA-163346001-1');
+      </script>
+      
+    <!-- google ad sense-->
+    <script data-ad-client="ca-pub-9561340457908416" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<meta name="generator" content="Hexo 4.2.1"><link rel="alternate" href="/atom.xml" title="星期五。見面" type="application/atom+xml">
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+	<!-- Modified by Yu-Hsuan Yen -->
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        
+            
+                background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.5)), url('/img/header_img/header-bg.jpg')
+            
+        
+    }
+    
+</style>
+
+<header class="intro-header" >
+    <!-- Signature -->
+    <div id="signature">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                
+                    <div class="post-heading">
+                        <div class="tags">
+                            
+                              <a class="tag" href="/tags/#deep learning" title="deep learning">deep learning</a>
+                            
+                        </div>
+                        <h1>[DL]Attention Mechanism學習筆記</h1>
+                        <h2 class="subheading"></h2>
+                        <span class="meta">
+                            Posted by John on
+                            2019-11-23
+                        </span>
+
+                        
+                            <div class="blank_box"></div>
+                            <span class="meta">
+                                Words <span class="post-count">1.1k</span> and
+                                Reading Time <span class="post-count">4</span> Minutes
+                            </span>
+                            <div class="blank_box"></div>
+                            <!-- 不蒜子统计 start -->
+                            <span class="meta">
+                                Viewed <span id="busuanzi_value_page_pv"><i class="fa fa-spinner fa-spin"></i></span> Times
+                            </span>
+                            <!-- 不蒜子统计 end -->
+                        
+
+                    </div>
+                
+
+                </div>
+            </div>
+        </div>      
+    </div>
+
+    
+        
+            <div class="waveWrapper">
+                <div class="wave wave_before" style="background-image: url('/img/wave-dark.png')"></div>
+                <div class="wave wave_after" style="background-image: url('/img/wave-dark.png')"></div>
+            </div>
+        
+    
+</header>
+
+	
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">星期五。見面</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archive/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/categories/">Categories</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/reading/">Reading</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+    
+    <!-- Main Content -->
+    <!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+            <!-- Post Container -->
+
+    
+        
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+        
+    
+
+                <p>這篇是之前自己在學習NLP的attention筆記，整理了網路上不少覺得不錯的資源分享給大家，會從Seq2seq開始，講述attention基本的概念，並如何利用attention融合在seq2seq，最後在講述NLP無人不知無人不曉的”Attention is all you need”這篇的概念(Transfromer)。<br><a id="more"></a></p>
+<h2 id="Seq2Seq"><a href="#Seq2Seq" class="headerlink" title="Seq2Seq"></a>Seq2Seq</h2><p><img src="https://meetonfriday.com/img/lazy-loading-animation.gif" data-original="https://i.imgur.com/EN4377S.png" alt=""></p>
+<ul>
+<li>基於encoder-decoder的RNN架構</li>
+<li>透過encoder產生context vector，然後透過decoder將context vector和前一個輸出結合來預測下一個時間點的輸出</li>
+<li>目標函數: <script type="math/tex">P(y_1,...y_{T'}|x_1,...x_T)=\prod_{t=1}^{T'}p(y_t|v,y_1,...y_{t-1})</script></li>
+<li>缺點: 把任意長度的input encode成一個global context vector，<strong>當input長的時候很難囊括所有info</strong></li>
+</ul>
+<h2 id="Seq2Seq-with-attention"><a href="#Seq2Seq-with-attention" class="headerlink" title="Seq2Seq with attention"></a>Seq2Seq with attention</h2><p><img src="https://meetonfriday.com/img/lazy-loading-animation.gif" data-original="https://i.imgur.com/esuoAhv.jpg" alt=""></p>
+<p><a href="https://arxiv.org/pdf/1508.04025.pdf" target="_blank" rel="noopener">Effective Approaches to Attention-based Neural Machine Translation</a></p>
+<ul>
+<li>注意力機制: 透過attention weight產生動態的context vector<ul>
+<li>每一個decoder的hidden state都會有不同的context vector</li>
+</ul>
+</li>
+</ul>
+<h3 id="Algorithm"><a href="#Algorithm" class="headerlink" title="Algorithm"></a>Algorithm</h3><ul>
+<li>輸入: <script type="math/tex">x=(x_1,...x_{T_x})</script></li>
+<li>輸出: <script type="math/tex">y=(y_1,...y_{T_y})</script></li>
+<li>encoder的hidden state <script type="math/tex">h_s=RNN_{enc}(x_t, h_{s-1})</script></li>
+<li>decoder的hidden state <script type="math/tex">h_t=RNN_{dec}(y_t,h_{t-1})</script></li>
+</ul>
+<ol>
+<li><strong>attention weights</strong>: 每次都用當下decoder的hidden state$h_t$去對所有encoder的hidden state進行<strong>score function</strong>，得出$h_t$對每個$h_s$的重要程度<script type="math/tex; mode=display">\alpha_{ts}=\frac{exp(score(h_t, h_s))}{\sum_{s'=1}^{S}exp(score(h_t, h_s'))}</script></li>
+<li><strong>context vector</strong>: 透過attention weight和原本的$h_s$做weight averaging<script type="math/tex; mode=display">c_t=\sum_{s}\alpha_{ts}h_s</script></li>
+<li><strong>attention vector</strong>: 將context vector和decoder的hidden state做concat並做一個nonlinear-transformation<script type="math/tex; mode=display">\alpha'=f(c_t, h_t) = tanh(W_c[c_t;h_t])</script></li>
+</ol>
+<h3 id="討論"><a href="#討論" class="headerlink" title="討論"></a>討論</h3><ul>
+<li>這裏的attention是關注decoder的output對於encoder的input重要程度，不同於Transformer的self-attention是指關注同一個句子中其他位置的token的重要程度(後面會介紹)</li>
+<li>整體的架構仍然是基於RNN的Seq2Seq，RNN很大一個缺點是不能parallelization</li>
+</ul>
+<h2 id="Transformer"><a href="#Transformer" class="headerlink" title="Transformer"></a>Transformer</h2><p><a href="https://arxiv.org/abs/1706.03762" target="_blank" rel="noopener">Attention Is All You Need</a></p>
+<ul>
+<li>RNN的優點是可以引入長時間的資訊，但缺點是很難平行化</li>
+<li>可以透過深層的CNN使得包含相同的資訊量，但缺點是CNN要疊很多層</li>
+<li>self-attention可以包含長期的資訊，並且可以平行化</li>
+</ul>
+<p><img src="https://meetonfriday.com/img/lazy-loading-animation.gif" data-original="https://i.imgur.com/fZOxHUm.png" alt=""></p>
+<p>完整的transformer架構:</p>
+<h3 id="Self-attention"><a href="#Self-attention" class="headerlink" title="Self-attention"></a>Self-attention</h3><p><img src="https://meetonfriday.com/img/lazy-loading-animation.gif" data-original="https://i.imgur.com/fJ9wPhc.jpg" alt=""></p>
+<ol>
+<li>對input $x$做embedding<ul>
+<li>$X’ = WX$</li>
+</ul>
+</li>
+<li>將相同的$X$分成三份，每一份乘上不同的矩陣得到$Q,K,V$<ul>
+<li>$X’ \times W_Q = Q$</li>
+<li>$X’ \times W_K = K$</li>
+<li>$X’ \times W_V = V$</li>
+</ul>
+</li>
+<li>透過score和$Q, K$計算attention weights<ul>
+<li>$softmax(\frac{Q \times K^T}{\sqrt{d}})$</li>
+<li>$d$是$Q$和$K$的維度，因為$Q$和$K$會隨著dimension變大使得variance越大，所以做一點scaled</li>
+</ul>
+</li>
+<li>透過attentnion weights和$V$做weighting average<ul>
+<li>$Z = softmax(\frac{Q \times K^T}{\sqrt{d}})\cdot V$</li>
+</ul>
+</li>
+</ol>
+<ul>
+<li>這些矩陣運算可以透過GPU來加速</li>
+</ul>
+<h3 id="multi-head-attention"><a href="#multi-head-attention" class="headerlink" title="multi-head attention"></a>multi-head attention</h3><p><img src="https://meetonfriday.com/img/lazy-loading-animation.gif" data-original="https://i.imgur.com/t5Uy3la.jpg" alt=""></p>
+<ul>
+<li>$Q, K, V$可以有多個，使得不同的attention關注不同的地方</li>
+<li>最後會有多個$Z$，可以把他們concat起來，也可以做一個線性轉換進行降維$Z\cdot W_Z=Z’$</li>
+</ul>
+<h3 id="Position-Encoding"><a href="#Position-Encoding" class="headerlink" title="Position Encoding"></a>Position Encoding</h3><ul>
+<li>對於self-attention來說，input的token位置是無關的，因為每個token都會跟前後的所有token做attention</li>
+<li>所以必須加入position information，直觀的想法是想辦法讓被加入位置編碼的 word embedding 在$d_{model}$維度的空間裡頭不只會因為語義相近而靠近，也會因為位置靠近而在該空間裡頭靠近。</li>
+</ul>
+<p>公式為:</p>
+<ul>
+<li>$PE(pos, 2i)=sin(\frac{pos}{10000^{2i/d_{model}}})$</li>
+<li>$PE(pos, 2i+1)=cos(\frac{pos}{10000^{2i/d_{model}}})$</li>
+</ul>
+<p><img src="https://meetonfriday.com/img/lazy-loading-animation.gif" data-original="https://i.imgur.com/dOd7a2l.png" alt=""></p>
+<p>畫出來的圖長這樣:</p>
+<blockquote>
+<p>論文裡頭提到他們之所以這樣設計位置編碼（Positional Encoding, PE）是因為這個函數有個很好的特性：給定任一位置 pos 的位置編碼 PE(pos)，跟它距離 k 個單位的位置 pos + k 的位置編碼 PE(pos + k) 可以表示為 PE(pos) 的一個線性函數（linear function）。</p>
+<p>因此透過在 word embedding 裡加入這樣的資訊，作者們認為可以幫助 Transformer 學會 model 序列中的子詞的相對位置關係。</p>
+</blockquote>
+<h3 id="Implementation-detail"><a href="#Implementation-detail" class="headerlink" title="Implementation detail"></a>Implementation detail</h3><p>實作上，還有下列的一些需要注意的地方:</p>
+<ul>
+<li>position encoding要用add / concat?<ul>
+<li><a href="https://meetonfriday.com/posts/45f8d851/">[DL]Difference between add/concat operation in Neural Network</a></li>
+</ul>
+</li>
+<li>兩個會被用到的mask<ul>
+<li>padding mask使得attention不會注意到padding的地方</li>
+<li>look ahead mask使得decoder在做attention時不會關注到decoder產生的詞(只會往前看)</li>
+</ul>
+</li>
+<li>架構中其實還用到了skip connection的概念</li>
+<li>可以透過attention weights來關注模型注重的部分，並且在decoder的第二個multi-attention的$Q,K$是來自encoder的output，所以這一個block不是self-attention架構，也因此可以透過這一個block來視覺化input和output之間對應的重要性</li>
+</ul>
+<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><ul>
+<li><a href="https://www.youtube.com/watch?v=ugWDIIOHtPA" target="_blank" rel="noopener">Transformer</a></li>
+<li><a href="https://leemeng.tw/neural-machine-translation-with-transformer-and-tensorflow2.html" target="_blank" rel="noopener">淺談神經機器翻譯 &amp; 用 Transformer 與 TensorFlow 2 英翻中</a></li>
+<li><a href="https://zhuanlan.zhihu.com/p/48508221" target="_blank" rel="noopener">详解Transformer （Attention Is All You Need）</a></li>
+</ul>
+
+                <hr>
+                <!-- Pager -->
+                <ul class="pager">
+    
+    <li class="previous">
+        <a href="/posts/7a4bb453/" data-toggle="tooltip" data-placement="top" title="[Python]Use Capstone to disassemble code">&larr; Newer Post</a>
+    </li>
+    
+    
+    <li class="next">
+        <a href="/posts/45f8d851/" data-toggle="tooltip" data-placement="top" title="[DL]Difference between add/concat operation in Neural Network">Older Post &rarr;</a>
+    </li>
+    
+</ul>
+
+                <!-- tip start -->
+                
+
+                
+                <!-- tip end -->
+
+                <!-- Sharing -->
+                
+                <!-- Sharing -->
+
+                <!-- gitment start -->
+                
+                <!-- gitment end -->
+
+                <!-- 来必力City版安装代码 -->
+                
+                <!-- City版安装代码已完成 -->
+
+                <!-- disqus comment start -->
+                
+                <div class="comment">
+                    <div id="disqus_thread" class="disqus-thread"></div>
+                </div>
+                
+                <!-- disqus comment end -->
+            </div>
+            
+            <!-- Tabe of Content -->
+            <!-- Table of Contents -->
+
+    
+      
+        <aside id="sidebar">
+          <div id="toc" class="toc-article">
+          <strong class="toc-title">Contents</strong>
+          
+            <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Seq2Seq"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">Seq2Seq</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Seq2Seq-with-attention"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">Seq2Seq with attention</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Algorithm"><span class="toc-nav-number">2.1.</span> <span class="toc-nav-text">Algorithm</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#討論"><span class="toc-nav-number">2.2.</span> <span class="toc-nav-text">討論</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Transformer"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">Transformer</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Self-attention"><span class="toc-nav-number">3.1.</span> <span class="toc-nav-text">Self-attention</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#multi-head-attention"><span class="toc-nav-number">3.2.</span> <span class="toc-nav-text">multi-head attention</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Position-Encoding"><span class="toc-nav-number">3.3.</span> <span class="toc-nav-text">Position Encoding</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Implementation-detail"><span class="toc-nav-number">3.4.</span> <span class="toc-nav-text">Implementation detail</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Reference"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">Reference</span></a></li></ol>
+          
+          </div>
+        </aside>
+      
+    
+
+        </div>
+    </div>
+</article>
+
+	
+    <!-- disqus embedded js code start (one page only need to embed once) -->	
+    <script type="text/javascript">	
+        /* * * CONFIGURATION VARIABLES * * */	
+        var disqus_shortname = "meetonfriday";	
+        var disqus_identifier = "https://meetonfriday.com/posts/e26b7840/";	
+        var disqus_url = "https://meetonfriday.com/posts/e26b7840/";	
+        (function() {	
+            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;	
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';	
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);	
+        })();	
+    </script>	
+    <!-- disqus embedded js code start end -->	
+    
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/john850512">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://www.linkedin.com/in/john85051232">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                
+                    <li>
+                        <a target="_blank" href="https://www.facebook.com/meetonfridayyy">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+                
+                    <li>
+                        <a target="_blank"  href="https://mail.google.com/mail/?view=cm&fs=1&to=john85051232@gmail.com">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-envelope-o fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+                
+                
+
+                
+
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; John 2025 
+                    <br>
+                    Powered by 
+                    <a href="https://github.com/john850512/hexo-theme-jiji" target="_blank" rel="noopener">
+                        <i>hexo-theme-jiji</i>
+                    </a> | 
+                    <iframe name="star" style="margin-left: 2px; margin-bottom:-5px;" frameborder="0" scrolling="0"
+                        width="100px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=john850512&repo=hexo-theme-jiji&type=star&count=true">
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+
+</footer>
+
+<!-- jQuery -->
+
+<script src="/js/jquery.min.js"></script>
+
+
+<!-- Bootstrap Core JavaScript -->
+
+<script src="/js/bootstrap.min.js"></script>
+
+
+<!-- Custom Theme JavaScript -->
+
+<script src="/js/hux-blog.min.js"></script>
+
+
+<!-- Search -->
+
+<script src="/js/search.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("https://meetonfriday.com/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+<!-- Search -->
+
+    <script type="text/javascript">      
+        var search_path = "search.xml";
+        if (search_path.length == 0) {
+            search_path = "search.xml";
+        }
+    var path = "/" + search_path;
+    searchFunc(path, 'local-search-input', 'local-search-result');
+    </script>
+
+
+<!-- busuanzi -->
+<!--<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>-->
+<script async src="//cdn.jsdelivr.net/npm/busuanzi@2.3.0"></script>
+
+
+
+
+	<a id="rocket" href="#top" class=""></a>
+	<script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script>
+    <script type="text/javascript" src="/js/toc.js?v=1.0.0" async=""></script>
+
+    
+        <!-- background effects line -->
+        
+        <!-- background effects end -->
+    
+    
+    <!-- background animation-->>
+    <!--<script size="50" alpha='0.3' zIndex="-999" src="/js/ribbonStatic.js"></script>-->
+    
+        <script src="/js/ribbonDynamic.js"></script>
+    
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script>
+            window.imageLazyLoadSetting = {
+                isSPA: false,
+                processImages: null,
+            };
+        </script><script>window.addEventListener("load",function(){var t=/\.(gif|jpg|jpeg|tiff|png)$/i,r=/^data:image\/[a-z]+;base64,/;Array.prototype.slice.call(document.querySelectorAll("img[data-original]")).forEach(function(a){var e=a.parentNode;"A"===e.tagName&&(e.href.match(t)||e.href.match(r))&&(e.href=a.dataset.original)})});</script><script>!function(n){n.imageLazyLoadSetting.processImages=o;var i=n.imageLazyLoadSetting.isSPA,r=Array.prototype.slice.call(document.querySelectorAll("img[data-original]"));function o(){i&&(r=Array.prototype.slice.call(document.querySelectorAll("img[data-original]")));for(var t,e,a=0;a<r.length;a++)t=r[a],0<=(e=t.getBoundingClientRect()).bottom&&0<=e.left&&e.top<=(n.innerHeight||document.documentElement.clientHeight)&&function(){var t,e,n,i,o=r[a];t=o,e=function(){r=r.filter(function(t){return o!==t})},n=new Image,i=t.getAttribute("data-original"),n.onload=function(){t.src=i,e&&e()},n.src=i}()}o(),n.addEventListener("scroll",function(){var t,e;t=o,e=n,clearTimeout(t.tId),t.tId=setTimeout(function(){t.call(e)},500)})}(this);</script></body>
+
+</html>

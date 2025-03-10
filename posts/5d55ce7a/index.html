@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<!-- Head tag -->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="baidu-site-verification" content="093lY4ziMu" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="keyword"  content="programming, study, daily, entertainment">
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="星期五。見面">
+    <meta property="og:locale" content="zh-TW" />
+    
+    <meta property="og:title" content="[Linux Kernel慢慢學]Bit fields介紹" />
+    
+    
+    <meta property="og:description" content="之前在上一篇介紹linux kernel中build_on_zero的時候有使用到了bit fields技巧，然後我很懶的丟了一個超連結就代過了，後來越想越覺得自己對這個概念還沒是很清楚，所以痛定思痛來寫一篇介紹文順便把它搞懂。" />
+    <meta name="description" content="之前在上一篇介紹linux kernel中build_on_zero的時候有使用到了bit fields技巧，然後我很懶的丟了一個超連結就代過了，後來越想越覺得自己對這個概念還沒是很清楚，所以痛定思痛來寫一篇介紹文順便把它搞懂。">
+    
+    
+    <meta property="og:image" content="/img/avatar.jpg" />
+    
+
+    <link rel="shortcut icon" href="/img/avatar.jpg">
+    <!-- Place this tag in your head or just before your close body tag. -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <!--<link href='http://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>-->
+    <title>
+        
+          [Linux Kernel慢慢學]Bit fields介紹 - MeetonFriday
+        
+    </title>
+    <!-- canonical -->
+    
+    
+      <link rel="canonical" href="https://meetonfriday.com/posts/5d55ce7a/">
+    
+
+    <!-- Bootstrap Core CSS -->
+    
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+
+
+    <!-- Custom CSS --> 
+    
+<link rel="stylesheet" href="/css/dusign-dark.css">
+
+    
+<link rel="stylesheet" href="/css/dusign-common-dark.css">
+
+    <!-- 
+<link rel="stylesheet" href="/css/font-awesome.css">
+ -->
+    
+<link rel="stylesheet" href="/css/toc.css">
+
+
+    
+    <!-- Pygments Highlight CSS -->
+    
+<link rel="stylesheet" href="/css/highlight.css">
+
+
+    
+<link rel="stylesheet" href="/css/widget.css">
+
+
+    
+<link rel="stylesheet" href="/css/rocket.css">
+
+
+    
+<link rel="stylesheet" href="/css/signature.css">
+
+
+    
+<link rel="stylesheet" href="/css/fonts.googleapis.css">
+
+
+    <!-- <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.3.0/css/font-awesome.min.css">-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.min.css">
+    
+    <!-- Google Analytics -->
+    
+      <!-- <script>
+          // dynamic User by Hux
+          var _gaId = 'UA-163346001-1';
+          var _gaDomain = 'auto';
+      
+          // Originial
+          (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+          (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+          })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+      
+          ga('create', _gaId, _gaDomain);
+          ga('send', 'pageview');
+      </script> -->
+      
+      <!-- Global site tag (gtag.js) - Google Analytics -->
+      <script async src="https://www.googletagmanager.com/gtag/js?id=UA-163346001-1"></script>
+      <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+      
+        gtag('config', 'UA-163346001-1');
+      </script>
+      
+    <!-- google ad sense-->
+    <script data-ad-client="ca-pub-9561340457908416" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<meta name="generator" content="Hexo 4.2.1"><link rel="alternate" href="/atom.xml" title="星期五。見面" type="application/atom+xml">
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+	<!-- Modified by Yu-Hsuan Yen -->
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        
+            
+                background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.5)), url('/img/header_img/header-bg.jpg')
+            
+        
+    }
+    
+</style>
+
+<header class="intro-header" >
+    <!-- Signature -->
+    <div id="signature">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                
+                    <div class="post-heading">
+                        <div class="tags">
+                            
+                              <a class="tag" href="/tags/#c" title="c">c</a>
+                            
+                              <a class="tag" href="/tags/#linux kernel" title="linux kernel">linux kernel</a>
+                            
+                        </div>
+                        <h1>[Linux Kernel慢慢學]Bit fields介紹</h1>
+                        <h2 class="subheading"></h2>
+                        <span class="meta">
+                            Posted by John on
+                            2020-03-07
+                        </span>
+
+                        
+                            <div class="blank_box"></div>
+                            <span class="meta">
+                                Words <span class="post-count">1.1k</span> and
+                                Reading Time <span class="post-count">5</span> Minutes
+                            </span>
+                            <div class="blank_box"></div>
+                            <!-- 不蒜子统计 start -->
+                            <span class="meta">
+                                Viewed <span id="busuanzi_value_page_pv"><i class="fa fa-spinner fa-spin"></i></span> Times
+                            </span>
+                            <!-- 不蒜子统计 end -->
+                        
+
+                    </div>
+                
+
+                </div>
+            </div>
+        </div>      
+    </div>
+
+    
+        
+            <div class="waveWrapper">
+                <div class="wave wave_before" style="background-image: url('/img/wave-dark.png')"></div>
+                <div class="wave wave_after" style="background-image: url('/img/wave-dark.png')"></div>
+            </div>
+        
+    
+</header>
+
+	
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">星期五。見面</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archive/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/categories/">Categories</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/reading/">Reading</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+    
+    <!-- Main Content -->
+    <!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+            <!-- Post Container -->
+
+    
+        
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+        
+    
+
+                <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>之前在<a href="https://meetonfriday.com/posts/58e72281/">上一篇</a>介紹linux kernel中build_on_zero的時候有使用到了bit fields技巧，然後我很懶的丟了一個超連結就代過了，後來越想越覺得自己對這個概念還沒是很清楚，所以痛定思痛來寫一篇介紹文順便把它搞懂。</p>
+<h2 id="Bit-fields"><a href="#Bit-fields" class="headerlink" title="Bit fields"></a>Bit fields</h2><p>bit fields是什麼? </p>
+<p>簡單來說是可以在struct內以bit為單位來指定變數，考慮我們有一個需要紀錄4個flag的struct，如果都用bool(p.s. 題外話，c99後才在stdbool.h定義了bool這個type，我自首，我以前都沒注意…)來儲存的話則需要4*1byte = 4bytes。</p>
+<p><strong>但是其實每個flag只有true/false，也就是說只要一個bit來紀錄就可以了</strong>，所以我們可以用一個byte的4個bits來記錄這些flag，總共只佔了1byte。</p>
+<p>用法如下，在struct中以冒號來指定bit field </p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">bit_field_name</span> </span></span><br><span class="line"><span class="class">&#123;</span> </span><br><span class="line">  type member_name : <span class="built_in">width</span>; </span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<a id="more"></a>
+<p>注意在<a href="https://en.cppreference.com/w/c/language/bit_field" target="_blank" rel="noopener">document</a>有提到，bit field的type只能是以下這幾種:</p>
+<ul>
+<li>unsigned int (Ex: unsigned int b:3 ，代表b的範圍介於0..7)</li>
+<li>signed int(Ex: unsigned int b:3 ，代表b的範圍介於-4..3)</li>
+<li>int，注意這裡的int是implement-defined，也就是說它是有號無號的取決於compiler</li>
+<li>_Bool</li>
+</ul>
+<p>下面直接舉例子一邊介紹比較相關的概念比較快。</p>
+<h3 id="Example1-使用方式"><a href="#Example1-使用方式" class="headerlink" title="Example1 - 使用方式"></a>Example1 - 使用方式</h3><p>取自<a href="https://www.tutorialspoint.com/cprogramming/c_bit_fields.htm" target="_blank" rel="noopener">C - Bit Fields</a>，當如果有兩個flag要設置的時候，使用bit field和不使用的差別。</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">/* define simple structure */</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> &#123;</span></span><br><span class="line">   <span class="keyword">unsigned</span> <span class="keyword">int</span> widthValidated;</span><br><span class="line">   <span class="keyword">unsigned</span> <span class="keyword">int</span> heightValidated;</span><br><span class="line">&#125; status1;</span><br><span class="line"> </span><br><span class="line"><span class="comment">/* define a structure with bit fields */</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> &#123;</span></span><br><span class="line">   <span class="keyword">unsigned</span> <span class="keyword">int</span> widthValidated : <span class="number">1</span>;</span><br><span class="line">   <span class="keyword">unsigned</span> <span class="keyword">int</span> heightValidated : <span class="number">1</span>;</span><br><span class="line">&#125; status2;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">( )</span> </span>&#123;</span><br><span class="line">   <span class="built_in">printf</span>( <span class="string">"Memory size occupied by status1 : %d\n"</span>, <span class="keyword">sizeof</span>(status1));</span><br><span class="line">   <span class="built_in">printf</span>( <span class="string">"Memory size occupied by status2 : %d\n"</span>, <span class="keyword">sizeof</span>(status2));</span><br><span class="line">   <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>由於status1裡面有兩個unsigned int，所以大小是 2 * 4(unsigned int) = 8；而如果使用bit field則只有占用一個unsigned int，也就是4byte的空間。</p>
+<h3 id="Example2-bit-fields的對齊"><a href="#Example2-bit-fields的對齊" class="headerlink" title="Example2 - bit fields的對齊"></a>Example2 - bit fields的對齊</h3><p><strong>bit fields的對齊可以使用unamed bit field來使得下一個bit field 對齊到下一個 unit 的 boundary，unamed bit field可以指定要pad的數量或是直接指定0對齊下一個unit，並且zero-width bit field 宣告不會使用到任何空間。</strong></p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">S</span> &#123;</span></span><br><span class="line">    <span class="comment">// will usually occupy 8 bytes:</span></span><br><span class="line">    <span class="comment">// 5 bits: value of b1</span></span><br><span class="line">    <span class="comment">// 27 bits: unused</span></span><br><span class="line">    <span class="comment">// 6 bits: value of b2</span></span><br><span class="line">    <span class="comment">// 15 bits: value of b3</span></span><br><span class="line">    <span class="comment">// 11 bits: unused</span></span><br><span class="line">    <span class="keyword">unsigned</span> b1 : <span class="number">5</span>;</span><br><span class="line">    <span class="keyword">unsigned</span> :<span class="number">27</span>; <span class="comment">// start a new unsigned int</span></span><br><span class="line">    <span class="keyword">unsigned</span> b2 : <span class="number">6</span>;</span><br><span class="line">    <span class="keyword">unsigned</span> b3 : <span class="number">15</span>;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"%zu\n"</span>, <span class="keyword">sizeof</span>(struct S)); <span class="comment">// usually prints 8</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>或是<br><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">S</span> &#123;</span></span><br><span class="line">    <span class="comment">// will usually occupy 8 bytes:</span></span><br><span class="line">    <span class="comment">// 5 bits: value of b1</span></span><br><span class="line">    <span class="comment">// 27 bits: unused</span></span><br><span class="line">    <span class="comment">// 6 bits: value of b2</span></span><br><span class="line">    <span class="comment">// 15 bits: value of b3</span></span><br><span class="line">    <span class="comment">// 11 bits: unused</span></span><br><span class="line">    <span class="keyword">unsigned</span> b1 : <span class="number">5</span>;</span><br><span class="line">    <span class="keyword">unsigned</span> :<span class="number">0</span>; <span class="comment">// start a new unsigned int</span></span><br><span class="line">    <span class="keyword">unsigned</span> b2 : <span class="number">6</span>;</span><br><span class="line">    <span class="keyword">unsigned</span> b3 : <span class="number">15</span>;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"%zu\n"</span>, <span class="keyword">sizeof</span>(struct S)); <span class="comment">// usually prints 8</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h3 id="Example3-指定struct值"><a href="#Example3-指定struct值" class="headerlink" title="Example3 - 指定struct值"></a>Example3 - 指定struct值</h3><p>參照 <a href="http://www.yuan-ji.me/C-C-%E4%BD%8D%E5%9F%9F-Bit-fields-%E5%AD%A6%E4%B9%A0%E5%BF%83%E5%BE%97/" target="_blank" rel="noopener">C/C++ 位域 Bit fields 学习心得</a>，bit fields struct的值除了可以一個一個變數指定外，也可以透過re-mapping的方式來達成。</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span>* p = (<span class="keyword">int</span> *) &amp;b1; <span class="comment">// 将 "位域结构体的地址" 映射至 "整形（int*) 的地址" </span></span><br><span class="line">*p = <span class="number">0</span>; <span class="comment">// 清除 s1，将各成员归零</span></span><br></pre></td></tr></table></figure>
+<p>也可以透過union來指定內容，透過在union內宣告一個和struct一樣大小的variable，透過指定該變數來初始化struct的記憶體空間。</p>
+<h3 id="Example4-指定struct值的注意事項"><a href="#Example4-指定struct值的注意事項" class="headerlink" title="Example4 - 指定struct值的注意事項"></a>Example4 - 指定struct值的注意事項</h3><p>參照<a href="https://stackoverflow.com/questions/13802728/what-is-zero-width-bit-field" target="_blank" rel="noopener">stackoverflow的這篇</a>，考慮以下程式碼:</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">foo</span> &#123;</span></span><br><span class="line">    <span class="keyword">int</span> a : <span class="number">3</span>;</span><br><span class="line">    <span class="keyword">int</span> b : <span class="number">2</span>;</span><br><span class="line">    <span class="keyword">int</span> : <span class="number">0</span>; <span class="comment">/* Force alignment to next boundary */</span></span><br><span class="line">    <span class="keyword">int</span> c : <span class="number">4</span>;</span><br><span class="line">    <span class="keyword">int</span> d : <span class="number">3</span>;</span><br><span class="line">&#125;;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> i = <span class="number">0xFFFF</span>;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">foo</span> *<span class="title">f</span> = (<span class="title">struct</span> <span class="title">foo</span> *) &amp;<span class="title">i</span>;</span></span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"a=%d\nb=%d\nc=%d\nd=%d\n"</span>, f-&gt;a, f-&gt;b, f-&gt;c, f-&gt;d);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>在指定值的時候由於alignment，c跟d都已經取到了超出0xFFFF的記憶體空間了，所以可能會取得不正確的值。</strong></p>
+<h3 id="Example5-應用實例"><a href="#Example5-應用實例" class="headerlink" title="Example5 - 應用實例"></a>Example5 - 應用實例</h3><p>參閱<a href="https://stackoverflow.com/questions/4297095/practical-use-of-zero-length-bitfields" target="_blank" rel="noopener">Practical Use of Zero-Length Bitfields</a>這篇的回答，當兩個平台所使用的規格不同的時候，有時為了相容，會進行alignment，這時候就會用到bit fields的技巧。</p>
+<h2 id="結語"><a href="#結語" class="headerlink" title="結語"></a>結語</h2><p>最後，關於bit fields有幾點要注意的:</p>
+<ul>
+<li>一個struct只有zero-width bit field是未定義行為</li>
+<li>無法透過pointer去操作(Because bit fields do not necessarily begin at the beginning of a byte, address of a bit field cannot be taken)</li>
+<li>不能用sizeof取得大小(但可以對整個struct做)</li>
+<li>Endianness影響了bit fields的順序(The order of bit fields within an allocation unit (on some platforms, bit fields are packed left-to-right, on others right-to-left))，這取決於compiler-dependent，參閱<a href="http://mjfrazer.org/mjfrazer/bitfields/" target="_blank" rel="noopener">How Endianness Effects Bitfield Packing</a></li>
+<li>雖然上面規定了使用的type，但其實也有人用char或unsigned char，參閱<a href="https://stackoverflow.com/questions/3971085/how-does-a-bit-field-work-with-character-types" target="_blank" rel="noopener">How does a bit field work with character types?</a></li>
+</ul>
+<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><ul>
+<li><a href="https://en.cppreference.com/w/c/language/bit_field" target="_blank" rel="noopener">document</a></li>
+<li><a href="https://www.tutorialspoint.com/cprogramming/c_bit_fields.htm" target="_blank" rel="noopener">C - Bit Fields</a></li>
+<li><a href="http://www.yuan-ji.me/C-C-%E4%BD%8D%E5%9F%9F-Bit-fields-%E5%AD%A6%E4%B9%A0%E5%BF%83%E5%BE%97/" target="_blank" rel="noopener">C/C++ 位域 Bit fields 学习心得</a></li>
+<li><a href="http://mjfrazer.org/mjfrazer/bitfields/" target="_blank" rel="noopener">How Endianness Effects Bitfield Packing</a></li>
+<li><a href="https://stackoverflow.com/questions/3971085/how-does-a-bit-field-work-with-character-types" target="_blank" rel="noopener">How does a bit field work with character types?</a></li>
+<li><a href="https://stackoverflow.com/questions/4297095/practical-use-of-zero-length-bitfields" target="_blank" rel="noopener">Practical Use of Zero-Length Bitfields</a></li>
+</ul>
+
+                <hr>
+                <!-- Pager -->
+                <ul class="pager">
+    
+    <li class="previous">
+        <a href="/posts/3cef1e25/" data-toggle="tooltip" data-placement="top" title="2020微軟一日實習生(RDI)">&larr; Newer Post</a>
+    </li>
+    
+    
+    <li class="next">
+        <a href="/posts/58e72281/" data-toggle="tooltip" data-placement="top" title="[Linux Kernel慢慢學]ARRAY_SIZE macro in linux kernel">Older Post &rarr;</a>
+    </li>
+    
+</ul>
+
+                <!-- tip start -->
+                
+
+                
+                <!-- tip end -->
+
+                <!-- Sharing -->
+                
+                <!-- Sharing -->
+
+                <!-- gitment start -->
+                
+                <!-- gitment end -->
+
+                <!-- 来必力City版安装代码 -->
+                
+                <!-- City版安装代码已完成 -->
+
+                <!-- disqus comment start -->
+                
+                <div class="comment">
+                    <div id="disqus_thread" class="disqus-thread"></div>
+                </div>
+                
+                <!-- disqus comment end -->
+            </div>
+            
+            <!-- Tabe of Content -->
+            <!-- Table of Contents -->
+
+    
+      
+        <aside id="sidebar">
+          <div id="toc" class="toc-article">
+          <strong class="toc-title">Contents</strong>
+          
+            <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#前言"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">前言</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Bit-fields"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">Bit fields</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Example1-使用方式"><span class="toc-nav-number">2.1.</span> <span class="toc-nav-text">Example1 - 使用方式</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Example2-bit-fields的對齊"><span class="toc-nav-number">2.2.</span> <span class="toc-nav-text">Example2 - bit fields的對齊</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Example3-指定struct值"><span class="toc-nav-number">2.3.</span> <span class="toc-nav-text">Example3 - 指定struct值</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Example4-指定struct值的注意事項"><span class="toc-nav-number">2.4.</span> <span class="toc-nav-text">Example4 - 指定struct值的注意事項</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Example5-應用實例"><span class="toc-nav-number">2.5.</span> <span class="toc-nav-text">Example5 - 應用實例</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#結語"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">結語</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Reference"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">Reference</span></a></li></ol>
+          
+          </div>
+        </aside>
+      
+    
+
+        </div>
+    </div>
+</article>
+
+	
+    <!-- disqus embedded js code start (one page only need to embed once) -->	
+    <script type="text/javascript">	
+        /* * * CONFIGURATION VARIABLES * * */	
+        var disqus_shortname = "meetonfriday";	
+        var disqus_identifier = "https://meetonfriday.com/posts/5d55ce7a/";	
+        var disqus_url = "https://meetonfriday.com/posts/5d55ce7a/";	
+        (function() {	
+            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;	
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';	
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);	
+        })();	
+    </script>	
+    <!-- disqus embedded js code start end -->	
+    
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/john850512">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://www.linkedin.com/in/john85051232">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                
+                    <li>
+                        <a target="_blank" href="https://www.facebook.com/meetonfridayyy">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+                
+                    <li>
+                        <a target="_blank"  href="https://mail.google.com/mail/?view=cm&fs=1&to=john85051232@gmail.com">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-envelope-o fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+                
+                
+
+                
+
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; John 2025 
+                    <br>
+                    Powered by 
+                    <a href="https://github.com/john850512/hexo-theme-jiji" target="_blank" rel="noopener">
+                        <i>hexo-theme-jiji</i>
+                    </a> | 
+                    <iframe name="star" style="margin-left: 2px; margin-bottom:-5px;" frameborder="0" scrolling="0"
+                        width="100px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=john850512&repo=hexo-theme-jiji&type=star&count=true">
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+
+</footer>
+
+<!-- jQuery -->
+
+<script src="/js/jquery.min.js"></script>
+
+
+<!-- Bootstrap Core JavaScript -->
+
+<script src="/js/bootstrap.min.js"></script>
+
+
+<!-- Custom Theme JavaScript -->
+
+<script src="/js/hux-blog.min.js"></script>
+
+
+<!-- Search -->
+
+<script src="/js/search.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("https://meetonfriday.com/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+<!-- Search -->
+
+    <script type="text/javascript">      
+        var search_path = "search.xml";
+        if (search_path.length == 0) {
+            search_path = "search.xml";
+        }
+    var path = "/" + search_path;
+    searchFunc(path, 'local-search-input', 'local-search-result');
+    </script>
+
+
+<!-- busuanzi -->
+<!--<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>-->
+<script async src="//cdn.jsdelivr.net/npm/busuanzi@2.3.0"></script>
+
+
+
+
+	<a id="rocket" href="#top" class=""></a>
+	<script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script>
+    <script type="text/javascript" src="/js/toc.js?v=1.0.0" async=""></script>
+
+    
+        <!-- background effects line -->
+        
+        <!-- background effects end -->
+    
+    
+    <!-- background animation-->>
+    <!--<script size="50" alpha='0.3' zIndex="-999" src="/js/ribbonStatic.js"></script>-->
+    
+        <script src="/js/ribbonDynamic.js"></script>
+    
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script>
+            window.imageLazyLoadSetting = {
+                isSPA: false,
+                processImages: null,
+            };
+        </script><script>window.addEventListener("load",function(){var t=/\.(gif|jpg|jpeg|tiff|png)$/i,r=/^data:image\/[a-z]+;base64,/;Array.prototype.slice.call(document.querySelectorAll("img[data-original]")).forEach(function(a){var e=a.parentNode;"A"===e.tagName&&(e.href.match(t)||e.href.match(r))&&(e.href=a.dataset.original)})});</script><script>!function(n){n.imageLazyLoadSetting.processImages=o;var i=n.imageLazyLoadSetting.isSPA,r=Array.prototype.slice.call(document.querySelectorAll("img[data-original]"));function o(){i&&(r=Array.prototype.slice.call(document.querySelectorAll("img[data-original]")));for(var t,e,a=0;a<r.length;a++)t=r[a],0<=(e=t.getBoundingClientRect()).bottom&&0<=e.left&&e.top<=(n.innerHeight||document.documentElement.clientHeight)&&function(){var t,e,n,i,o=r[a];t=o,e=function(){r=r.filter(function(t){return o!==t})},n=new Image,i=t.getAttribute("data-original"),n.onload=function(){t.src=i,e&&e()},n.src=i}()}o(),n.addEventListener("scroll",function(){var t,e;t=o,e=n,clearTimeout(t.tId),t.tId=setTimeout(function(){t.call(e)},500)})}(this);</script></body>
+
+</html>

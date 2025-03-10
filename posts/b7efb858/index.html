@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<!-- Head tag -->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="baidu-site-verification" content="093lY4ziMu" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="keyword"  content="programming, study, daily, entertainment">
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="星期五。見面">
+    <meta property="og:locale" content="zh-TW" />
+    
+    <meta property="og:title" content="[Linux Kernel慢慢學]define macro with hashtag(&#34;#&#34; and &#34;##&#34;)" />
+    
+    
+    <meta property="og:description" content="介紹c/c++的define macro，以及搭配preprocessor operators(井字號/hashtag)的介紹。" />
+    <meta name="description" content="介紹c/c++的define macro，以及搭配preprocessor operators(井字號/hashtag)的介紹。">
+    
+    
+    <meta property="og:image" content="/img/avatar.jpg" />
+    
+
+    <link rel="shortcut icon" href="/img/avatar.jpg">
+    <!-- Place this tag in your head or just before your close body tag. -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <!--<link href='http://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>-->
+    <title>
+        
+          [Linux Kernel慢慢學]define macro with hashtag(&#34;#&#34; and &#34;##&#34;) - MeetonFriday
+        
+    </title>
+    <!-- canonical -->
+    
+    
+      <link rel="canonical" href="https://meetonfriday.com/posts/b7efb858/">
+    
+
+    <!-- Bootstrap Core CSS -->
+    
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+
+
+    <!-- Custom CSS --> 
+    
+<link rel="stylesheet" href="/css/dusign-dark.css">
+
+    
+<link rel="stylesheet" href="/css/dusign-common-dark.css">
+
+    <!-- 
+<link rel="stylesheet" href="/css/font-awesome.css">
+ -->
+    
+<link rel="stylesheet" href="/css/toc.css">
+
+
+    
+    <!-- Pygments Highlight CSS -->
+    
+<link rel="stylesheet" href="/css/highlight.css">
+
+
+    
+<link rel="stylesheet" href="/css/widget.css">
+
+
+    
+<link rel="stylesheet" href="/css/rocket.css">
+
+
+    
+<link rel="stylesheet" href="/css/signature.css">
+
+
+    
+<link rel="stylesheet" href="/css/fonts.googleapis.css">
+
+
+    <!-- <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.3.0/css/font-awesome.min.css">-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.min.css">
+    
+    <!-- Google Analytics -->
+    
+      <!-- <script>
+          // dynamic User by Hux
+          var _gaId = 'UA-163346001-1';
+          var _gaDomain = 'auto';
+      
+          // Originial
+          (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+          (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+          })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+      
+          ga('create', _gaId, _gaDomain);
+          ga('send', 'pageview');
+      </script> -->
+      
+      <!-- Global site tag (gtag.js) - Google Analytics -->
+      <script async src="https://www.googletagmanager.com/gtag/js?id=UA-163346001-1"></script>
+      <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+      
+        gtag('config', 'UA-163346001-1');
+      </script>
+      
+    <!-- google ad sense-->
+    <script data-ad-client="ca-pub-9561340457908416" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<meta name="generator" content="Hexo 4.2.1"><link rel="alternate" href="/atom.xml" title="星期五。見面" type="application/atom+xml">
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+	<!-- Modified by Yu-Hsuan Yen -->
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        
+            
+                background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.5)), url('/img/header_img/header-bg.jpg')
+            
+        
+    }
+    
+</style>
+
+<header class="intro-header" >
+    <!-- Signature -->
+    <div id="signature">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                
+                    <div class="post-heading">
+                        <div class="tags">
+                            
+                              <a class="tag" href="/tags/#c" title="c">c</a>
+                            
+                              <a class="tag" href="/tags/#linux kernel" title="linux kernel">linux kernel</a>
+                            
+                        </div>
+                        <h1>[Linux Kernel慢慢學]define macro with hashtag(&#34;#&#34; and &#34;##&#34;)</h1>
+                        <h2 class="subheading"></h2>
+                        <span class="meta">
+                            Posted by John on
+                            2020-10-27
+                        </span>
+
+                        
+                            <div class="blank_box"></div>
+                            <span class="meta">
+                                Words <span class="post-count">1.2k</span> and
+                                Reading Time <span class="post-count">4</span> Minutes
+                            </span>
+                            <div class="blank_box"></div>
+                            <!-- 不蒜子统计 start -->
+                            <span class="meta">
+                                Viewed <span id="busuanzi_value_page_pv"><i class="fa fa-spinner fa-spin"></i></span> Times
+                            </span>
+                            <!-- 不蒜子统计 end -->
+                        
+
+                    </div>
+                
+
+                </div>
+            </div>
+        </div>      
+    </div>
+
+    
+        
+            <div class="waveWrapper">
+                <div class="wave wave_before" style="background-image: url('/img/wave-dark.png')"></div>
+                <div class="wave wave_after" style="background-image: url('/img/wave-dark.png')"></div>
+            </div>
+        
+    
+</header>
+
+	
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">星期五。見面</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archive/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/categories/">Categories</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/reading/">Reading</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+    
+    <!-- Main Content -->
+    <!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+            <!-- Post Container -->
+
+    
+        
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+        
+    
+
+                <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>這篇的標題定的很…白話(?) 主要是在看Linux kernel code的時候有時候常常會看到一堆define，有些define還會搭配井字號的寫法還會讓你很看不懂，所以重新寫一個小短篇順便幫自己複習一下。</p>
+<p>然後井字號這種特殊符號又很難去search，所以標題就決定也這樣下，不知道未來遇到同樣問題的人搜尋起來會不會比較容易xD</p>
+<p>來個小測驗，如果你覺得你夠懂#define了，下面這段Linux kernel code你看得懂嗎?</p>
+<ul>
+<li>來自<a href="https://meetonfriday.com/posts/c4426b79/">[Linux Kernel慢慢學]Linux modules載入及載入順序</a></li>
+</ul>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">/* include/linux/init.h. line=172 */</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> __define_initcall(fn, id) \</span></span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">initcall_t</span> __initcall_#<span class="meta">#fn##id __used \</span></span><br><span class="line">    __attribute__((__section__(<span class="string">".initcall"</span> #id <span class="string">".init"</span>))) = fn;</span><br></pre></td></tr></table></figure>
+<p>比較陌生的應該是跟井字號的用法(# 和 ##)，他們其實被稱作<strong>Preprocessor operators</strong></p>
+<p>所以這篇一開始會快速介紹define macro，接下來開始介紹和Preprocessor operators的搭配，對這部分有興趣的可以直接看最後一Part。</p>
+<a id="more"></a>
+<h2 id="1分鐘學會-define-macro"><a href="#1分鐘學會-define-macro" class="headerlink" title="1分鐘學會#define macro"></a>1分鐘學會#define macro</h2><p>define macro的用法很簡單，快速舉個例子:<br><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> MAX_LEVEL 100</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"%d\n"</span>, MAX_LEVEL);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>Compiler在<strong>編譯時期</strong>就會把這個MAX_LEVEL直接<strong>替換</strong>成後面的100，就4這麼簡單。</p>
+<p>define常被用來定義一些常量，或是一些config。例如你的Code有個部分會引用到版本號，那每次版本號一變動所有相關的code都要跟著改很麻煩，此時你可以<code>#define VERSION 1.1</code>，然後把code都用VERSION來替代，這樣未來如果版本變了只需要改一次define的值就好。</p>
+<ul>
+<li>此外，也可以透過define macro來節省一些function call，具體可以在後面的介紹觀察到</li>
+</ul>
+<p>最後，為了和function, variable區分，<strong>define macro通常都會使用大寫</strong>。</p>
+<h2 id="define不只能用在常數"><a href="#define不只能用在常數" class="headerlink" title="define不只能用在常數"></a>define不只能用在常數</h2><p>define也可以用在function，例如:<br><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> ADD(a, b) a + b <span class="comment">// wrong way of define</span></span></span><br></pre></td></tr></table></figure></p>
+<p>但要注意，上面這兩種寫法是錯誤的。因為define只是將後面的東西<strong>替換</strong>你的<code>add(a, b)</code>，所以如果你在呼叫的時候這樣寫:<br><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> ADD(a, b) a + b; <span class="comment">// wrong way of define</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> c = ADD(<span class="number">1</span>, <span class="number">2</span>); <span class="comment">// exec correct, c = 3</span></span><br><span class="line">    <span class="keyword">int</span> d = ADD(<span class="number">1</span>, <span class="number">2</span>) * <span class="number">0</span>; <span class="comment">// wrong output, d = 1</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>可以發現d的值跟預想的不同，因為<code>ADD(1, 2)</code>只是被替換成<code>1+2</code>，並不是實際去執行了，所以d的assign右半邊實際上是<code>1+2*0</code>，也就得到了1的output。</p>
+<p>解決方法是在define前後<strong>加上括號</strong>，確保define被替換的內容也能正確地執行<br><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> ADD(a, b) (a + b)</span></span><br></pre></td></tr></table></figure></p>
+<p>所以define macro使用在function或condition(當然也可以拿來寫if else)的時候要很小心。</p>
+<p>再看另一個例子:<br><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;cstdio&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> SWAP(a, b) &#123;		\ </span></span><br><span class="line">                        a ^= b; \</span><br><span class="line">                        b ^= a; \</span><br><span class="line">                        a ^= b; \</span><br><span class="line">                    &#125;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">swap</span><span class="params">(<span class="keyword">int</span> a, <span class="keyword">int</span> b)</span> </span>&#123;</span><br><span class="line">    a ^= b;</span><br><span class="line">    b ^= a;</span><br><span class="line">    a ^= b;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> x = <span class="number">1</span>, y = <span class="number">2</span>;</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; x &lt;&lt; y &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>; <span class="comment">// 12</span></span><br><span class="line">    SWAP(x, y);</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; x &lt;&lt; y &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>; <span class="comment">// 21</span></span><br><span class="line">    swap(x, y);</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; x &lt;&lt; y &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>; <span class="comment">// 21</span></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>會發現<code>SWAP</code>成功的將x y調換了，但<code>swap()</code>卻沒有，為什麼呢?</p>
+<ul>
+<li>因為swap()是call by value</li>
+<li>而SWAP是define macro，實際上compiler是把那三行<strong>替換</strong>到<code>main()</code>中而不是呼叫一個function<ul>
+<li>有注意到我一值強調<strong>替換</strong>嗎? 這是define macro很重要的行為要分辨清楚以後才不會出錯</li>
+</ul>
+</li>
+</ul>
+<p>然後有發現這個例子中define變成了多行的敘述了嗎? 沒錯，define當然可以分成多行來撰寫。</p>
+<h2 id="define也可以寫多行"><a href="#define也可以寫多行" class="headerlink" title="define也可以寫多行"></a>define也可以寫多行</h2><p>如果define的敘述太長怎麼辦，一般建議程式碼一行不要超過<strong>79</strong>個字元，所以有時候有需要分行的需求，此時就可以這樣寫:<br><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> SWAP_XOR(a, b) &#123;		\ </span></span><br><span class="line">                        a ^= b; \</span><br><span class="line">                        b ^= a; \</span><br><span class="line">                        a ^= b; \</span><br><span class="line">                    &#125;</span><br></pre></td></tr></table></figure></p>
+<p>透過用斜線的方式來寫多行的define macro。</p>
+<h2 id="當-define碰上井字號"><a href="#當-define碰上井字號" class="headerlink" title="當#define碰上井字號"></a>當#define碰上井字號</h2><p>這些符號稱之Preprocessor operators，共有三種。下面快速總結，淺顯易懂:</p>
+<ul>
+<li><strong>Stringizing operator (#)</strong>: 用來將引數變成一個字串</li>
+<li><strong>Charizing operator (#@)</strong>: 用來將引數變成一個字元</li>
+<li><strong>Token-pasting operator (##)</strong>: 用來拼接引數</li>
+</ul>
+<p>然後再搭配個簡單的例子就知道了:</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> MAKESTR(s) #s</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> MAKECHAR(x)  #@x</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> CONS(a,b) int(a##e##b)</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    a = MAKECHAR(b);        <span class="comment">// a = 'b';	</span></span><br><span class="line">    b = MAKESTR(hello)      <span class="comment">// b = "hello";</span></span><br><span class="line">    c = CONS(<span class="number">2</span>,<span class="number">3</span>);          <span class="comment">// c = 2e3;</span></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>了解了之後，最後回頭看我們在前言提到的那段kernel code:<br><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">/* include/linux/init.h. line=172 */</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> __define_initcall(fn, id) \</span></span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">initcall_t</span> __initcall_#<span class="meta">#fn##id __used \</span></span><br><span class="line">    __attribute__((__section__(<span class="string">".initcall"</span> #id <span class="string">".init"</span>))) = fn;</span><br></pre></td></tr></table></figure><br>如果fn=module, id=3的話，那<code>__define_initcall(fn, id)</code>就會變成</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">static</span> <span class="keyword">initcall_t</span> __initcall_module3 __used \</span><br><span class="line">    __attribute__((__section__(<span class="string">".initcall"</span> <span class="string">"6"</span> <span class="string">".init"</span>))) = fn;</span><br></pre></td></tr></table></figure>
+<p>你答對了嗎?</p>
+<h2 id="References"><a href="#References" class="headerlink" title="References"></a>References</h2><ul>
+<li><a href="https://docs.microsoft.com/en-us/cpp/preprocessor/preprocessor-operators?view=vs-2019" target="_blank" rel="noopener">Preprocessor operators</a></li>
+</ul>
+
+                <hr>
+                <!-- Pager -->
+                <ul class="pager">
+    
+    <li class="previous">
+        <a href="/posts/5523c739/" data-toggle="tooltip" data-placement="top" title="[Linux Kernel慢慢學]快速上手Makefile和Kbuild Makefile">&larr; Newer Post</a>
+    </li>
+    
+    
+    <li class="next">
+        <a href="/posts/1e087b70/" data-toggle="tooltip" data-placement="top" title="[論文速速讀]ILSVRC系列文回顧 - 歷屆CNN模型介紹">Older Post &rarr;</a>
+    </li>
+    
+</ul>
+
+                <!-- tip start -->
+                
+
+                
+                <!-- tip end -->
+
+                <!-- Sharing -->
+                
+                <!-- Sharing -->
+
+                <!-- gitment start -->
+                
+                <!-- gitment end -->
+
+                <!-- 来必力City版安装代码 -->
+                
+                <!-- City版安装代码已完成 -->
+
+                <!-- disqus comment start -->
+                
+                <div class="comment">
+                    <div id="disqus_thread" class="disqus-thread"></div>
+                </div>
+                
+                <!-- disqus comment end -->
+            </div>
+            
+            <!-- Tabe of Content -->
+            <!-- Table of Contents -->
+
+    
+      
+        <aside id="sidebar">
+          <div id="toc" class="toc-article">
+          <strong class="toc-title">Contents</strong>
+          
+            <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#前言"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">前言</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#1分鐘學會-define-macro"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">1分鐘學會#define macro</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#define不只能用在常數"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">define不只能用在常數</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#define也可以寫多行"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">define也可以寫多行</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#當-define碰上井字號"><span class="toc-nav-number">5.</span> <span class="toc-nav-text">當#define碰上井字號</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#References"><span class="toc-nav-number">6.</span> <span class="toc-nav-text">References</span></a></li></ol>
+          
+          </div>
+        </aside>
+      
+    
+
+        </div>
+    </div>
+</article>
+
+	
+    <!-- disqus embedded js code start (one page only need to embed once) -->	
+    <script type="text/javascript">	
+        /* * * CONFIGURATION VARIABLES * * */	
+        var disqus_shortname = "meetonfriday";	
+        var disqus_identifier = "https://meetonfriday.com/posts/b7efb858/";	
+        var disqus_url = "https://meetonfriday.com/posts/b7efb858/";	
+        (function() {	
+            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;	
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';	
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);	
+        })();	
+    </script>	
+    <!-- disqus embedded js code start end -->	
+    
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/john850512">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://www.linkedin.com/in/john85051232">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                
+                    <li>
+                        <a target="_blank" href="https://www.facebook.com/meetonfridayyy">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+                
+                    <li>
+                        <a target="_blank"  href="https://mail.google.com/mail/?view=cm&fs=1&to=john85051232@gmail.com">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-envelope-o fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+                
+                
+
+                
+
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; John 2025 
+                    <br>
+                    Powered by 
+                    <a href="https://github.com/john850512/hexo-theme-jiji" target="_blank" rel="noopener">
+                        <i>hexo-theme-jiji</i>
+                    </a> | 
+                    <iframe name="star" style="margin-left: 2px; margin-bottom:-5px;" frameborder="0" scrolling="0"
+                        width="100px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=john850512&repo=hexo-theme-jiji&type=star&count=true">
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+
+</footer>
+
+<!-- jQuery -->
+
+<script src="/js/jquery.min.js"></script>
+
+
+<!-- Bootstrap Core JavaScript -->
+
+<script src="/js/bootstrap.min.js"></script>
+
+
+<!-- Custom Theme JavaScript -->
+
+<script src="/js/hux-blog.min.js"></script>
+
+
+<!-- Search -->
+
+<script src="/js/search.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("https://meetonfriday.com/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+<!-- Search -->
+
+    <script type="text/javascript">      
+        var search_path = "search.xml";
+        if (search_path.length == 0) {
+            search_path = "search.xml";
+        }
+    var path = "/" + search_path;
+    searchFunc(path, 'local-search-input', 'local-search-result');
+    </script>
+
+
+<!-- busuanzi -->
+<!--<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>-->
+<script async src="//cdn.jsdelivr.net/npm/busuanzi@2.3.0"></script>
+
+
+
+
+	<a id="rocket" href="#top" class=""></a>
+	<script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script>
+    <script type="text/javascript" src="/js/toc.js?v=1.0.0" async=""></script>
+
+    
+        <!-- background effects line -->
+        
+        <!-- background effects end -->
+    
+    
+    <!-- background animation-->>
+    <!--<script size="50" alpha='0.3' zIndex="-999" src="/js/ribbonStatic.js"></script>-->
+    
+        <script src="/js/ribbonDynamic.js"></script>
+    
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script>
+            window.imageLazyLoadSetting = {
+                isSPA: false,
+                processImages: null,
+            };
+        </script><script>window.addEventListener("load",function(){var t=/\.(gif|jpg|jpeg|tiff|png)$/i,r=/^data:image\/[a-z]+;base64,/;Array.prototype.slice.call(document.querySelectorAll("img[data-original]")).forEach(function(a){var e=a.parentNode;"A"===e.tagName&&(e.href.match(t)||e.href.match(r))&&(e.href=a.dataset.original)})});</script><script>!function(n){n.imageLazyLoadSetting.processImages=o;var i=n.imageLazyLoadSetting.isSPA,r=Array.prototype.slice.call(document.querySelectorAll("img[data-original]"));function o(){i&&(r=Array.prototype.slice.call(document.querySelectorAll("img[data-original]")));for(var t,e,a=0;a<r.length;a++)t=r[a],0<=(e=t.getBoundingClientRect()).bottom&&0<=e.left&&e.top<=(n.innerHeight||document.documentElement.clientHeight)&&function(){var t,e,n,i,o=r[a];t=o,e=function(){r=r.filter(function(t){return o!==t})},n=new Image,i=t.getAttribute("data-original"),n.onload=function(){t.src=i,e&&e()},n.src=i}()}o(),n.addEventListener("scroll",function(){var t,e;t=o,e=n,clearTimeout(t.tId),t.tId=setTimeout(function(){t.call(e)},500)})}(this);</script></body>
+
+</html>

@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<!-- Head tag -->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="baidu-site-verification" content="093lY4ziMu" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="keyword"  content="programming, study, daily, entertainment">
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="星期五。見面">
+    <meta property="og:locale" content="zh-TW" />
+    
+    <meta property="og:title" content="[論文速速讀]系列文章介紹" />
+    
+    
+    <meta property="og:description" content="由於在AI領域每年總是有一些非常重大的突破和應用，如果跟不上潮流很有可能就會錯失許多機會。例如，對NLP領域熟悉的話你一定聽過2013年的word2vec、2014年開始流行的attention、2018年的Bert...這些很有名的技術。藉由這系列的文章讓讀者能夠更加快速的了解AI的新技術和研究，同時逼迫自己看論文。" />
+    <meta name="description" content="由於在AI領域每年總是有一些非常重大的突破和應用，如果跟不上潮流很有可能就會錯失許多機會。例如，對NLP領域熟悉的話你一定聽過2013年的word2vec、2014年開始流行的attention、2018年的Bert...這些很有名的技術。藉由這系列的文章讓讀者能夠更加快速的了解AI的新技術和研究，同時逼迫自己看論文。">
+    
+    
+    <meta property="og:image" content="/img/avatar.jpg" />
+    
+
+    <link rel="shortcut icon" href="/img/avatar.jpg">
+    <!-- Place this tag in your head or just before your close body tag. -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <!--<link href='http://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>-->
+    <title>
+        
+          [論文速速讀]系列文章介紹 - MeetonFriday
+        
+    </title>
+    <!-- canonical -->
+    
+    
+      <link rel="canonical" href="https://meetonfriday.com/posts/aa55d3f9/">
+    
+
+    <!-- Bootstrap Core CSS -->
+    
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+
+
+    <!-- Custom CSS --> 
+    
+<link rel="stylesheet" href="/css/dusign-dark.css">
+
+    
+<link rel="stylesheet" href="/css/dusign-common-dark.css">
+
+    <!-- 
+<link rel="stylesheet" href="/css/font-awesome.css">
+ -->
+    
+<link rel="stylesheet" href="/css/toc.css">
+
+
+    
+    <!-- Pygments Highlight CSS -->
+    
+<link rel="stylesheet" href="/css/highlight.css">
+
+
+    
+<link rel="stylesheet" href="/css/widget.css">
+
+
+    
+<link rel="stylesheet" href="/css/rocket.css">
+
+
+    
+<link rel="stylesheet" href="/css/signature.css">
+
+
+    
+<link rel="stylesheet" href="/css/fonts.googleapis.css">
+
+
+    <!-- <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.3.0/css/font-awesome.min.css">-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.min.css">
+    
+    <!-- Google Analytics -->
+    
+      <!-- <script>
+          // dynamic User by Hux
+          var _gaId = 'UA-163346001-1';
+          var _gaDomain = 'auto';
+      
+          // Originial
+          (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+          (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+          })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+      
+          ga('create', _gaId, _gaDomain);
+          ga('send', 'pageview');
+      </script> -->
+      
+      <!-- Global site tag (gtag.js) - Google Analytics -->
+      <script async src="https://www.googletagmanager.com/gtag/js?id=UA-163346001-1"></script>
+      <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+      
+        gtag('config', 'UA-163346001-1');
+      </script>
+      
+    <!-- google ad sense-->
+    <script data-ad-client="ca-pub-9561340457908416" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<meta name="generator" content="Hexo 4.2.1"><link rel="alternate" href="/atom.xml" title="星期五。見面" type="application/atom+xml">
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+	<!-- Modified by Yu-Hsuan Yen -->
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        
+            
+                background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.5)), url('/img/header_img/header-bg.jpg')
+            
+        
+    }
+    
+</style>
+
+<header class="intro-header" >
+    <!-- Signature -->
+    <div id="signature">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                
+                    <div class="post-heading">
+                        <div class="tags">
+                            
+                              <a class="tag" href="/tags/#deep learning" title="deep learning">deep learning</a>
+                            
+                              <a class="tag" href="/tags/#paper" title="paper">paper</a>
+                            
+                        </div>
+                        <h1>[論文速速讀]系列文章介紹</h1>
+                        <h2 class="subheading"></h2>
+                        <span class="meta">
+                            Posted by John on
+                            2020-07-09
+                        </span>
+
+                        
+                            <div class="blank_box"></div>
+                            <span class="meta">
+                                Words <span class="post-count">1.1k</span> and
+                                Reading Time <span class="post-count">4</span> Minutes
+                            </span>
+                            <div class="blank_box"></div>
+                            <!-- 不蒜子统计 start -->
+                            <span class="meta">
+                                Viewed <span id="busuanzi_value_page_pv"><i class="fa fa-spinner fa-spin"></i></span> Times
+                            </span>
+                            <!-- 不蒜子统计 end -->
+                        
+
+                    </div>
+                
+
+                </div>
+            </div>
+        </div>      
+    </div>
+
+    
+        
+            <div class="waveWrapper">
+                <div class="wave wave_before" style="background-image: url('/img/wave-dark.png')"></div>
+                <div class="wave wave_after" style="background-image: url('/img/wave-dark.png')"></div>
+            </div>
+        
+    
+</header>
+
+	
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">星期五。見面</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archive/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/categories/">Categories</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/reading/">Reading</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+    
+    <!-- Main Content -->
+    <!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+            <!-- Post Container -->
+
+    
+        
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+        
+    
+
+                <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>論文速速讀系列是從今年四月開始，我開始寫一些論文的中文讀書筆記，還記得第一篇是<a href="https://meetonfriday.com/posts/98f60d1d/">[論文速速讀]ReZero is All You Need: Fast Convergence at Large Depth</a>，之後發現儘管自己已經陸續產出了幾篇文章，可是好像都沒正式的跟大家介紹這系列文章的由來xD</p>
+<p>所以這篇文章就是來講講這系列文章到底是什麼，以及我會和會想寫這些文章。</p>
+<h2 id="論文速速讀系列是什麼"><a href="#論文速速讀系列是什麼" class="headerlink" title="論文速速讀系列是什麼?"></a>論文速速讀系列是什麼?</h2><p>由於在AI領域每年總是有一些非常重大的突破和應用，如果跟不上潮流很有可能就會錯失許多機會。例如，對NLP領域熟悉的話你一定聽過2013年的word2vec、2014年開始流行的attention、2018年的Bert…這些很有名的技術。</p>
+<p>還記得Bert剛出的時候我好像剛進碩士實驗室，當時只知道這個技術屌打了當時一堆NLP的研究，但我想也想不到兩年後Bert已經造成如此大的影響力，一堆基於Bert的變形應用在各大領域上都取得了非常優異的結果。</p>
+<p>因此，我想要藉由這系列的文章讓自己能夠更加快速的了解AI的新技術和研究，同時逼迫自己看論文xD</p>
+<a id="more"></a>
+<p>這個系列的文章大多都是<strong>中文的讀書筆記的形式</strong>(畢竟對於我自己在中文的文章上還是能夠更加快速的理解的)，可能會將自己認為論文中重要的部分擷取出來做引用，並且加上一些自己的認知。在過程中如果有不懂的地方也會試著將外部的一些資訊一同補充進來(題外話，真的覺得知乎是個中文友善的學術研討平台，可以學到很多東西)。</p>
+<p>然後我希望以快速理解論文的重點為主，所以<strong>對於實驗流程、資料集、數據比較的部分我會比較省略</strong>，此時你可能就會看到下面的Jumping馬力歐出現，代表我又要跳過這一部分了xD</p>
+<p><img src="https://meetonfriday.com/img/lazy-loading-animation.gif" data-original="https://i.pinimg.com/originals/51/18/62/511862395ab304a6991b2917fa2bc039.jpg" alt=""></p>
+<p>最後，所有的文章都是自己的閱讀心得、或是整理網路上其他前輩的資源後的文章，如果觀念、講解上有任何錯誤還請協助提醒指教謝謝~</p>
+<h2 id="文章整理"><a href="#文章整理" class="headerlink" title="文章整理"></a>文章整理</h2><p>雖然再Archives也能看的到，不過那邊還有包含了其他的文章，所以我會將這篇文章置頂，並做個簡單的分類，以便能夠快速查閱論文。</p>
+<p>目前分類的部分大致會分成CV(Computer Vision), NLP(Natural Language Processing), and Others這三個項目，之後視情況會再進行微調。排序方式由上至下分別是根據我發文的日期最新到最舊的文章這樣。</p>
+<p><strong>注意下列順序為我撰寫文章的順序，並非論文的年份順序，此分類僅供方便查閱文章使用，並不建議按照分類順序學習Deep Learning</strong></p>
+<h3 id="Computer-Vision"><a href="#Computer-Vision" class="headerlink" title="Computer Vision"></a>Computer Vision</h3><ul>
+<li><a href="https://meetonfriday.com/posts/2b446abf">[論文速速讀]Learning Deep Features for Discriminative Localization</a></li>
+<li><a href="https://meetonfriday.com/posts/79fdff34">[論文速速讀]Squeeze-and-Excitation Networks</a></li>
+<li><a href="https://meetonfriday.com/posts/7c0020de">[論文速速讀]Deep Residual Learning for Image Recognition</a></li>
+<li><a href="https://meetonfriday.com/posts/5f745d96">[論文速速讀]Very Deep Convolutional Networks For Large-Scale Image Recognition</a></li>
+<li><a href="https://meetonfriday.com/posts/a151bfa2">[論文速速讀]Network In Network</a></li>
+<li><a href="https://meetonfriday.com/posts/263e065d/">[論文速速讀]Going deeper with convolutions</a></li>
+<li><a href="https://meetonfriday.com/posts/3013fdb9">[論文速速讀]Visualizing and Understanding Convolutional Networks</a></li>
+<li><a href="https://meetonfriday.com/posts/e54c12ea">[論文速速讀]ImageNet Classification with Deep Convolutional Neural Networks</a></li>
+<li><a href="https://meetonfriday.com/posts/d5321308">[論文速速讀]Gradient Based Learning Applied to Document Recognition</a></li>
+<li><a href="https://meetonfriday.com/posts/2e56b772/">[論文速速讀]End-to-end object detection with Transformers</a></li>
+</ul>
+<h3 id="Natural-Language-Processing"><a href="#Natural-Language-Processing" class="headerlink" title="Natural Language Processing"></a>Natural Language Processing</h3><ul>
+<li><a href="https://meetonfriday.com/posts/abd81088/">[論文速速讀]Efficient Estimation of Word Representation in Vector Space</a></li>
+<li><a href="https://meetonfriday.com/posts/aa73b0a2/">[論文速速讀]PEGASUS: Pre-training with Extracted Gap-sentences for Abstractive Summarization</a></li>
+<li><a href="https://meetonfriday.com/posts/b70f16d0/">[論文速速讀]Attention is not Explanation</a></li>
+<li><a href="https://meetonfriday.com/posts/6a169efb/">[論文速速讀]Attention-based LSTM for Aspect-level Sentiment Classification</a></li>
+<li><a href="https://meetonfriday.com/posts/8cad39eb/">[論文速速讀]Hierarchical Attention Networks for Document Classification</a></li>
+<li><a href="https://meetonfriday.com/posts/4f49bf9b/">[論文速速讀]NEURAL MACHINE TRANSLATION BY JOINTLY LEARNING TO ALIGN AND TRANSLATE</a></li>
+<li><a href="https://meetonfriday.com/posts/5839a8bf/">[論文速速讀]Attention Is All You Need</a></li>
+<li><a href="https://meetonfriday.com/posts/8a0dacdf/">[論文速速讀]Automatic Generation of Personalized Annotation Tags for Twitter Users</a></li>
+</ul>
+<h3 id="Others"><a href="#Others" class="headerlink" title="Others"></a>Others</h3><ul>
+<li><a href="https://meetonfriday.com/posts/1e087b70/">[論文速速讀]ILSVRC系列文回顧 - 各種CNN知名模型介紹</a></li>
+<li><a href="https://meetonfriday.com/posts/d978825d/">[論文速速讀]Attentive CutMix: An Enhanced Data Augmentation Approach for Deep Learning Based Image Classification</a></li>
+<li><a href="https://meetonfriday.com/posts/b4202d1/">[論文速速讀]CutMix: Regularization Strategy to Train Strong Classifiers with Localizable Features</a></li>
+<li><a href="https://meetonfriday.com/posts/98f60d1d/">[論文速速讀]ReZero is All You Need: Fast Convergence at Large Depth</a></li>
+</ul>
+
+                <hr>
+                <!-- Pager -->
+                <ul class="pager">
+    
+    <li class="previous">
+        <a href="/posts/d5321308/" data-toggle="tooltip" data-placement="top" title="[論文速速讀]Gradient Based Learning Applied to Document Recognition">&larr; Newer Post</a>
+    </li>
+    
+    
+    <li class="next">
+        <a href="/posts/abd81088/" data-toggle="tooltip" data-placement="top" title="[論文速速讀]Efficient Estimation of Word Representation in Vector Space">Older Post &rarr;</a>
+    </li>
+    
+</ul>
+
+                <!-- tip start -->
+                
+
+                
+                <!-- tip end -->
+
+                <!-- Sharing -->
+                
+                <!-- Sharing -->
+
+                <!-- gitment start -->
+                
+                <!-- gitment end -->
+
+                <!-- 来必力City版安装代码 -->
+                
+                <!-- City版安装代码已完成 -->
+
+                <!-- disqus comment start -->
+                
+                <div class="comment">
+                    <div id="disqus_thread" class="disqus-thread"></div>
+                </div>
+                
+                <!-- disqus comment end -->
+            </div>
+            
+            <!-- Tabe of Content -->
+            <!-- Table of Contents -->
+
+    
+      
+        <aside id="sidebar">
+          <div id="toc" class="toc-article">
+          <strong class="toc-title">Contents</strong>
+          
+            <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#前言"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">前言</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#論文速速讀系列是什麼"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">論文速速讀系列是什麼?</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#文章整理"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">文章整理</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Computer-Vision"><span class="toc-nav-number">3.1.</span> <span class="toc-nav-text">Computer Vision</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Natural-Language-Processing"><span class="toc-nav-number">3.2.</span> <span class="toc-nav-text">Natural Language Processing</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Others"><span class="toc-nav-number">3.3.</span> <span class="toc-nav-text">Others</span></a></li></ol></li></ol>
+          
+          </div>
+        </aside>
+      
+    
+
+        </div>
+    </div>
+</article>
+
+	
+    <!-- disqus embedded js code start (one page only need to embed once) -->	
+    <script type="text/javascript">	
+        /* * * CONFIGURATION VARIABLES * * */	
+        var disqus_shortname = "meetonfriday";	
+        var disqus_identifier = "https://meetonfriday.com/posts/aa55d3f9/";	
+        var disqus_url = "https://meetonfriday.com/posts/aa55d3f9/";	
+        (function() {	
+            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;	
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';	
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);	
+        })();	
+    </script>	
+    <!-- disqus embedded js code start end -->	
+    
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/john850512">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://www.linkedin.com/in/john85051232">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                
+                    <li>
+                        <a target="_blank" href="https://www.facebook.com/meetonfridayyy">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+                
+                    <li>
+                        <a target="_blank"  href="https://mail.google.com/mail/?view=cm&fs=1&to=john85051232@gmail.com">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-envelope-o fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+                
+                
+
+                
+
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; John 2025 
+                    <br>
+                    Powered by 
+                    <a href="https://github.com/john850512/hexo-theme-jiji" target="_blank" rel="noopener">
+                        <i>hexo-theme-jiji</i>
+                    </a> | 
+                    <iframe name="star" style="margin-left: 2px; margin-bottom:-5px;" frameborder="0" scrolling="0"
+                        width="100px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=john850512&repo=hexo-theme-jiji&type=star&count=true">
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+
+</footer>
+
+<!-- jQuery -->
+
+<script src="/js/jquery.min.js"></script>
+
+
+<!-- Bootstrap Core JavaScript -->
+
+<script src="/js/bootstrap.min.js"></script>
+
+
+<!-- Custom Theme JavaScript -->
+
+<script src="/js/hux-blog.min.js"></script>
+
+
+<!-- Search -->
+
+<script src="/js/search.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("https://meetonfriday.com/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+<!-- Search -->
+
+    <script type="text/javascript">      
+        var search_path = "search.xml";
+        if (search_path.length == 0) {
+            search_path = "search.xml";
+        }
+    var path = "/" + search_path;
+    searchFunc(path, 'local-search-input', 'local-search-result');
+    </script>
+
+
+<!-- busuanzi -->
+<!--<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>-->
+<script async src="//cdn.jsdelivr.net/npm/busuanzi@2.3.0"></script>
+
+
+
+
+	<a id="rocket" href="#top" class=""></a>
+	<script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script>
+    <script type="text/javascript" src="/js/toc.js?v=1.0.0" async=""></script>
+
+    
+        <!-- background effects line -->
+        
+        <!-- background effects end -->
+    
+    
+    <!-- background animation-->>
+    <!--<script size="50" alpha='0.3' zIndex="-999" src="/js/ribbonStatic.js"></script>-->
+    
+        <script src="/js/ribbonDynamic.js"></script>
+    
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script>
+            window.imageLazyLoadSetting = {
+                isSPA: false,
+                processImages: null,
+            };
+        </script><script>window.addEventListener("load",function(){var t=/\.(gif|jpg|jpeg|tiff|png)$/i,r=/^data:image\/[a-z]+;base64,/;Array.prototype.slice.call(document.querySelectorAll("img[data-original]")).forEach(function(a){var e=a.parentNode;"A"===e.tagName&&(e.href.match(t)||e.href.match(r))&&(e.href=a.dataset.original)})});</script><script>!function(n){n.imageLazyLoadSetting.processImages=o;var i=n.imageLazyLoadSetting.isSPA,r=Array.prototype.slice.call(document.querySelectorAll("img[data-original]"));function o(){i&&(r=Array.prototype.slice.call(document.querySelectorAll("img[data-original]")));for(var t,e,a=0;a<r.length;a++)t=r[a],0<=(e=t.getBoundingClientRect()).bottom&&0<=e.left&&e.top<=(n.innerHeight||document.documentElement.clientHeight)&&function(){var t,e,n,i,o=r[a];t=o,e=function(){r=r.filter(function(t){return o!==t})},n=new Image,i=t.getAttribute("data-original"),n.onload=function(){t.src=i,e&&e()},n.src=i}()}o(),n.addEventListener("scroll",function(){var t,e;t=o,e=n,clearTimeout(t.tId),t.tId=setTimeout(function(){t.call(e)},500)})}(this);</script></body>
+
+</html>

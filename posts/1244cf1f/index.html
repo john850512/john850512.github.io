@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<!-- Head tag -->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="baidu-site-verification" content="093lY4ziMu" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="keyword"  content="programming, study, daily, entertainment">
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="星期五。見面">
+    <meta property="og:locale" content="zh-TW" />
+    
+    <meta property="og:title" content="[Tensorflow]從Pytorch到TF2的學習之路 - Different Padding Algorithms" />
+    
+    
+    <meta property="og:description" content="這篇文章透過簡單的例子搭配程式碼進行講解，最後搭配一些網路上的討論跟介紹幫助大家釐清TF/Pytorch的Padding觀念。" />
+    <meta name="description" content="這篇文章透過簡單的例子搭配程式碼進行講解，最後搭配一些網路上的討論跟介紹幫助大家釐清TF/Pytorch的Padding觀念。">
+    
+    
+    <meta property="og:image" content="/img/avatar.jpg" />
+    
+
+    <link rel="shortcut icon" href="/img/avatar.jpg">
+    <!-- Place this tag in your head or just before your close body tag. -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <!--<link href='http://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>-->
+    <title>
+        
+          [Tensorflow]從Pytorch到TF2的學習之路 - Different Padding Algorithms - MeetonFriday
+        
+    </title>
+    <!-- canonical -->
+    
+    
+      <link rel="canonical" href="https://meetonfriday.com/posts/1244cf1f/">
+    
+
+    <!-- Bootstrap Core CSS -->
+    
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+
+
+    <!-- Custom CSS --> 
+    
+<link rel="stylesheet" href="/css/dusign-dark.css">
+
+    
+<link rel="stylesheet" href="/css/dusign-common-dark.css">
+
+    <!-- 
+<link rel="stylesheet" href="/css/font-awesome.css">
+ -->
+    
+<link rel="stylesheet" href="/css/toc.css">
+
+
+    
+    <!-- Pygments Highlight CSS -->
+    
+<link rel="stylesheet" href="/css/highlight.css">
+
+
+    
+<link rel="stylesheet" href="/css/widget.css">
+
+
+    
+<link rel="stylesheet" href="/css/rocket.css">
+
+
+    
+<link rel="stylesheet" href="/css/signature.css">
+
+
+    
+<link rel="stylesheet" href="/css/fonts.googleapis.css">
+
+
+    <!-- <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.3.0/css/font-awesome.min.css">-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.min.css">
+    
+    <!-- Google Analytics -->
+    
+      <!-- <script>
+          // dynamic User by Hux
+          var _gaId = 'UA-163346001-1';
+          var _gaDomain = 'auto';
+      
+          // Originial
+          (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+          (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+          })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+      
+          ga('create', _gaId, _gaDomain);
+          ga('send', 'pageview');
+      </script> -->
+      
+      <!-- Global site tag (gtag.js) - Google Analytics -->
+      <script async src="https://www.googletagmanager.com/gtag/js?id=UA-163346001-1"></script>
+      <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+      
+        gtag('config', 'UA-163346001-1');
+      </script>
+      
+    <!-- google ad sense-->
+    <script data-ad-client="ca-pub-9561340457908416" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<meta name="generator" content="Hexo 4.2.1"><link rel="alternate" href="/atom.xml" title="星期五。見面" type="application/atom+xml">
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+	<!-- Modified by Yu-Hsuan Yen -->
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        
+            
+                background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.5)), url('/img/header_img/header-bg.jpg')
+            
+        
+    }
+    
+</style>
+
+<header class="intro-header" >
+    <!-- Signature -->
+    <div id="signature">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                
+                    <div class="post-heading">
+                        <div class="tags">
+                            
+                              <a class="tag" href="/tags/#deep learning" title="deep learning">deep learning</a>
+                            
+                              <a class="tag" href="/tags/#pytorch" title="pytorch">pytorch</a>
+                            
+                              <a class="tag" href="/tags/#tensorflow" title="tensorflow">tensorflow</a>
+                            
+                        </div>
+                        <h1>[Tensorflow]從Pytorch到TF2的學習之路 - Different Padding Algorithms</h1>
+                        <h2 class="subheading"></h2>
+                        <span class="meta">
+                            Posted by John on
+                            2020-08-27
+                        </span>
+
+                        
+                            <div class="blank_box"></div>
+                            <span class="meta">
+                                Words <span class="post-count">2.5k</span> and
+                                Reading Time <span class="post-count">10</span> Minutes
+                            </span>
+                            <div class="blank_box"></div>
+                            <!-- 不蒜子统计 start -->
+                            <span class="meta">
+                                Viewed <span id="busuanzi_value_page_pv"><i class="fa fa-spinner fa-spin"></i></span> Times
+                            </span>
+                            <!-- 不蒜子统计 end -->
+                        
+
+                    </div>
+                
+
+                </div>
+            </div>
+        </div>      
+    </div>
+
+    
+        
+            <div class="waveWrapper">
+                <div class="wave wave_before" style="background-image: url('/img/wave-dark.png')"></div>
+                <div class="wave wave_after" style="background-image: url('/img/wave-dark.png')"></div>
+            </div>
+        
+    
+</header>
+
+	
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">星期五。見面</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archive/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/categories/">Categories</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/reading/">Reading</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+    
+    <!-- Main Content -->
+    <!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+            <!-- Post Container -->
+
+    
+        
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+        
+    
+
+                <p>【[Tensorflow]從Pytorch到TF2的學習之路】所有文章:</p>
+<ul>
+<li><a href="https://meetonfriday.com/posts/1244cf1f/">[Tensorflow]從Pytorch到TF2的學習之路 - Different Padding Algorithms</a></li>
+<li><a href="https://meetonfriday.com/posts/877f4063/">[Tensorflow]從Pytorch到TF2的學習之路 - Training mode v.s. Inference mode</a></li>
+<li><a href="https://meetonfriday.com/posts/3e428c8a/">[Tensorflow]從Pytorch到TF2的學習之路 - Custom Model &amp; Custom training</a></li>
+</ul>
+<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>在Conv layer和Pooling layer的時候，由於kernel size和stride的設置，Input有可能會在操作過程中越變越小。為了使得圖片在這個過程中保持相同的輸出，此時我們就會對input加上padding(通常是補0操作)。<br><img src="https://meetonfriday.com/img/lazy-loading-animation.gif" data-original="https://res.cloudinary.com/meet-on-friday/image/upload/v1598519313/blog_posts/0rs9l_jjogjj.gif" alt=""></p>
+<p>不過<strong>在Tensorflow和Pytorch中對於padding這件事有一點小差異</strong>，像是Tensorflow的padding參數就提供了<code>SAME</code>和<code>VALID</code>，但在Pytorch的文件中我們並沒看到類似的參數，究竟這不同框架之間padding的差異到底在哪裡呢? </p>
+<p>這篇文章透過簡單的例子搭配程式碼進行講解，最後搭配一些網路上的討論跟介紹幫助大家釐清TF/Pytorch的Padding觀念。</p>
+<a id="more"></a>
+<h2 id="Padding-in-Tensorflow2"><a href="#Padding-in-Tensorflow2" class="headerlink" title="Padding in Tensorflow2"></a>Padding in Tensorflow2</h2><p>Padding在TF1/TF2中似乎沒有做太大改動，不過下面我們以TF2(下面統稱TF)的程式搭配來輔助講解。</p>
+<p>首先，在TF的Conv系列(例如<a href="https://www.tensorflow.org/api_docs/python/tf/nn/conv1d" target="_blank" rel="noopener">tf.nn.conv1d</a>)和Pooling系列(例如<a href="https://www.tensorflow.org/api_docs/python/tf/nn/max_pool1d" target="_blank" rel="noopener">tf.nn.max_pool1d</a>)都可以看到關於Padding參數有兩個方法可以使用:</p>
+<ul>
+<li><strong>SAME</strong></li>
+<li><strong>VALID</strong></li>
+</ul>
+<p>不過對於這兩個方法的細節似乎沒有太多著墨，下面針對這兩個方法來進行介紹。</p>
+<p>首先為了方便介紹我們先考慮一維的資料，然後下面我們都使用這組作為我們的input。假設我們的輸入為:</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">inputs: <span class="number">1</span> <span class="number">2</span> <span class="number">3</span> <span class="number">4</span> <span class="number">5</span> <span class="number">6</span> <span class="number">7</span> <span class="number">8</span> <span class="number">9</span></span><br></pre></td></tr></table></figure>
+<p>我們先用幾行的程式碼把資料建立起來<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">0</span><br><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> tensorflow <span class="keyword">as</span> tf</span><br><span class="line">data = tf.constant([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>, <span class="number">8</span>, <span class="number">9</span>]) <span class="comment"># shape: (dimension, )</span></span><br><span class="line">data = tf.reshape(data, (<span class="number">1</span>, <span class="number">-1</span>, <span class="number">1</span>)) <span class="comment"># reshape to (batch, dimension, channel)</span></span><br><span class="line">print(<span class="string">'input: '</span>, data)</span><br><span class="line"><span class="comment"># input:  tf.Tensor(</span></span><br><span class="line"><span class="comment"># [[[1]</span></span><br><span class="line"><span class="comment">#   [2]</span></span><br><span class="line"><span class="comment">#   [3]</span></span><br><span class="line"><span class="comment">#   [4]</span></span><br><span class="line"><span class="comment">#   [5]</span></span><br><span class="line"><span class="comment">#   [6]</span></span><br><span class="line"><span class="comment">#   [7]</span></span><br><span class="line"><span class="comment">#   [8]</span></span><br><span class="line"><span class="comment">#   [9]]], shape=(1, 9, 1), dtype=int32)</span></span><br></pre></td></tr></table></figure></p>
+<p>儘管一開始我們說資料維度是一維的，但我們仍然轉換到一個三維的space以符合Tensorflow的格式。<strong>這邊的維度(1, 9, 1)分別代表了(batch, dimension, channel)，符合TF data format的預設NHWC格式(channel last)</strong></p>
+<ul>
+<li>如果是二維的資料則是(batch, width, height, channel)</li>
+<li>關於TF的data format可以參考<a href="https://stackoverflow.com/questions/56754574/channels-first-vs-channels-last-what-do-these-mean" target="_blank" rel="noopener">Channels first vs Channels last - what do these mean?</a></li>
+</ul>
+<h3 id="padding-’VALID’"><a href="#padding-’VALID’" class="headerlink" title="padding=’VALID’"></a>padding=’VALID’</h3><p>對於padding=VALID，就是<strong>不做padding</strong>的意思，不夠的部分我就直接砍掉，所以資料長度很理所當然的會變小。</p>
+<ul>
+<li>其實覺得選用VALID這個字很容易讓人搞混，網路上也有人說或許用NO-PADDING會更加清楚</li>
+<li>在這個情況下，output shape為$\left\lceil\frac{W-K+1}{S}\right\rceil$，$W$是input shape、$K$是kernel size，而$S$則是stride</li>
+</ul>
+<p>現在考慮在padding=’VALID’下，以下設置搭配max_pool1d的padding結果:</p>
+<ul>
+<li>kernel=4, stride=4</li>
+</ul>
+<figure class="highlight"><table><tr><td class="code"><pre><span class="line">inputs: <span class="number">1</span> <span class="number">2</span> <span class="number">3</span> <span class="number">4</span> <span class="number">5</span> <span class="number">6</span> <span class="number">7</span> <span class="number">8</span> (<span class="number">9</span>)</span><br><span class="line">        |-----|             -&gt; output 4 </span><br><span class="line">                |-----|     -&gt; output 8</span><br></pre></td></tr></table></figure>
+<p>可以發現多餘的部分，也就是9，直接被捨棄掉了。對照一下程式的結果發現是吻合的<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">0</span><br><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">print(tf.nn.max_pool1d(data, ksize=<span class="number">4</span>, strides=<span class="number">4</span>, padding=<span class="string">'VALID'</span>))</span><br><span class="line"><span class="comment"># tf.Tensor(</span></span><br><span class="line"><span class="comment"># [[[4]</span></span><br><span class="line"><span class="comment">#   [8]]], shape=(1, 2, 1), dtype=int32)</span></span><br></pre></td></tr></table></figure></p>
+<p>再來另外一個例子想想看，以下設置的時候輸出應該是什麼?</p>
+<ul>
+<li>kernel=4, stride=1<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">0</span><br><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">print(tf.nn.max_pool1d(data, ksize=<span class="number">4</span>, strides=<span class="number">1</span>, padding=<span class="string">'VALID'</span>))</span><br><span class="line"><span class="comment"># tf.Tensor(</span></span><br><span class="line"><span class="comment"># [[[4]</span></span><br><span class="line"><span class="comment">#   [5]</span></span><br><span class="line"><span class="comment">#   [6]</span></span><br><span class="line"><span class="comment">#   [7]</span></span><br><span class="line"><span class="comment">#   [8]</span></span><br><span class="line"><span class="comment">#   [9]]], shape=(1, 6, 1), dtype=int32)</span></span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h3 id="padding-’SAME’"><a href="#padding-’SAME’" class="headerlink" title="padding=’SAME’"></a>padding=’SAME’</h3><p>對於padding=’SAME’，代表<strong>使用padding(default zero padding)來調整shape</strong></p>
+<ul>
+<li>output shape公式為$\left\lceil\frac{W}{S}\right\rceil$</li>
+</ul>
+<p>實際來看一下幾個例子，首先考慮和上面相同的case在padding=’SAME’下會是怎樣?</p>
+<ul>
+<li>kernel size=4, stride=4<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">print(tf.nn.max_pool1d(data, ksize=<span class="number">4</span>, strides=<span class="number">4</span>, padding=<span class="string">'SAME'</span>))</span><br><span class="line"><span class="comment"># tf.Tensor(</span></span><br><span class="line"><span class="comment"># [[[3]</span></span><br><span class="line"><span class="comment">#   [7]</span></span><br><span class="line"><span class="comment">#   [9]]], shape=(1, 3, 1), dtype=int32)</span></span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>…咦? </p>
+<p>為什麼會是這種神奇的輸出結果? 實際上TF在padding的時候把我們的input變成了下面這樣<br><figure class="highlight"><table><tr><td class="code"><pre><span class="line">inputs: <span class="number">0</span> <span class="number">1</span> <span class="number">2</span> <span class="number">3</span> <span class="number">4</span> <span class="number">5</span> <span class="number">6</span> <span class="number">7</span> <span class="number">8</span> <span class="number">9</span> <span class="number">0</span> <span class="number">0</span></span><br><span class="line">        |-----|                 -&gt; output 3 </span><br><span class="line">                |-----|         -&gt; output 7</span><br><span class="line">                        |-----| -&gt; output 9</span><br></pre></td></tr></table></figure><br><img src="https://meetonfriday.com/img/lazy-loading-animation.gif" data-original="https://res.cloudinary.com/meet-on-friday/image/upload/v1595269674/blog_posts/Zb4LabP_j8hkod.jpg" alt=""></p>
+<p>這個神奇的補0方式是什麼鬼? 為什麼右邊多補了1個0?</p>
+<p>要理解這個首先就必須知道output shape真正的計算公式其實是長怎樣的:</p>
+<script type="math/tex; mode=display">\mathrm{output\_shape}=\frac{\mathrm{W}+2 \times \text { padding }-\text { dilation } \times(\text { kernel_size }-1)-1}{\text { stride }}+1</script><p>dilation是另外一種捲積操作，一般預設為1，這裡先忽略他。於是把上面式子簡化一下可以得到</p>
+<script type="math/tex; mode=display">\mathrm{output\_shape}=\frac{\mathrm{W}+2 \times \text { padding }-\text { kernel_size }}{\text { stride }}+1</script><ul>
+<li>TF2透過這個公式反推出總共要補0的數量($2 \times \text { padding }$)</li>
+<li>然後對input的左右各補padding行(二維的話則是上下左右)</li>
+<li>然而，<strong>當($2 \times \text { padding }$)為奇數時，TF會對右邊(二維時則是右邊跟下面)多補一行0，確保output shape是整數</strong><ul>
+<li>你應該也發現了這其實並不是一個對稱的padding，所以這種方式也被稱之<strong>Asymmetric padding</strong></li>
+<li>TF對右下多補0的操作和caffe不同(caffe會對左上補)，所以在框架轉換的時候可能會出現問題，詳見<a href="https://stackoverflow.com/questions/42924324/tensorflows-asymmetric-padding-assumptions" target="_blank" rel="noopener">Tensorflow’s asymmetric padding assumptions</a></li>
+</ul>
+</li>
+</ul>
+<p>了解了padding=’SAME’所做的事情後，整個流程其實可用下面這個更新公式來得到，透過公式直接算出左右補0所需要的增加的欄位數量</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># pad_width: 寬度方向填充0的行數</span></span><br><span class="line"><span class="comment"># pad_left, pad_right: 分别代表左右方向填充0的行數</span></span><br><span class="line"><span class="comment"># 二維的pad_top, pad_bottom依此類推</span></span><br><span class="line">pad_width = max((out_width<span class="number">-1</span>) * strides_width + kernel_size - in_width, <span class="number">0</span>)</span><br><span class="line">pad_left = pad_width // <span class="number">2</span> <span class="comment"># 向下取整</span></span><br><span class="line">pad_right  = pad_width - pad_left</span><br></pre></td></tr></table></figure>
+<p>這個你也可以在TF的source code看到相關的code:</p>
+<ul>
+<li><a href="https://github.com/tensorflow/tensorflow/blob/8b722cf5ef234c187d6e96345c8715548a13c4f1/tensorflow/python/ops/nn_ops.py#L2718-L2728" target="_blank" rel="noopener">tf.nn.atrous_conv2d_transpose()</a>，implemented in python<ul>
+<li>看標註區段(計算pad_left和pad_right)的部分就好，前面的計算其實是再做另外一種padding(FULL padding)，常被用在DeConv中，用來放大input shape</li>
+<li>不過padding=’FULL’這個參數只在原本的Keras(不是指TF2的keras API)有，在TF中是透過直接設置pad_width=kernel_size-1來達成，細節這裡不做太多著墨</li>
+</ul>
+</li>
+<li><a href="https://github.com/tensorflow/tensorflow/blob/8eaf671025e8cd5358278f91f7e89e2fbbe6a26b/tensorflow/core/kernels/conv_ops.cc#L274-L301" target="_blank" rel="noopener">tf.nn.conv2d()</a>，implemented in C </li>
+</ul>
+<p>好了，講了這麼多，再看一次剛剛問題的解答，現在應該知道為什麼剛剛的例子最右邊會補2個0，而左邊只補了1個0了，這裡我們再貼一次剛剛的padding結果幫助你複習<br><figure class="highlight"><table><tr><td class="code"><pre><span class="line">inputs: <span class="number">0</span> <span class="number">1</span> <span class="number">2</span> <span class="number">3</span> <span class="number">4</span> <span class="number">5</span> <span class="number">6</span> <span class="number">7</span> <span class="number">8</span> <span class="number">9</span> <span class="number">0</span> <span class="number">0</span></span><br><span class="line">        |-----|                 -&gt; output 3 </span><br><span class="line">                |-----|         -&gt; output 7</span><br><span class="line">                        |-----| -&gt; output 9</span><br></pre></td></tr></table></figure></p>
+<p>再來回顧VALID的第二個case，在padding=’SAME’的時候下列設置輸出應該是什麼?</p>
+<ul>
+<li>kernel=4, stride=1<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">0</span><br><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">print(tf.nn.max_pool1d(data, ksize=<span class="number">4</span>, strides=<span class="number">1</span>, padding=<span class="string">'SAME'</span>))</span><br><span class="line"><span class="comment"># tf.Tensor(</span></span><br><span class="line"><span class="comment"># [[[3]</span></span><br><span class="line"><span class="comment">#   [4]</span></span><br><span class="line"><span class="comment">#   [5]</span></span><br><span class="line"><span class="comment">#   [6]</span></span><br><span class="line"><span class="comment">#   [7]</span></span><br><span class="line"><span class="comment">#   [8]</span></span><br><span class="line"><span class="comment">#   [9]</span></span><br><span class="line"><span class="comment">#   [9]</span></span><br><span class="line"><span class="comment">#   [9]]], shape=(1, 9, 1), dtype=int32)</span></span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>在這個例子中，你會發現其實padding的狀況和前一個例子相同。</p>
+<p>到這裡你應該對於TF的兩種padding方法有了充足的理解。最後再次強調，根據公式，<strong>padding=’SAME’只有當stride=1時才會確保output shape和input shape相同</strong>。</p>
+<h2 id="Padding-in-Pytorch"><a href="#Padding-in-Pytorch" class="headerlink" title="Padding in Pytorch"></a>Padding in Pytorch</h2><p>Pytorch的padding參數預設是0，也就是<strong>預設不做padding</strong>(TF的padding=’Valid’)。</p>
+<p>不過要做padding的話，就是需要按照Pytorch文件的公式來計算出正確output shape(寫Pytorch的都要對資料的維度很敏感，不然一個不小心shape弄錯模型就炸了…)，在<a href="https://pytorch.org/docs/master/generated/torch.nn.MaxPool1d.html" target="_blank" rel="noopener">torch.nn.MaxPool1d</a>中寫到output shape公式如下:</p>
+<script type="math/tex; mode=display">\mathrm{L}_{\text {out }}=\left\lfloor\frac{\mathrm{L}_{\text {in }}+2 \times \text { padding }-\text { dilation } \times(\text { kernel size }-1)-1}{\text { stride }}+1\right\rfloor</script><ul>
+<li>題外話，當初在那算二維的output shape算到崩潰，後來直接把公式變成了一個function，可以參考<a href="https://meetonfriday.com/posts/a418962a/">[Python]Utility function of calculate convolution output shape</a></li>
+</ul>
+<p>Pytorch的padding方法是Symmetric padding，也就是一維的時候對左右(二維則是對上下左右)補齊的數量是相同的，後續的操作出餘的部分就捨棄掉。</p>
+<p>接下來我們來用code實際跑一下，首先我們準備和TF章節中相同的輸入:<br><figure class="highlight python"><table><tr><td class="code"><pre><span class="line">inputs: <span class="number">1</span> <span class="number">2</span> <span class="number">3</span> <span class="number">4</span> <span class="number">5</span> <span class="number">6</span> <span class="number">7</span> <span class="number">8</span> <span class="number">9</span></span><br></pre></td></tr></table></figure></p>
+<p>和TF不同的地方是data format要轉換一下，Pytorch預設採用的格式是channel first<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">0</span><br><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch </span><br><span class="line">data = torch.Tensor([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>, <span class="number">8</span>, <span class="number">9</span>]).view(<span class="number">1</span>, <span class="number">1</span>, <span class="number">-1</span>) <span class="comment"># (batch, channel, dimension)</span></span><br><span class="line">print(<span class="string">'input:'</span>, data, <span class="string">'shape:'</span>, data.shape)</span><br><span class="line"><span class="comment"># input: tensor([[[1., 2., 3., 4., 5., 6., 7., 8., 9.]]]) shape: torch.Size([1, 1, 9])</span></span><br></pre></td></tr></table></figure></p>
+<p>然後一樣用max_pool1d來看一下在TF中測試過的兩組設置</p>
+<ul>
+<li>kernel=4, stride=4</li>
+<li>kernel=4, stride=1</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">0</span><br><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">print(torch.nn.functional.max_pool1d(data, kernel_size=<span class="number">4</span>, stride=<span class="number">4</span>))</span><br><span class="line"><span class="comment"># tensor([[[4., 8.]]])</span></span><br><span class="line">print(torch.nn.functional.max_pool1d(data, kernel_size=<span class="number">4</span>, stride=<span class="number">1</span>))</span><br><span class="line"><span class="comment"># tensor([[[ 4., 5., 6., 7., 8., 9.]]])</span></span><br></pre></td></tr></table></figure>
+<p>由於預設參數padding=0，所以就行為和TF的VALID padding一模一樣。</p>
+<p>再來，測試有指定padding參數的狀況下結果是什麼，考慮以下設置: </p>
+<ul>
+<li>kernel=4, stride=4, padding=1</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">0</span><br><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">print(torch.nn.functional.max_pool1d(c, kernel_size=<span class="number">4</span>, stride=<span class="number">4</span>, padding=<span class="number">1</span>))</span><br><span class="line"><span class="comment"># tensor([[[3., 7.]]])</span></span><br></pre></td></tr></table></figure>
+<p>此時padding的情況如下<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">inputs: 0 1 2 3 4 5 6 7 (8 9 0) </span><br><span class="line">        |-----|                 -&gt; output 3 </span><br><span class="line">                |-----|         -&gt; output 7</span><br></pre></td></tr></table></figure></p>
+<p>左右對稱補0後，多出來的部分(8 9 0)被捨棄了(也可以想成，Pytorch的作法是symmetric padding後，將output當作新的input進行VALID padding操作)</p>
+<p>最後，Pytorch要怎麼做到TF的SAME padding(Asymmetric padding)呢?<br>你可以自行算好input周遭的padding數，透過<code>torch.nn.ZeroPad2d()</code>來實踐。不過這個功能目前似乎沒打算到<code>torch.nn.Conv2d()</code>等Conv function中。對此論壇上討論了很久了，目前基於效能等的考量所以不打算加進去，有興趣了解來龍去脈的可以參考下列Issue:</p>
+<ul>
+<li><a href="https://github.com/pytorch/pytorch/issues/3867" target="_blank" rel="noopener">[Feature Request] Implement “same” padding for convolution operations?</a></li>
+<li><a href="https://github.com/DAA233/learning-notes/issues/16" target="_blank" rel="noopener">如何在 PyTorch 中实现 TensorFlow 里的 ‘SAME’ padding 和 ‘VALID’ padding？</a></li>
+</ul>
+<h2 id="總結"><a href="#總結" class="headerlink" title="總結"></a>總結</h2><p>前面辛苦寫了這麼久，其實懶人包就幾行: </p>
+<ul>
+<li>在TF中，有兩種padding algorithm: SAME padding &amp; VALID padding<ul>
+<li>VALID代表不做任何padding，在運算中多餘的部分就會直接捨去<ul>
+<li>output shape: $\left\lceil\frac{W-K+1}{S}\right\rceil$</li>
+</ul>
+</li>
+<li>SAME代表對input周遭進行padding，並且當stride=1的時候會使output保持跟input相同的大小<ul>
+<li>output shape: $\left\lceil\frac{W}{S}\right\rceil$</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>在Pytorch中，預設是padding參數是0，也就是TF的VALID padding<ul>
+<li>如果有指定padding參數，則會對四周做對稱補0，並且運算中多餘的部分會直接捨去(周圍對稱補0後再做VALID padding)<ul>
+<li>output shape: <script type="math/tex">\mathrm{L}_{\text {out }}=\left\lfloor\frac{\mathrm{L}_{\text {in }}+2 \times \text { padding }-\text { dilation } \times(\text { kernel size }-1)-1}{\text { stride }}+1\right\rfloor</script></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="References"><a href="#References" class="headerlink" title="References"></a>References</h2><ul>
+<li><a href="https://oldpan.me/archives/tf-keras-padding-vaild-same" target="_blank" rel="noopener">深度学习-TF、keras两种padding方式：vaild和same</a></li>
+<li><a href="https://www.cnblogs.com/zyly/p/8697985.html" target="_blank" rel="noopener">第三节，TensorFlow 使用CNN实现手写数字识别(卷积函数tf.nn.convd介绍)</a></li>
+<li><a href="https://stackoverflow.com/questions/34835503/tensorflow-where-is-tf-nn-conv2d-actually-executed" target="_blank" rel="noopener">Tensorflow: Where is tf.nn.conv2d Actually Executed?</a></li>
+<li><a href="https://stackoverflow.com/questions/37674306/what-is-the-difference-between-same-and-valid-padding-in-tf-nn-max-pool-of-t/37674568#37674568" target="_blank" rel="noopener">What is the difference between ‘SAME’ and ‘VALID’ padding in tf.nn.max_pool of tensorflow?</a></li>
+</ul>
+
+                <hr>
+                <!-- Pager -->
+                <ul class="pager">
+    
+    <li class="previous">
+        <a href="/posts/612e94f1/" data-toggle="tooltip" data-placement="top" title="研發替代役替第九十梯-15天生存紀實-1">&larr; Newer Post</a>
+    </li>
+    
+    
+    <li class="next">
+        <a href="/posts/5f745d96/" data-toggle="tooltip" data-placement="top" title="[論文速速讀]Very Deep Convolutional Networks For Large-Scale Image Recognition">Older Post &rarr;</a>
+    </li>
+    
+</ul>
+
+                <!-- tip start -->
+                
+
+                
+                <!-- tip end -->
+
+                <!-- Sharing -->
+                
+                <!-- Sharing -->
+
+                <!-- gitment start -->
+                
+                <!-- gitment end -->
+
+                <!-- 来必力City版安装代码 -->
+                
+                <!-- City版安装代码已完成 -->
+
+                <!-- disqus comment start -->
+                
+                <div class="comment">
+                    <div id="disqus_thread" class="disqus-thread"></div>
+                </div>
+                
+                <!-- disqus comment end -->
+            </div>
+            
+            <!-- Tabe of Content -->
+            <!-- Table of Contents -->
+
+    
+      
+        <aside id="sidebar">
+          <div id="toc" class="toc-article">
+          <strong class="toc-title">Contents</strong>
+          
+            <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#前言"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">前言</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Padding-in-Tensorflow2"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">Padding in Tensorflow2</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#padding-’VALID’"><span class="toc-nav-number">2.1.</span> <span class="toc-nav-text">padding&#x3D;’VALID’</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#padding-’SAME’"><span class="toc-nav-number">2.2.</span> <span class="toc-nav-text">padding&#x3D;’SAME’</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Padding-in-Pytorch"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">Padding in Pytorch</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#總結"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">總結</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#References"><span class="toc-nav-number">5.</span> <span class="toc-nav-text">References</span></a></li></ol>
+          
+          </div>
+        </aside>
+      
+    
+
+        </div>
+    </div>
+</article>
+
+	
+    <!-- disqus embedded js code start (one page only need to embed once) -->	
+    <script type="text/javascript">	
+        /* * * CONFIGURATION VARIABLES * * */	
+        var disqus_shortname = "meetonfriday";	
+        var disqus_identifier = "https://meetonfriday.com/posts/1244cf1f/";	
+        var disqus_url = "https://meetonfriday.com/posts/1244cf1f/";	
+        (function() {	
+            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;	
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';	
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);	
+        })();	
+    </script>	
+    <!-- disqus embedded js code start end -->	
+    
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/john850512">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://www.linkedin.com/in/john85051232">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                
+                    <li>
+                        <a target="_blank" href="https://www.facebook.com/meetonfridayyy">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+                
+                    <li>
+                        <a target="_blank"  href="https://mail.google.com/mail/?view=cm&fs=1&to=john85051232@gmail.com">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-envelope-o fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+                
+                
+
+                
+
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; John 2025 
+                    <br>
+                    Powered by 
+                    <a href="https://github.com/john850512/hexo-theme-jiji" target="_blank" rel="noopener">
+                        <i>hexo-theme-jiji</i>
+                    </a> | 
+                    <iframe name="star" style="margin-left: 2px; margin-bottom:-5px;" frameborder="0" scrolling="0"
+                        width="100px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=john850512&repo=hexo-theme-jiji&type=star&count=true">
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+
+</footer>
+
+<!-- jQuery -->
+
+<script src="/js/jquery.min.js"></script>
+
+
+<!-- Bootstrap Core JavaScript -->
+
+<script src="/js/bootstrap.min.js"></script>
+
+
+<!-- Custom Theme JavaScript -->
+
+<script src="/js/hux-blog.min.js"></script>
+
+
+<!-- Search -->
+
+<script src="/js/search.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("https://meetonfriday.com/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+<!-- Search -->
+
+    <script type="text/javascript">      
+        var search_path = "search.xml";
+        if (search_path.length == 0) {
+            search_path = "search.xml";
+        }
+    var path = "/" + search_path;
+    searchFunc(path, 'local-search-input', 'local-search-result');
+    </script>
+
+
+<!-- busuanzi -->
+<!--<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>-->
+<script async src="//cdn.jsdelivr.net/npm/busuanzi@2.3.0"></script>
+
+
+
+
+	<a id="rocket" href="#top" class=""></a>
+	<script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script>
+    <script type="text/javascript" src="/js/toc.js?v=1.0.0" async=""></script>
+
+    
+        <!-- background effects line -->
+        
+        <!-- background effects end -->
+    
+    
+    <!-- background animation-->>
+    <!--<script size="50" alpha='0.3' zIndex="-999" src="/js/ribbonStatic.js"></script>-->
+    
+        <script src="/js/ribbonDynamic.js"></script>
+    
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script>
+            window.imageLazyLoadSetting = {
+                isSPA: false,
+                processImages: null,
+            };
+        </script><script>window.addEventListener("load",function(){var t=/\.(gif|jpg|jpeg|tiff|png)$/i,r=/^data:image\/[a-z]+;base64,/;Array.prototype.slice.call(document.querySelectorAll("img[data-original]")).forEach(function(a){var e=a.parentNode;"A"===e.tagName&&(e.href.match(t)||e.href.match(r))&&(e.href=a.dataset.original)})});</script><script>!function(n){n.imageLazyLoadSetting.processImages=o;var i=n.imageLazyLoadSetting.isSPA,r=Array.prototype.slice.call(document.querySelectorAll("img[data-original]"));function o(){i&&(r=Array.prototype.slice.call(document.querySelectorAll("img[data-original]")));for(var t,e,a=0;a<r.length;a++)t=r[a],0<=(e=t.getBoundingClientRect()).bottom&&0<=e.left&&e.top<=(n.innerHeight||document.documentElement.clientHeight)&&function(){var t,e,n,i,o=r[a];t=o,e=function(){r=r.filter(function(t){return o!==t})},n=new Image,i=t.getAttribute("data-original"),n.onload=function(){t.src=i,e&&e()},n.src=i}()}o(),n.addEventListener("scroll",function(){var t,e;t=o,e=n,clearTimeout(t.tId),t.tId=setTimeout(function(){t.call(e)},500)})}(this);</script></body>
+
+</html>

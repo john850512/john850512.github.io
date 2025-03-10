@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<!-- Head tag -->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="baidu-site-verification" content="093lY4ziMu" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="keyword"  content="programming, study, daily, entertainment">
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="星期五。見面">
+    <meta property="og:locale" content="zh-TW" />
+    
+    <meta property="og:title" content="SITCON 2019" />
+    
+    
+    <meta property="og:description" content="想當初上一次參加SITCON是...兩年前吧...在高雄的時候實在是太遠了也不是想來就來，不過現在在新竹所以沒關係:|地點一樣舉辦在中研院，從南港展覽館捷運站(不是南港)出來後走到對面搭公車就可以到中研院站，然後再走進去就是了。有很多班公車都會到中研院站所以不用太擔心。如果真的不知道怎麼走的話，其實當天捷運站出來看到一堆學生們就跟著他們走就對了，應該都可以順利到達目的地(我當天中研院裡面就是這樣走的，連導航都沒開xD)。" />
+    <meta name="description" content="想當初上一次參加SITCON是...兩年前吧...在高雄的時候實在是太遠了也不是想來就來，不過現在在新竹所以沒關係:|地點一樣舉辦在中研院，從南港展覽館捷運站(不是南港)出來後走到對面搭公車就可以到中研院站，然後再走進去就是了。有很多班公車都會到中研院站所以不用太擔心。如果真的不知道怎麼走的話，其實當天捷運站出來看到一堆學生們就跟著他們走就對了，應該都可以順利到達目的地(我當天中研院裡面就是這樣走的，連導航都沒開xD)。">
+    
+    
+    <meta property="og:image" content="/img/avatar.jpg" />
+    
+
+    <link rel="shortcut icon" href="/img/avatar.jpg">
+    <!-- Place this tag in your head or just before your close body tag. -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <!--<link href='http://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>-->
+    <title>
+        
+          SITCON 2019 - MeetonFriday
+        
+    </title>
+    <!-- canonical -->
+    
+    
+      <link rel="canonical" href="https://meetonfriday.com/posts/c119e85f/">
+    
+
+    <!-- Bootstrap Core CSS -->
+    
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+
+
+    <!-- Custom CSS --> 
+    
+<link rel="stylesheet" href="/css/dusign-dark.css">
+
+    
+<link rel="stylesheet" href="/css/dusign-common-dark.css">
+
+    <!-- 
+<link rel="stylesheet" href="/css/font-awesome.css">
+ -->
+    
+<link rel="stylesheet" href="/css/toc.css">
+
+
+    
+    <!-- Pygments Highlight CSS -->
+    
+<link rel="stylesheet" href="/css/highlight.css">
+
+
+    
+<link rel="stylesheet" href="/css/widget.css">
+
+
+    
+<link rel="stylesheet" href="/css/rocket.css">
+
+
+    
+<link rel="stylesheet" href="/css/signature.css">
+
+
+    
+<link rel="stylesheet" href="/css/fonts.googleapis.css">
+
+
+    <!-- <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.3.0/css/font-awesome.min.css">-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.min.css">
+    
+    <!-- Google Analytics -->
+    
+      <!-- <script>
+          // dynamic User by Hux
+          var _gaId = 'UA-163346001-1';
+          var _gaDomain = 'auto';
+      
+          // Originial
+          (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+          (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+          })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+      
+          ga('create', _gaId, _gaDomain);
+          ga('send', 'pageview');
+      </script> -->
+      
+      <!-- Global site tag (gtag.js) - Google Analytics -->
+      <script async src="https://www.googletagmanager.com/gtag/js?id=UA-163346001-1"></script>
+      <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+      
+        gtag('config', 'UA-163346001-1');
+      </script>
+      
+    <!-- google ad sense-->
+    <script data-ad-client="ca-pub-9561340457908416" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<meta name="generator" content="Hexo 4.2.1"><link rel="alternate" href="/atom.xml" title="星期五。見面" type="application/atom+xml">
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+	<!-- Modified by Yu-Hsuan Yen -->
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        
+            
+                background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.5)), url('/img/header_img/header-bg.jpg')
+            
+        
+    }
+    
+</style>
+
+<header class="intro-header" >
+    <!-- Signature -->
+    <div id="signature">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                
+                    <div class="post-heading">
+                        <div class="tags">
+                            
+                              <a class="tag" href="/tags/#conference" title="conference">conference</a>
+                            
+                        </div>
+                        <h1>SITCON 2019</h1>
+                        <h2 class="subheading"></h2>
+                        <span class="meta">
+                            Posted by John on
+                            2019-03-31
+                        </span>
+
+                        
+                            <div class="blank_box"></div>
+                            <span class="meta">
+                                Words <span class="post-count">2.4k</span> and
+                                Reading Time <span class="post-count">8</span> Minutes
+                            </span>
+                            <div class="blank_box"></div>
+                            <!-- 不蒜子统计 start -->
+                            <span class="meta">
+                                Viewed <span id="busuanzi_value_page_pv"><i class="fa fa-spinner fa-spin"></i></span> Times
+                            </span>
+                            <!-- 不蒜子统计 end -->
+                        
+
+                    </div>
+                
+
+                </div>
+            </div>
+        </div>      
+    </div>
+
+    
+        
+            <div class="waveWrapper">
+                <div class="wave wave_before" style="background-image: url('/img/wave-dark.png')"></div>
+                <div class="wave wave_after" style="background-image: url('/img/wave-dark.png')"></div>
+            </div>
+        
+    
+</header>
+
+	
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">星期五。見面</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archive/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/categories/">Categories</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/reading/">Reading</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+    
+    <!-- Main Content -->
+    <!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+            <!-- Post Container -->
+
+    
+        
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+        
+    
+
+                <p><img src="https://meetonfriday.com/img/lazy-loading-animation.gif" data-original="https://john850512.files.wordpress.com/2019/03/main-logo.805726b.png" alt="main-logo.805726b.png"></p>
+<p>想當初上一次參加SITCON是…兩年前吧…在高雄的時候實在是太遠了也不是想來就來，不過現在在新竹所以沒關係:|</p>
+<p>地點一樣舉辦在中研院，從南港展覽館捷運站(不是南港)出來後走到對面搭公車就可以到中研院站，然後再走進去就是了。有很多班公車都會到中研院站所以不用太擔心。</p>
+<p>如果真的不知道怎麼走的話，其實當天捷運站出來看到一堆學生們就跟著他們走就對了，應該都可以順利到達目的地(我當天中研院裡面就是這樣走的，連導航都沒開xD)。</p>
+<a id="more"></a>
+<p><img src="https://meetonfriday.com/img/lazy-loading-animation.gif" data-original="https://john850512.files.wordpress.com/2019/03/img_20190324_084428.jpg" alt="dav"></p>
+<p>報到的時候使用一個APP就可以避免大家都在排隊等報到的情況，很方便。</p>
+<p><img src="https://meetonfriday.com/img/lazy-loading-animation.gif" data-original="https://john850512.files.wordpress.com/2019/03/screenshot_20190324-084616.jpg" alt="Screenshot_20190324-084616.jpg"></p>
+<p>SITCON今年的主題是”Algorithm in a Box”，也就是開箱演算法。我蠻喜歡這屆的風格設計的，簡潔風，不過仍然很好看。</p>
+<p><img src="https://meetonfriday.com/img/lazy-loading-animation.gif" data-original="https://john850512.files.wordpress.com/2019/03/img_20190324_150702.jpg" alt="IMG_20190324_150702.jpg"></p>
+<p>很喜歡這種年齡相仿的學生們為了資訊活動一起聚起來的感覺，跟在學校比較不同的是，會來的幾乎都是真的具有興趣或熱忱的朋友，彼此可以一起交流經驗跟討論問題，這種感覺會讓人覺得很棒。</p>
+<p><img src="https://meetonfriday.com/img/lazy-loading-animation.gif" data-original="https://john850512.files.wordpress.com/2019/03/img_20190324_085357.jpg" alt="sdr"></p>
+<p>大體上活動都跟我當初參加差不多，不過提問方式改成可以在網路上匿名發問了(不知道什麼時候開始的)，我覺得這是個還不錯的方式，不過有時候會有一些蠻有趣的狀況…像是下面這樣：</p>
+<p>“媽！我上新聞啦”</p>
+<p><img src="https://meetonfriday.com/img/lazy-loading-animation.gif" data-original="https://john850512.files.wordpress.com/2019/03/img_20190324_095942.jpg" alt="IMG_20190324_095942.jpg"></p>
+<p>前兩個時段的議程是共通的，其他演講廳會同步直播，有經驗的就會知道其實會在第二場共通議程快結束前先離開(或是直接在第二場時去其他地方看直播)，這樣才能在之後想聽的小議程搶到位置。由於其他場地相較R0小很多，如果太晚去你就會看到如下畫面：</p>
+<p><img src="https://meetonfriday.com/img/lazy-loading-animation.gif" data-original="https://john850512.files.wordpress.com/2019/03/img_20190324_125131.jpg" alt="IMG_20190324_125131.jpg"></p>
+<p>此外，在外頭走廊的白板上面都會有一些很有趣的題目讓大家自由發揮回答，比方說…</p>
+<p>“你都用什麼CPU?”</p>
+<p>“6.YAMAHA”</p>
+<p>…….?????</p>
+<p><img src="https://meetonfriday.com/img/lazy-loading-animation.gif" data-original="https://john850512.files.wordpress.com/2019/03/img_20190324_100601.jpg" alt="dav"></p>
+<p>這張圖我想是在評論前陣子的萬物皆O(1)的討論(想知道的請去臉書python taiwan社團爬文)xD</p>
+<p><img src="https://meetonfriday.com/img/lazy-loading-animation.gif" data-original="https://john850512.files.wordpress.com/2019/03/img_20190324_100730.jpg" alt="dav"></p>
+<p>然後來參加年會就是要吃東西，吃也是很重要的一環怎麼可以不介紹！！！</p>
+<p><img src="https://meetonfriday.com/img/lazy-loading-animation.gif" data-original="https://john850512.files.wordpress.com/2019/03/img_20190324_141345.jpg" alt="sdr"></p>
+<p><img src="https://meetonfriday.com/img/lazy-loading-animation.gif" data-original="https://john850512.files.wordpress.com/2019/03/img_20190324_152031-1.jpg" alt="IMG_20190324_152031.jpg"></p>
+<p>最後今年有真實境矩陣的活動，集滿廠商的章就可以換大禮包，可以換到手提袋(用買的要200元)。</p>
+<p>我很喜歡SITCON今年的手提袋，覺得真的好看～還有衣服我也很喜歡，所以我也買了一件，紙膠帶覺得有點小貴，不過還是買了，支持一下。</p>
+<p>(之後再補圖片…如果沒忘記的話)</p>
+<hr>
+<h2 id="議程分享"><a href="#議程分享" class="headerlink" title="議程分享"></a>議程分享</h2><p>首先小抱怨一下，一整天下來網路有點不給力阿QQ 想打共筆也是打得很辛苦，一直斷斷續續的，後來果斷連中研院自己的網路而不用SITCON提供的站點，才終於順暢了一點。</p>
+<p>接下來就分享一下我聽了哪些的議程，以及一些心得，以下都只是簡述議程內容跟心得，如果想知道更多資訊歡迎到最下面看共筆唷！</p>
+<h3 id="議程分享-人工智慧的過去現在與未來"><a href="#議程分享-人工智慧的過去現在與未來" class="headerlink" title="議程分享 - 人工智慧的過去現在與未來"></a>議程分享 - 人工智慧的過去現在與未來</h3><p>摁…這是SITCON的第一場議程，主要是在講人工智慧的一些科普背景，因為我本來就是走相關領域的，所以聽得有些無聊xD</p>
+<p>不過我還是很認真地幫忙做共筆了(然後一邊被網路搞得很崩潰)。</p>
+<h3 id="議程分享-商管、演算法、商管"><a href="#議程分享-商管、演算法、商管" class="headerlink" title="議程分享 - 商管、演算法、商管"></a>議程分享 - 商管、演算法、商管</h3><p>這場的議程就相對有趣多了，講者透過一些例子來分享商管策略跟演算法之間的一些連結關係，講者也分享了許多實際的例子：</p>
+<ol>
+<li>自動化的(競爭標價)系統(為什麼網路上有一本書的訂價永遠是別人的1.27倍？)、</li>
+<li>套利(arbitrage)(無套利條件、高頻交易、新聞交易…)、</li>
+<li>決策支援(航空公司人員排班:1000名地勤人員在桃園機場服務，如何排班?)</li>
+</ol>
+<p>最後也給了大家一些結論跟建議：</p>
+<ol>
+<li>不是每個問題都一定要用很複雜的演算法來解決，搞不好老闆只是想要最簡單的解決方法。</li>
+<li>同時不要瞧不起老闆，”不要因為自己比較會寫程式就覺得老闆是廢物，老闆常常是廢物、也常常不是”…這句話是講者說的，不是我說的，老闆止步。</li>
+</ol>
+<h3 id="議程分享-Rex-算法初探"><a href="#議程分享-Rex-算法初探" class="headerlink" title="議程分享 - Rex 算法初探"></a>議程分享 - Rex 算法初探</h3><p>我以為我可以越級打巴洛古，直到進了副本才發現這是炎魔團…</p>
+<p>初心者是沒辦法發表什麼心得的…留給高手們吧QQ</p>
+<h3 id="議程分享-手把手玩-PE-Injection-lt-3"><a href="#議程分享-手把手玩-PE-Injection-lt-3" class="headerlink" title="議程分享 - 手把手玩 PE Injection &lt;3"></a>議程分享 - 手把手玩 PE Injection &lt;3</h3><p>這場我因為記錯吃下午茶時間跟都在逛樓上廠商攤位……所以晚了一點才進去…明明只有十分鐘的演講我只聽了一半左右吧QQ</p>
+<p>主要是在介紹PE file的結構，然後如何透過修改PE file去改寫程式，雖然時間很短但是我覺得講的很清楚很棒～</p>
+<p>這好像也是少數我有看到有梗圖的簡報(簡報還是要有梗圖才好玩嘛xD)，而且這場其實也是我當初列為最想聽的清單之一(但是遲到了QQQQQ)。</p>
+<h3 id="議程分享-AI-for-the-Art-in-a-Box"><a href="#議程分享-AI-for-the-Art-in-a-Box" class="headerlink" title="議程分享 - AI for the Art in a Box"></a>議程分享 - AI for the Art in a Box</h3><p>這場也是10分鐘小議程，主要是講說GAN是什麼(有人念GAN，也有人念GAN，不過我都念GAN)：就是一個警察一個壞人，兩個在那邊互相進化，最後兩個都超進化的故事。</p>
+<p>以及怎麼透過GAN怎麼做到一些藝術上的應用(如何產生表情微奇怪的二次元妹子)，因為時間關係沒辦法講太細節的部份，不過對於還沒接觸過GAN的朋友們應該會覺得很酷～</p>
+<h3 id="議程分享-TMML真相靠自己─You-are-Fake-News！"><a href="#議程分享-TMML真相靠自己─You-are-Fake-News！" class="headerlink" title="議程分享 - TMML真相靠自己─You are Fake News！"></a>議程分享 - TMML真相靠自己─You are Fake News！</h3><p>這場也是我當初最想聽的議程之一，不過不得不說講者真的很厲害…各種意義上……</p>
+<p>主要是透過三種open dataset，包含了8種不同類別的文章去做一些語意分析(資料視覺化)、特徵萃取(Chi-Square, Log likehood, EMI, TF-IDF)，資料前處理，然後透過Dilated CNN + GRU去判斷一篇文章是不是假新聞(對於假新聞的ground truth，似乎是事前透過了supervised learning訓練出來…這部分我沒聽的很懂)。</p>
+<p>雖然40分鐘還是沒辦法把所有東西都講得很細，不過還是收穫很多。</p>
+<p>有趣的是，最後提問的時候蠻多有趣的問題，像是”到底是嗑了什麼才能做出這種東西”、”中天新聞表示不喜歡這個主題”之類的，讓全場都哄堂大笑。</p>
+<h3 id="議程分享-從學校到業界，工程師作為職業的現實"><a href="#議程分享-從學校到業界，工程師作為職業的現實" class="headerlink" title="議程分享 - 從學校到業界，工程師作為職業的現實"></a>議程分享 - 從學校到業界，工程師作為職業的現實</h3><p>這場議程主要是在介紹業界跟學界的一些差別，作為一個即將要出社會的人覺得心有戚戚焉QQ</p>
+<p>可惜的是整場聽下來有點小悶…</p>
+<hr>
+<h2 id="light-show"><a href="#light-show" class="headerlink" title="light show"></a>light show</h2><p>這應該是整天的重點活動了，每人3分鐘的時間去講自己想要講的東西，沒有講完的話就會被Timeout，為此大家的講話速度都自動倍速了起來。不過儘管如此，整場只有一個人被Timeout(主辦表示難過，做了這麼辛苦的圖只用到一次)。</p>
+<p><img src="https://meetonfriday.com/img/lazy-loading-animation.gif" data-original="https://john850512.files.wordpress.com/2019/03/img_20190324_173706.jpg" alt="IMG_20190324_173706.jpg"></p>
+<p>此外大家好像都為投影而苦惱不少，有些人光是在喬投影問題就花了半分鐘了…最後講不完怎麼辦呢？</p>
+<p>直接跳到最後一頁就對了。</p>
+<p>“這個故事告訴我們，投影片不用做太多，反正最後也用不到”…這也是主持人講的xD</p>
+<h2 id="閉幕"><a href="#閉幕" class="headerlink" title="閉幕"></a>閉幕</h2><p>用兩張照片來總結今年的SITCON：</p>
+<p>…10G那位同學是怎樣 開直播嗎xD</p>
+<p><img src="https://meetonfriday.com/img/lazy-loading-animation.gif" data-original="https://john850512.files.wordpress.com/2019/03/img_20190324_175015.jpg" alt="ozdfov"></p>
+<p>下面這張是大家填寫最有代表性的關鍵字，不得不說冰淇淋那個： 奧義科技真的是佛心來的，那天的冰淇淋真的是幹你娘發爆，只要有人過去就是發一個冰淇淋，讓大家吃好吃滿，聽說他們公司的願景就是讓每個資訊年會都有冰淇淋吃xD</p>
+<p><img src="https://meetonfriday.com/img/lazy-loading-animation.gif" data-original="https://john850512.files.wordpress.com/2019/03/img_20190324_175131.jpg" alt="IMG_20190324_175131.jpg"></p>
+<h2 id="心得"><a href="#心得" class="headerlink" title="心得"></a>心得</h2><p>覺得能定期參加這些活動除了可以認識更多同年齡層的朋友外，在這個氣氛下能夠提升自己對於開發程式的熱情(不然在學校都快被消磨光了)，當心很累的時候還是可以來補個血的。不過幫SITCON呼籲一下，票是免費的真的夠佛心，也希望大家不要占著票不來，這樣很母湯～</p>
+<p>今年聽完也給了自己一個小小目標，如果有機會希望自己明年也可以投個10分鐘小議程試試看(?)，在學生的最後一年給自己一個小任務這樣。</p>
+<p>最後附上我當初做的筆記(部分是來自共筆的整理，會比較多紀錄我有興趣的部分)跟共筆、官網連結，有興趣的就上去看看瞜～</p>
+<ul>
+<li><a href="https://hackmd.io/FOG2p2x1RIiZTr_Bpb_RYQ" target="_blank" rel="noopener">SITCON 2019 R0 共筆</a></li>
+<li><a href="https://hackmd.io/wT-LCYjMRcGB283k4imuUw" target="_blank" rel="noopener">SITCON 2019</a></li>
+<li><a href="https://sitcon.org/2019/" target="_blank" rel="noopener">官方網站</a></li>
+</ul>
+
+                <hr>
+                <!-- Pager -->
+                <ul class="pager">
+    
+    <li class="previous">
+        <a href="/posts/79132bb1/" data-toggle="tooltip" data-placement="top" title="碩一生活總結">&larr; Newer Post</a>
+    </li>
+    
+    
+    <li class="next">
+        <a href="/posts/a1b74789/" data-toggle="tooltip" data-placement="top" title="交大就職博覽會心得&參加攻略">Older Post &rarr;</a>
+    </li>
+    
+</ul>
+
+                <!-- tip start -->
+                
+
+                
+                <!-- tip end -->
+
+                <!-- Sharing -->
+                
+                <!-- Sharing -->
+
+                <!-- gitment start -->
+                
+                <!-- gitment end -->
+
+                <!-- 来必力City版安装代码 -->
+                
+                <!-- City版安装代码已完成 -->
+
+                <!-- disqus comment start -->
+                
+                <div class="comment">
+                    <div id="disqus_thread" class="disqus-thread"></div>
+                </div>
+                
+                <!-- disqus comment end -->
+            </div>
+            
+            <!-- Tabe of Content -->
+            <!-- Table of Contents -->
+
+    
+      
+        <aside id="sidebar">
+          <div id="toc" class="toc-article">
+          <strong class="toc-title">Contents</strong>
+          
+            <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#議程分享"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">議程分享</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#議程分享-人工智慧的過去現在與未來"><span class="toc-nav-number">1.1.</span> <span class="toc-nav-text">議程分享 - 人工智慧的過去現在與未來</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#議程分享-商管、演算法、商管"><span class="toc-nav-number">1.2.</span> <span class="toc-nav-text">議程分享 - 商管、演算法、商管</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#議程分享-Rex-算法初探"><span class="toc-nav-number">1.3.</span> <span class="toc-nav-text">議程分享 - Rex 算法初探</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#議程分享-手把手玩-PE-Injection-lt-3"><span class="toc-nav-number">1.4.</span> <span class="toc-nav-text">議程分享 - 手把手玩 PE Injection &lt;3</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#議程分享-AI-for-the-Art-in-a-Box"><span class="toc-nav-number">1.5.</span> <span class="toc-nav-text">議程分享 - AI for the Art in a Box</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#議程分享-TMML真相靠自己─You-are-Fake-News！"><span class="toc-nav-number">1.6.</span> <span class="toc-nav-text">議程分享 - TMML真相靠自己─You are Fake News！</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#議程分享-從學校到業界，工程師作為職業的現實"><span class="toc-nav-number">1.7.</span> <span class="toc-nav-text">議程分享 - 從學校到業界，工程師作為職業的現實</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#light-show"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">light show</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#閉幕"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">閉幕</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#心得"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">心得</span></a></li></ol>
+          
+          </div>
+        </aside>
+      
+    
+
+        </div>
+    </div>
+</article>
+
+	
+    <!-- disqus embedded js code start (one page only need to embed once) -->	
+    <script type="text/javascript">	
+        /* * * CONFIGURATION VARIABLES * * */	
+        var disqus_shortname = "meetonfriday";	
+        var disqus_identifier = "https://meetonfriday.com/posts/c119e85f/";	
+        var disqus_url = "https://meetonfriday.com/posts/c119e85f/";	
+        (function() {	
+            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;	
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';	
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);	
+        })();	
+    </script>	
+    <!-- disqus embedded js code start end -->	
+    
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/john850512">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://www.linkedin.com/in/john85051232">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                
+                    <li>
+                        <a target="_blank" href="https://www.facebook.com/meetonfridayyy">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+                
+                    <li>
+                        <a target="_blank"  href="https://mail.google.com/mail/?view=cm&fs=1&to=john85051232@gmail.com">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-envelope-o fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+                
+                
+
+                
+
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; John 2025 
+                    <br>
+                    Powered by 
+                    <a href="https://github.com/john850512/hexo-theme-jiji" target="_blank" rel="noopener">
+                        <i>hexo-theme-jiji</i>
+                    </a> | 
+                    <iframe name="star" style="margin-left: 2px; margin-bottom:-5px;" frameborder="0" scrolling="0"
+                        width="100px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=john850512&repo=hexo-theme-jiji&type=star&count=true">
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+
+</footer>
+
+<!-- jQuery -->
+
+<script src="/js/jquery.min.js"></script>
+
+
+<!-- Bootstrap Core JavaScript -->
+
+<script src="/js/bootstrap.min.js"></script>
+
+
+<!-- Custom Theme JavaScript -->
+
+<script src="/js/hux-blog.min.js"></script>
+
+
+<!-- Search -->
+
+<script src="/js/search.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("https://meetonfriday.com/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+<!-- Search -->
+
+    <script type="text/javascript">      
+        var search_path = "search.xml";
+        if (search_path.length == 0) {
+            search_path = "search.xml";
+        }
+    var path = "/" + search_path;
+    searchFunc(path, 'local-search-input', 'local-search-result');
+    </script>
+
+
+<!-- busuanzi -->
+<!--<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>-->
+<script async src="//cdn.jsdelivr.net/npm/busuanzi@2.3.0"></script>
+
+
+
+
+	<a id="rocket" href="#top" class=""></a>
+	<script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script>
+    <script type="text/javascript" src="/js/toc.js?v=1.0.0" async=""></script>
+
+    
+        <!-- background effects line -->
+        
+        <!-- background effects end -->
+    
+    
+    <!-- background animation-->>
+    <!--<script size="50" alpha='0.3' zIndex="-999" src="/js/ribbonStatic.js"></script>-->
+    
+        <script src="/js/ribbonDynamic.js"></script>
+    
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script>
+            window.imageLazyLoadSetting = {
+                isSPA: false,
+                processImages: null,
+            };
+        </script><script>window.addEventListener("load",function(){var t=/\.(gif|jpg|jpeg|tiff|png)$/i,r=/^data:image\/[a-z]+;base64,/;Array.prototype.slice.call(document.querySelectorAll("img[data-original]")).forEach(function(a){var e=a.parentNode;"A"===e.tagName&&(e.href.match(t)||e.href.match(r))&&(e.href=a.dataset.original)})});</script><script>!function(n){n.imageLazyLoadSetting.processImages=o;var i=n.imageLazyLoadSetting.isSPA,r=Array.prototype.slice.call(document.querySelectorAll("img[data-original]"));function o(){i&&(r=Array.prototype.slice.call(document.querySelectorAll("img[data-original]")));for(var t,e,a=0;a<r.length;a++)t=r[a],0<=(e=t.getBoundingClientRect()).bottom&&0<=e.left&&e.top<=(n.innerHeight||document.documentElement.clientHeight)&&function(){var t,e,n,i,o=r[a];t=o,e=function(){r=r.filter(function(t){return o!==t})},n=new Image,i=t.getAttribute("data-original"),n.onload=function(){t.src=i,e&&e()},n.src=i}()}o(),n.addEventListener("scroll",function(){var t,e;t=o,e=n,clearTimeout(t.tId),t.tId=setTimeout(function(){t.call(e)},500)})}(this);</script></body>
+
+</html>
